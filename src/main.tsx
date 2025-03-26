@@ -12,56 +12,19 @@ import ListOfBrokerAgent from './views/admin/affialiated/table/ListOfBrokerAgent
 import ProtectedRoute from './jwt/ProtectedRoute';
 import PublicRoute from './jwt/PublicRoute';
 
-const Login = lazy(() =>
-  wait(3000).then(() => import("./views/auth/login/Login"))
-);
-
-const Register = lazy(() =>
-  wait(3000).then(() => import("./views/auth/register/Register"))
-);
-
-const DashboardContainer = lazy(() =>
-  wait(3000).then(() => import("./views/admin/dashboard/DashboardContainer"))
-);
-
-const Facilainers = lazy(() =>
-  wait(3000).then(() => import("./views/admin/affialiated/AffialiatedContainer"))
-);
-
-const ListOfPendingRegistered = lazy(() =>
-  wait(3000).then(() => import("./views/admin/affialiated/table/ListOfPendingRegistered"))
-);
-
-const ListOfLiscenced = lazy(() =>
-  wait(3000).then(() => import("./views/admin/affialiated/table/ListOfLiscenced"))
-);
-
-const ListOfUnliscenced = lazy(() =>
-  wait(3000).then(() => import("./views/admin/affialiated/table/ListOfUnliscenced"))
-);
-
-const DeveloperContainer = lazy(() =>
-  wait(3000).then(() => import("./views/admin/developer/DeveloperContainer"))
-);
-
-const BrokerageProperty = lazy(() =>
-  wait(3000).then(() => import("./views/admin/brokerage/BrokerageProperty"))
-);
-
-const SalesEncodingContainer = lazy(() =>
-  wait(3000).then(() => import("./views/admin/salesEncoding/SalesEncodingContainer"))
-);
-
-const SalesReport = lazy(() =>
-  wait(3000).then(() => import("./views/admin/reports/SalesReport"))
-);
-
-
-// Agent-Broker
-
-const DashboardAgentBroker = lazy(() =>
-  wait(3000).then(() => import("./views/agent/dashboard/DashboardContainer"))
-);
+// Remove the wait function and use direct dynamic imports
+const Login = lazy(() => import("./views/auth/login/Login"));
+const Register = lazy(() => import("./views/auth/register/Register"));
+const DashboardContainer = lazy(() => import("./views/admin/dashboard/DashboardContainer"));
+const Facilainers = lazy(() => import("./views/admin/affialiated/AffialiatedContainer"));
+const ListOfPendingRegistered = lazy(() => import("./views/admin/affialiated/table/ListOfPendingRegistered"));
+const ListOfLiscenced = lazy(() => import("./views/admin/affialiated/table/ListOfLiscenced"));
+const ListOfUnliscenced = lazy(() => import("./views/admin/affialiated/table/ListOfUnliscenced"));
+const DeveloperContainer = lazy(() => import("./views/admin/developer/DeveloperContainer"));
+const BrokerageProperty = lazy(() => import("./views/admin/brokerage/BrokerageProperty"));
+const SalesEncodingContainer = lazy(() => import("./views/admin/salesEncoding/SalesEncodingContainer"));
+const SalesReport = lazy(() => import("./views/admin/reports/SalesReport"));
+const DashboardAgentBroker = lazy(() => import("./views/agent/dashboard/DashboardContainer"));
 
 
 // Route configuration
