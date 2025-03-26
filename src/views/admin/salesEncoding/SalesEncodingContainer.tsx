@@ -2,14 +2,13 @@ import NavigationSalesEncoding from './navigation/NavigationSalesEncoding';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faFile, faPen, faPlus, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFile, faPen, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 
 
 

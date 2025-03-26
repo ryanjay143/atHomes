@@ -1,4 +1,4 @@
-import { faBars, faBell, faChartLine, faCog, faEnvelope, faHome, faHomeUser, faKeyboard, faTachometerAlt, faTimes, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faBell, faChartLine, faCog, faEnvelope, faHome, faKeyboard, faTachometerAlt, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";

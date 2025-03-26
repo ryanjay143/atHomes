@@ -20,12 +20,32 @@ const generateAccountNumber = () => {
   return accountNumber;
 };
 
+// Define a type for the errors object
+type FormErrors = {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  extension_name?: string;
+  email?: string;
+  phone?: string;
+  gender?: string;
+  role?: string;
+  complete_address?: string;
+  username?: string;
+  password?: string;
+  confirm_password?: string;
+  prc_liscence_number?: string;
+  dhsud_registration_number?: string;
+  validation_date?: string;
+  last_school_att?: string;
+};
+
 function Register() {
   const [accountNumber, setAccountNumber] = useState('');
   const [isPasswordGenerated, setIsPasswordGenerated] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     acct_number: '',
@@ -53,7 +73,7 @@ function Register() {
     setFormData((prevData) => ({ ...prevData, acct_number: newAccountNumber }));
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -85,7 +105,7 @@ function Register() {
     setLoading(true);
   
     // Validation logic
-    const newErrors: { [key: string]: string } = {};
+    const newErrors: FormErrors = {};
     if (!formData.first_name) newErrors.first_name = "First name is required.";
     if (!formData.last_name) newErrors.last_name = "Last name is required.";
     if (!formData.email) newErrors.email = "Email is required.";

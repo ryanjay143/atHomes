@@ -1,4 +1,4 @@
-import { Card, CardHeader } from '@/components/ui/card';
+import { CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
