@@ -40,8 +40,11 @@ const DeveloperContainer = () => {
     };
 
     const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        event.currentTarget.src = '/path/to/default-image.jpg'; // Fallback image path
-        event.currentTarget.alt = 'Default Image'; // Update alt text for fallback
+        const target = event.currentTarget;
+        if (target instanceof HTMLImageElement) {
+            target.src = '/path/to/default-image.jpg'; // Ensure this path is correct
+            target.alt = 'Default Image'; // Update alt text for fallback
+        }
     };
 
     const handleRemoveImage = () => {
@@ -110,10 +113,10 @@ const DeveloperContainer = () => {
                                                 {imagePreview && (
                                                     <div className="mt-2 relative w-36 h-36 group">
                                                         <img
-                                                            src={imagePreview}
-                                                            alt="Preview"
-                                                            className="w-full h-full rounded-sm object-cover border border-gray-300 cursor-pointer"
-                                                            onClick={() => setIsImageModalOpen(true)} // Open modal on click
+                                                            src={imagePreview || '/path/to/default-image.jpg'} // Use default if imagePreview is null
+                                                            alt="Full Preview"
+                                                            className="max-w-full max-h-[80vh] rounded-md"
+                                                            onError={handleImageError} // Attach the error handler here
                                                         />
                                                         <div
                                                             className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
