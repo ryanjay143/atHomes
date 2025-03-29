@@ -8,13 +8,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { faArrowRight, faEye, faPen, faPlus, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import Navigation from './navigation/NavigationDeveloper'
 
 const DeveloperContainer = () => {
     const [projects, setProjects] = useState([{ name: '', location: '', contact: '' }]);
     const [newProject, setNewProject] = useState({ name: '', location: '', contact: '' });
-
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const addProject = () => {
         setProjects([...projects, newProject]);
@@ -24,6 +26,29 @@ const DeveloperContainer = () => {
     const deleteProject = (index:any) => {
         const newProjects = projects.filter((_, i) => i !== index);
         setProjects(newProjects);
+    };
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        event.currentTarget.src = '/path/to/default-image.jpg'; // Fallback image path
+        event.currentTarget.alt = 'Default Image'; // Update alt text for fallback
+    };
+
+    const handleRemoveImage = () => {
+        setImagePreview(null); // Clear the image preview
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Clear the file input value
+        }
     };
 
 
@@ -75,9 +100,56 @@ const DeveloperContainer = () => {
                                             </div>
                                             <div>
                                                 <Label className='text-[#172554]'>Image or Logo</Label>
-                                                <Input type='file' />
+                                                <Input
+                                                    type='file'
+                                                    onChange={handleImageChange}
+                                                    ref={fileInputRef} // Attach the ref to the input
+                                                />
                                             </div>
-
+                                            <div>
+                                                {imagePreview && (
+                                                    <div className="mt-2 relative w-36 h-36 group">
+                                                        <img
+                                                            src={imagePreview}
+                                                            alt="Preview"
+                                                            className="w-full h-full rounded-sm object-cover border border-gray-300 cursor-pointer"
+                                                            onClick={() => setIsImageModalOpen(true)} // Open modal on click
+                                                        />
+                                                        <div
+                                                            className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                                            onClick={() => setIsImageModalOpen(true)} // Open modal on overlay click
+                                                        >
+                                                            <span className="text-white text-sm font-semibold">Preview</span>
+                                                        </div>
+                                                        <button
+                                                            onClick={handleRemoveImage} // Remove image and clear input
+                                                            className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                                                            aria-label="Remove image"
+                                                        >
+                                                            &times;
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {isImageModalOpen && (
+                                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                                        <div className="bg-white p-4 rounded-md relative">
+                                                            <button
+                                                                onClick={() => setIsImageModalOpen(false)} // Close modal
+                                                                className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                                                aria-label="Close preview"
+                                                            >
+                                                                &times;
+                                                            </button>
+                                                            <img
+                                                                src={imagePreview || '/path/to/default-image.jpg'} // Use default if imagePreview is null
+                                                                alt="Full Preview"
+                                                                className="max-w-full max-h-[80vh] rounded-md"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+           
                                             
                                         </div>
                                         <div>
