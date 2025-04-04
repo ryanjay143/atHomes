@@ -126,33 +126,33 @@ const routes = [
           </Suspense>
         ),
         children: [
-          { 
-            path: "", 
-            element: <ListOfBrokerAgent /> 
+          {
+            path: "",
+            element: <ListOfBrokerAgent />,
           },
-          { 
-            path: "pendingRegister", 
+          {
+            path: "pendingRegister",
             element: (
               <Suspense fallback={<LoaderCard />}>
-                <ListOfPendingRegistered /> 
+                <ListOfPendingRegistered />
               </Suspense>
-            )
+            ),
           },
-          { 
-            path: "licensed", 
+          {
+            path: "licensed",
             element: (
               <Suspense fallback={<LoaderCard />}>
-                <ListOfLiscenced /> 
+                <ListOfLiscenced />
               </Suspense>
-            )
+            ),
           },
-          { 
-            path: "unlicensed", 
+          {
+            path: "unlicensed",
             element: (
               <Suspense fallback={<LoaderCard />}>
-                <ListOfUnliscenced /> 
+                <ListOfUnliscenced />
               </Suspense>
-            )
+            ),
           },
         ],
       },

@@ -1,15 +1,16 @@
 {
   "name": "athomes",
+  "homepage": "https://ryanjay143.github.io/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "tsc -b && vite build",
-  "lint": "eslint .",
-  "preview": "vite preview",
-  "deploy": "npm run build && echo 'Deploying to server...'"
-},
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "deploy": "npm run build && echo 'Deploying to server...'"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -40,6 +41,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
+    "react-image-file-resizer": "^0.4.8",
     "react-router": "^7.1.4",
     "react-router-dom": "^6.4.3",
     "sweetalert2": "^11.15.10",
