@@ -30,7 +30,7 @@ function ListOfBrokerAgent() {
 
   return (
     <div className='p-2'>
-    <div className='py-2 mt-10 flex flex-row justify-between'>
+    <div className='py-2 flex flex-row justify-between'>
       <Select>
         <SelectTrigger className="w-[120px] border border-primary md:w-28">
           <span className='text-[#172554]'>Show</span>
@@ -46,7 +46,7 @@ function ListOfBrokerAgent() {
       </Select>
       <Input type='text' placeholder='Search' className='w-52 md:w-48'/>
     </div>
-    <div className="h-80 overflow-y-auto block fade-in-left">
+    <div className="fade-in-left">
       <Table>
       <TableHeader className="bg-primary text-base h-12 sticky top-0 z-10">
         <TableRow>

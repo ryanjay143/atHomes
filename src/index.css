@@ -73,5 +73,21 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+
+  
 }
 
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Background of the scrollbar track */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary)); /* Use the --primary color for the scrollbar thumb */
+    border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+    border: 3px solid transparent; /* Space around the thumb */
+  }

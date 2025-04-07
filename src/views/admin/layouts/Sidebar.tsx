@@ -50,16 +50,16 @@ function AdminSidebar() {
         <div className="w-full h-full flex flex-col items-center justify-between py-4">
           {/* Logo Section */}
           <div
-            className="flex justify-center cursor-pointer mb-4"
+            className="flex justify-center cursor-pointer mb-7"
             onClick={() => handleNavigation("/admin")}
           >
-            <img src="../../../../logoathomes.jpg" alt="Logo" className="w-42 h-32 rounded-2xl" />
+            <img src="../../../../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
           </div>
-          <hr className="w-48 border-white" />
+          {/* <hr className="w-48 border-white" /> */}
 
           {/* Navigation Menu */}
           <nav className="w-full">
-            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2">
+            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2 ">
               {links.map((link) => (
                 <li
                 key={link.path}

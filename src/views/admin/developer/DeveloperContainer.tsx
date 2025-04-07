@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -24,8 +24,10 @@ const DeveloperContainer = () => {
         dev_location: '',
         image: null as File | string | null,
     });
+    
     const [responseData, setResponseData] = useState<any>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({
         dev_name: '',
         dev_email: '',
@@ -36,23 +38,61 @@ const DeveloperContainer = () => {
         project_location: '',
         project_contact: '',
     });
+
+    interface Project {
+        project_name: any;
+        project_location: any;
+        project_contact_person: any;
+        developer_id: number;
+        created_at: any;
+        updated_at: any;
+    }
+      
+    interface Developer {
+        id: any; // Assuming there's a unique identifier for each developer
+        dev_name: any;
+        dev_email: any;
+        dev_phone: any;
+        dev_location: any;
+        image: any;
+        status: number;
+        created_at: any;
+        updated_at: any;
+        projects: Project[];
+    }
+           
+    const [getAllDeveloper, setGetAllDeveloper] = useState<Developer[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    // Add a new project
-    const addProject = () => {
+   
 
+    const fetchDevelopers = async () => {
+        try {
+            const response = await axios.get('developers', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+                }
+            });
+            setGetAllDeveloper(response.data.developers);
+        } catch (error) {
+            console.error('Error fetching developers:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDevelopers();
+    }, []);
+
+    const addProject = () => {
         setProjects([...projects, newProject]);
-        
         setNewProject({ name: '', location: '', contact: '' });
     };
 
-    // Delete a project
     const deleteProject = (index: number) => {
         const updatedProjects = projects.filter((_, i) => i !== index);
         setProjects(updatedProjects);
     };
 
-    // Handle image selection
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -63,20 +103,18 @@ const DeveloperContainer = () => {
             } else {
                 setErrors({ ...errors, image: 'Please upload a valid image file (jpeg, png, jpg, gif).' });
                 if (fileInputRef.current) {
-                    fileInputRef.current.value = ''; // Clear the file input
+                    fileInputRef.current.value = '';
                 }
             }
         }
     };
 
-    // Handle image error (fallback to default image)
     const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
         const target = event.currentTarget;
         target.src = '/path/to/default-image.jpg';
         target.alt = 'Default Image';
     };
 
-    // Remove selected image
     const handleRemoveImage = () => {
         setImagePreview(null);
         setDeveloperData({ ...developerData, image: null });
@@ -85,7 +123,6 @@ const DeveloperContainer = () => {
         }
     };
 
-    // Validate form inputs
     const validateForm = () => {
         const newErrors = {
             dev_name: developerData.dev_name ? '' : 'Developer name is required.',
@@ -101,13 +138,14 @@ const DeveloperContainer = () => {
         return Object.values(newErrors).every(error => error === '');
     };
 
-    // Submit developer and project data
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         if (!validateForm()) {
             return;
         }
+
+        setIsSubmitting(true);
 
         let updatedProjects = projects;
         if (newProject.name && newProject.location && newProject.contact) {
@@ -154,8 +192,11 @@ const DeveloperContainer = () => {
                 title: 'Success',
                 text: 'Developer and projects created successfully!',
                 confirmButtonText: 'OK',
+            }).then(() => {
+                fetchDevelopers(); // Refresh the developer list
+                setResponseData(response.data);
             });
-            setResponseData(response.data);
+              
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -163,20 +204,22 @@ const DeveloperContainer = () => {
                 text: 'There was an error submitting the form. Please check your input and try again.',
                 confirmButtonText: 'OK',
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className='py-5 md:pt-20'>
-            <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mt-5 mr-5 md:px-5'>
+        <div className="py-3 md:pt-20">
+            <div className="ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5 ">
                 <Navigation />
-                <Card className='bg-[#eff6ff] border-b-4 border-primary fade-in-left'>
+                <Card className="border-b-4 border-primary bg-[#eff6ff] h-full md:h-full fade-in-left">
                     <CardHeader>
                         <div className='flex flex-row justify-end'>
                             <CardTitle className='text-[#172554]'>
                                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                     <DialogTrigger asChild>
-                                        <Button className='border border-primary'>
+                                        <Button className='border border-primary' disabled={isSubmitting}>
                                             <FontAwesomeIcon icon={faPlus} /> Add Developer
                                         </Button>
                                     </DialogTrigger>
@@ -299,8 +342,6 @@ const DeveloperContainer = () => {
                                                 </div>
                                             </div>
 
-                                        
-
                                             {/* Existing Projects */}
                                             <div className='mt-5 grid grid-cols-3 md:grid-cols-1 md:gap-2 gap-4'>
                                                 {projects.map((project, index) => (
@@ -357,22 +398,34 @@ const DeveloperContainer = () => {
                                                 ))}
                                             </div>
                                             {/* Add Project Button */}
-                                        <div className='col-span-4 mt-2'>
-                                                <Button type="button" className='w-32 h-8' onClick={addProject}>
+                                            <div className='col-span-4 mt-2'>
+                                                <Button type="button" className='w-32 h-8' onClick={addProject} disabled={isSubmitting}>
                                                     <FontAwesomeIcon icon={faPlus} /> Add Project
                                                 </Button>
                                             </div>
                                         </div>
 
-                                        {/* Submit Button */}
+                                        {/* Submit and Cancel Buttons */}
                                         <div className='flex justify-end'>
                                             <DialogFooter>
                                                 <div className='flex flex-row gap-2'>
                                                     <DialogClose asChild>
-                                                        <button className='bg-red-600 text-accent w-20 h-9 rounded-md'>Cancel</button>
+                                                        <Button className='bg-red-600 hover:bg-red-500 text-accent w-20 h-9 rounded-md' disabled={isSubmitting}>
+                                                            Cancel
+                                                        </Button>
                                                     </DialogClose>
-                                                    <Button type="submit" onClick={handleSubmit}>
-                                                        <FontAwesomeIcon icon={faArrowRight} /> Submit
+                                                    <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
+                                                        {isSubmitting? (
+                                                            <>
+                                                                <span>Submitting...</span>
+                                                                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
+                                                            </>
+                                                            ) : (
+                                                            <>
+                                                                <FontAwesomeIcon icon={faArrowRight} />
+                                                                Submit
+                                                            </>
+                                                        )}
                                                     </Button>
                                                 </div>
                                             </DialogFooter>
@@ -411,18 +464,20 @@ const DeveloperContainer = () => {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    <TableRow>
-                                        <TableCell className="font-medium border border-[#bfdbfe]">INV001</TableCell>
-                                        <TableCell className='border border-[#bfdbfe]'>Paid</TableCell>
-                                        <TableCell className='border border-[#bfdbfe]'>Credit Card</TableCell>
-                                        <TableCell className="text-right border border-[#bfdbfe]">
-                                            <div className='flex flex-row gap-1 justify-end'>
-                                                <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                                    <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
+                                    {getAllDeveloper.map((developer) => (
+                                        <TableRow key={developer.id}>
+                                            <TableCell className="font-medium border border-[#bfdbfe]">{developer.dev_name}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
+                                            <TableCell className="text-right border border-[#bfdbfe]">
+                                                <div className='flex flex-row gap-1 justify-end'>
+                                                    <Button className='w-8 h-8 rounded-xl border border-primary'>
+                                                        <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
                                 </TableBody>
                             </Table>
                             <div className='flex flex-row justify-between mt-3'>

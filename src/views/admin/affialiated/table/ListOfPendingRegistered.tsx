@@ -83,18 +83,18 @@ function ListOfPendingRegistered() {
   return (
     <div className="p-2">
       {/* Search and Select */}
-      <div className="py-2 mt-10 flex flex-row justify-between">
-        <Select>
+      <div className="py-2 flex flex-row justify-between">
+      <Select>
           <SelectTrigger className="w-[120px] border border-primary">
-            <span className="text-[#172554]">Show</span>
+            <span className='text-[#172554]'>Show</span>
             <SelectValue placeholder="10" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="20">20</SelectItem>
-            <SelectItem value="30">30</SelectItem>
-            <SelectItem value="40">40</SelectItem>
-            <SelectItem value="50">50</SelectItem>
+            <SelectItem value="light">10</SelectItem>
+            <SelectItem value="dark">20</SelectItem>
+            <SelectItem value="darw">30</SelectItem>
+            <SelectItem value="systemwe">40</SelectItem>
+            <SelectItem value="system">50</SelectItem>
           </SelectContent>
         </Select>
         <Input
