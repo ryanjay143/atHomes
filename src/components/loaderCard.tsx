@@ -3,7 +3,7 @@ import '../components/loader.css'
 
 const loaderCard = () => {
   return (
-    <div className='flex items-center justify-center md:p-5 md:mt-0 mt-32 md:px-5 mr-2'>
+    <div className='flex items-center justify-center h-96 top-1/2 left-1/2 absolute translate-x-[-50%] translate-y-[-50%]'>
         <div className="loader"></div> 
     </div>
   )
