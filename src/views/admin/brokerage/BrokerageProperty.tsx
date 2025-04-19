@@ -174,11 +174,19 @@ function BrokerageProperty() {
                           <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
                             {property.status}
                           </span>
-                        ) : (
+                        ) : property.status === 'Not Sold' ? (
                           <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
                             {property.status}
                           </span>
-                        )}
+                        ) : property.status === 'Pre-Selling' ? (
+                          <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-700/10 ring-inset">
+                            {property.status}
+                          </span>
+                        ) : property.status === 'RFO' ? (
+                          <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-purple-700/10 ring-inset">
+                            Ready for Occupancy
+                          </span>
+                        ) : null}
                       </TableCell>
                       <TableCell className="text-right border border-[#bfdbfe]">
                         <div className='flex flex-row gap-1 justify-end'>
@@ -191,12 +199,13 @@ function BrokerageProperty() {
                               </Button>
                             </DialogTrigger>
                             {selectedProperty && (
-                                <EditPropertyDialog
-                                  property={selectedProperty}
-                                  onClose={() => setSelectedProperty(null)}
-                                  fetchPropertiesData={fetchPropertiesData}
-                                />
-                              )}
+                              <EditPropertyDialog
+                                key={selectedProperty.id} 
+                                property={selectedProperty}
+                                onClose={() => setSelectedProperty(null)}
+                                fetchPropertiesData={fetchPropertiesData}
+                              />
+                            )}
                           </Dialog>
                         </div>
                       </TableCell>

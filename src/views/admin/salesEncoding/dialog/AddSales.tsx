@@ -8,6 +8,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@/components/ui/input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { NumericFormat } from 'react-number-format'; // Import NumericFormat
 
 // Define the type for the fetchAgent prop
 interface AddSalesProps {
@@ -41,7 +42,8 @@ function AddSales({ fetchAgent }: AddSalesProps) {
   const [loading, setLoading] = useState(false);
   const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
-
+  const [amount, setAmount] = React.useState('');
+  
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -58,6 +60,21 @@ function AddSales({ fetchAgent }: AddSalesProps) {
 
     fetchAgents();
   }, []);
+
+  const handleChangeAmount = (values: any) => {
+    const { value } = values;
+    setAmount(value);
+    setFormData({
+      ...formData,
+      amount: value,
+    });
+    // Add validation logic if needed
+    if (value === '') {
+      setErrors({ amount: 'Amount is required' });
+    } else {
+      setErrors({});
+    }
+  };
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData({
@@ -190,9 +207,9 @@ function AddSales({ fetchAgent }: AddSalesProps) {
             Add Sales
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:max-w-[400px] overflow-auto h-full">
+        <DialogContent className="md:max-w-[400px] overflow-auto max-h-[97%]">
           <DialogHeader>
-            <DialogTitle className='text-start'>SALES ENCODING FORM</DialogTitle>
+            <DialogTitle className='text-start'>ADD SALES ENCODING</DialogTitle>
             <DialogDescription>
               <form onSubmit={addSalesSubmit}>
                 <div className='text-start flex flex-col gap-4'>
@@ -245,7 +262,16 @@ function AddSales({ fetchAgent }: AddSalesProps) {
 
                   <div className="grid w-full items-center gap-1.5">
                     <Label>Amount of Sale</Label>
-                    <Input type="text" name="amount" placeholder='0.00' onChange={handleChange} />
+                    <NumericFormat
+                      value={amount}
+                      thousandSeparator={true}
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                      allowNegative={false}
+                      placeholder="0.00"
+                      onValueChange={handleChangeAmount}
+                      className="flex h-9 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" // Add your input class here
+                    />
                     {errors.amount && <p className="text-red-500 text-sm">{errors.amount}</p>}
                   </div>
 
@@ -262,8 +288,10 @@ function AddSales({ fetchAgent }: AddSalesProps) {
                         <SelectValue placeholder="Select remarks" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Full Payment">Full Payment</SelectItem>
-                        <SelectItem value="Partial Payment">Partial Payment</SelectItem>
+                          <SelectItem value="Sold">Sold</SelectItem>
+                          <SelectItem value="Not Sold">Not Sold</SelectItem>
+                          <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                          <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.remarks && <p className="text-red-500 text-sm">{errors.remarks}</p>}

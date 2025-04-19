@@ -27,7 +27,11 @@ interface ViewReceiptProps {
   dateFormatter: Intl.DateTimeFormat;
 }
 
-function ViewReceipt({ sales, dateFormatter }: ViewReceiptProps) {
+interface ViewReceiptProps {
+  currencyFormatter: Intl.NumberFormat; // Add this line
+}
+
+function ViewReceipt({ sales, dateFormatter, currencyFormatter }: ViewReceiptProps) {
   const receiptRef = useRef<HTMLDivElement>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -121,7 +125,7 @@ function ViewReceipt({ sales, dateFormatter }: ViewReceiptProps) {
                   <Label htmlFor="amount" className="text-gray-600 font-semibold">
                     Amount:
                   </Label>
-                  <span className="col-span-3 text-gray-800">PHP {sales.amount}</span>
+                  <span className="col-span-3 text-gray-800">{currencyFormatter.format(sales.amount)}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="location" className="text-gray-600 font-semibold">

@@ -120,7 +120,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
         title: 'Success',
         text: 'Property listing created successfully.',
         showConfirmButton: false,
-        timer: 3000,
+        timer: 2000,
         timerProgressBar: true,
       });
 
@@ -250,6 +250,8 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     <SelectContent>
                         <SelectItem value="Sold">Sold</SelectItem>
                         <SelectItem value="Not Sold">Not Sold</SelectItem>
+                        <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                        <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                     </SelectContent>
                     </Select>
                     {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}

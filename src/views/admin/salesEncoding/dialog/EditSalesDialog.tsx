@@ -12,6 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import axios from "../../../../plugin/axios";
+import { NumericFormat } from 'react-number-format';
 
 interface Agent {
   id: string;
@@ -55,6 +56,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const [clientName, setClientName] = useState(sales.client_name || ''); // New state for client_name
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ amount?: string }>({}); // Declare errors state
 
   useEffect(() => {
     if (open) {
@@ -117,6 +119,18 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleChangeAmount = (values: any) => {
+    const { value } = values;
+    setAmount(value);
+
+    // Add validation logic if needed
+    if (value === '') {
+      setErrors({ amount: 'Amount is required' });
+    } else {
+      setErrors({});
     }
   };
 
@@ -194,12 +208,16 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               <Label htmlFor="amount" className="text-start">
                 Amount
               </Label>
-              <Input
-                type="number"
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-                className="col-span-3"
-              />
+               <NumericFormat
+                  value={amount}
+                  thousandSeparator={true}
+                  decimalScale={2}
+                  fixedDecimalScale={true}
+                  allowNegative={false}
+                  placeholder="0.00"
+                  onValueChange={handleChangeAmount}
+                  className="flex h-9 col-span-3 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" // Add your input class here
+                />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="location" className="text-start">
@@ -215,11 +233,15 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               <Label htmlFor="remarks" className="text-start">
                 Remarks:
               </Label>
-              <Input
-                value={remarks}
-                onChange={e => setRemarks(e.target.value)}
-                className="col-span-3"
-              />
+              <Select value={remarks} onValueChange={setRemarks}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select remarks" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Full Payment">Full Payment</SelectItem>
+                  <SelectItem value="Partial Payment">Partial Payment</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
           </div>

@@ -248,7 +248,7 @@ const handleDelete = async (id: number) => {
                       <TableCell className='border border-[#bfdbfe]'>{sales.remarks}</TableCell>
                       <TableCell className="text-right border border-[#bfdbfe]">
                         <div className='flex flex-row gap-1 justify-end'>
-                          <ViewReceipt sales={sales} dateFormatter={dateFormatter} />
+                          <ViewReceipt sales={sales} dateFormatter={dateFormatter} currencyFormatter={currencyFormatter}/>
                           <Button
                             className='h-8 w-8 font-medium bg-green-500 hover:bg-green-400 text-sm rounded-md'
                             onClick={() => setEditDialogOpenId(sales.id)}

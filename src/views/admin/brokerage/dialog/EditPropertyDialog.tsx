@@ -15,25 +15,32 @@ interface EditPropertyDialogProps {
 }
 
 function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditPropertyDialogProps) {
-  const [category, setCategory] = useState(property.category);
-  const [dateListed, setDateListed] = useState(property.date_listed);
-  const [location, setLocation] = useState(property.location);
-  const [type, setType] = useState(property.type_of_listing);
-  const [status, setStatus] = useState(property.status);
-  const [lotArea, setLotArea] = useState(property.lot_area);
-  const [floorArea, setFloorArea] = useState(property.floor_area);
-  const [otherDetails, setOtherDetails] = useState(property.details);
+  const [category, setCategory] = useState('');
+  const [dateListed, setDateListed] = useState('');
+  const [location, setLocation] = useState('');
+  const [type, setType] = useState('');
+  const [status, setStatus] = useState('');
+  const [lotArea, setLotArea] = useState('');
+  const [floorArea, setFloorArea] = useState('');
+  const [otherDetails, setOtherDetails] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>(property.property_images || []);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load existing images from the property object
-    if (property.propertyImages) {
-      setExistingImages(property.propertyImages.map((img: any) => img.images));
+    if (property) {
+      setCategory(property.category || '');
+      setDateListed(property.date_listed || '');
+      setLocation(property.location || '');
+      setType(property.type_of_listing || '');
+      setStatus(property.status || '');
+      setLotArea(property.lot_area || '');
+      setFloorArea(property.floor_area || '');
+      setOtherDetails(property.details || '');
+      setExistingImages(property.property_images || []);
     }
   }, [property]);
 
@@ -57,20 +64,19 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
   };
 
   const handleRemoveImage = (index: number, e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault();
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
     if (fileInputRef.current) {
       const dataTransfer = new DataTransfer();
       newImages.forEach(file => dataTransfer.items.add(file));
-      fileInputRef.current.files = dataTransfer.files; // Update the file input with the new files
+      fileInputRef.current.files = dataTransfer.files;
     }
   };
 
   const updatePropertyImages = (updatedImages: any[]) => {
     setExistingImages(updatedImages);
-    // Optionally, update the property object or make an API call to persist changes
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,7 +94,6 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
     formData.append('type_of_listing', type);
     formData.append('status', status);
 
-    // Append new images
     images.forEach((image) => {
       formData.append('images[]', image);
     });
@@ -109,13 +114,44 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
         title: 'Success',
         text: 'Property listing updated successfully.',
         showConfirmButton: false,
-        timer: 3000,
+        timer: 2000,
         timerProgressBar: true,
       });
     } catch (error) {
       console.error('Error updating property:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteImage = async (imageId: string, index: number) => {
+    try {
+      await axios.delete(`property-listings/${imageId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+  
+      // Update the UI after successful deletion
+      const updatedImages = existingImages.filter((_, i) => i !== index);
+      updatePropertyImages(updatedImages);
+      fetchPropertiesData();
+  
+      // Swal.fire({
+      //   icon: 'success',
+      //   title: 'Deleted',
+      //   text: 'Image deleted successfully.',
+      //   showConfirmButton: false,
+      //   timer: 2000,
+      //   timerProgressBar: true,
+      // });
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to delete image.',
+      });
     }
   };
 
@@ -187,6 +223,8 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
               <SelectContent>
                 <SelectItem value="Sold">Sold</SelectItem>
                 <SelectItem value="Not Sold">Not Sold</SelectItem>
+                <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -229,11 +267,9 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
                       onClick={(e) => {
-                        e.preventDefault(); // Prevent form submission
-                        e.stopPropagation(); // Prevent triggering the setSelectedImage
-                        // Remove the image from the existing images
-                        const updatedImages = existingImages.filter((_: any, i: number) => i !== index);
-                        updatePropertyImages(updatedImages);
+                        e.preventDefault();
+                        e.stopPropagation();
+                        deleteImage(image.id, index); // Call the delete function with image ID and index
                       }}
                     >
                       &times;
@@ -257,8 +293,8 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
                   <button
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
                     onClick={(e) => {
-                      e.preventDefault(); // Prevent form submission
-                      e.stopPropagation(); // Prevent triggering the setSelectedImage
+                      e.preventDefault();
+                      e.stopPropagation();
                       const newPreviews = imagePreviews.filter((_: string, i: number) => i !== index);
                       setImagePreviews(newPreviews);
                     }}

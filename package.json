@@ -44,6 +44,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
     "react-image-file-resizer": "^0.4.8",
+    "react-number-format": "^5.4.4",
     "react-router": "^7.1.4",
     "react-router-dom": "^6.4.3",
     "sweetalert2": "^11.15.10",

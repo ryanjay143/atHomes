@@ -20,7 +20,7 @@ function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:max-w-[400px] p-6 bg-white rounded-lg shadow-lg">
+        <DialogContent className="md:max-w-[400px] p-6 overflow-auto max-h-[95%] bg-white rounded-lg shadow-lg">
           <DialogHeader className='text-start'>
             <DialogTitle className="text-xl font-bold mb-4">View Property Listing</DialogTitle>
             <DialogDescription>
