@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "./../../../../plugin/axios";
-import { formatDateToMMDDYYYY } from "@/helper/dateUtils";
-import { Button } from "@/components/ui/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { formatDateToMMDDYYYYDateRegistred } from "@/helper/dateUtils";
 import {
   Select,
   SelectContent,
@@ -20,15 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import ViewDetails from "../dialog/ViewDetails";
+import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
+
 
 function ListOfPendingRegistered() {
   const [pendingRegistered, setPendingRegistered] = useState<any>([]);
@@ -43,48 +37,66 @@ function ListOfPendingRegistered() {
         },
       })
       .then((e: any) => {
+        console.log('API Response:', e.data); // Log the response
         setPendingRegistered(e.data);
-        console.log(e.data);
       })
       .catch((e: any) => {
         console.log(e);
       });
   }
 
+  const deleteUser = async (id: string) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you really want to delete this user?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`agent-broker/${id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          });
+  
+          Swal.fire({
+            title: 'Deleted!',
+            text: response.data.message,
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
+  
+          // Refresh the list after deleting the user
+          getPendingRegistered();
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: 'An error occurred while deleting the user.',
+            icon: 'error',
+            showConfirmButton: true,
+          });
+        }
+      }
+    });
+  };
+
   // Fetch data only once when the component mounts
   useEffect(() => {
     getPendingRegistered();
   }, []);
 
-  // Filter data based on the search term
-  const filteredData = pendingRegistered.filter((item: any) => {
-    const fullname = `${item?.personal_info?.first_name} ${item?.personal_info?.last_name}`.toLowerCase();
-    const type =
-      item?.user?.role === 1
-        ? "agent"
-        : item?.user?.role === 2
-        ? "broker"
-        : item?.user?.role?.toString().toLowerCase();
-    const email = item?.user?.email?.toLowerCase();
-    const contactNumber = item?.personal_info?.phone?.toLowerCase();
-    const dateRegistered = formatDateToMMDDYYYY(
-      item?.personal_info?.created_at
-    ).toLowerCase();
-
-    return (
-      fullname.includes(searchTerm.toLowerCase()) ||
-      type.includes(searchTerm.toLowerCase()) ||
-      email.includes(searchTerm.toLowerCase()) ||
-      contactNumber.includes(searchTerm.toLowerCase()) ||
-      dateRegistered.includes(searchTerm.toLowerCase())
-    );
-  });
-
   return (
     <div className="p-2">
       {/* Search and Select */}
       <div className="py-2 flex flex-row justify-between">
-      <Select>
+        <Select>
           <SelectTrigger className="w-[120px] border border-primary">
             <span className='text-[#172554]'>Show</span>
             <SelectValue placeholder="10" />
@@ -120,8 +132,8 @@ function ListOfPendingRegistered() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredData?.length > 0 ? (
-              filteredData?.map((item: any, index: any) => (
+            {pendingRegistered?.length > 0 ? (
+              pendingRegistered?.map((item: any, index: any) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium capitalize">
                     {item?.personal_info?.first_name} {item?.personal_info?.last_name}
@@ -142,17 +154,16 @@ function ListOfPendingRegistered() {
                   <TableCell>{item?.user?.email}</TableCell>
                   <TableCell>{item?.personal_info?.phone}</TableCell>
                   <TableCell>
-                    {formatDateToMMDDYYYY(item?.personal_info?.created_at)}
+                    {formatDateToMMDDYYYYDateRegistred(item?.personal_info?.created_at)}
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-row gap-1 justify-center">
-                      <Button className="w-8 h-8 rounded-xl border border-primary">
-                        <FontAwesomeIcon
-                          icon={faEye}
-                          className="text-[#eff6ff]"
-                        />
-                      </Button>
-                    </div>
+                  <div className="flex flex-row gap-1 justify-center">
+                    <ViewDetails item={item} getPendingRegistered={getPendingRegistered} />
+
+                    <Button className="w-8 h-8 rounded-md bg-red-500 hover:bg-hover-400" onClick={() => deleteUser(item.id)}>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </Button>
+                  </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -171,29 +182,11 @@ function ListOfPendingRegistered() {
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-row justify-between mt-3">
+      <div className="flex flex-row justify-end mt-3">
         <div>
           <p className="text-[#172554] text-sm w-full">
-            Showing 1 to 10 of {filteredData.length} entries
+            Showing 1 to 10 of {pendingRegistered.length} entries
           </p>
-        </div>
-        <div>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
         </div>
       </div>
     </div>

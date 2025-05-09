@@ -6,11 +6,10 @@ import './index.css';
 import Admin from './views/admin/AdminLayouts';
 import AgentBrokerLayout from './views/agent/AgentBrokerLayout';
 import Loader from './components/loader';
-import LoaderAdmin from './components/loaderAdmin';
-import LoaderCard from './components/loaderCard';
 import ListOfBrokerAgent from './views/admin/affialiated/table/ListOfBrokerAgent';
 import ProtectedRoute from './jwt/ProtectedRoute';
 import PublicRoute from './jwt/PublicRoute';
+import LoaderCard from './components/loaderCard'
 
 const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
@@ -105,7 +104,7 @@ const routes = [
       {
         path: "user-dashboard",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <DashboardContainer />
           </Suspense>
         ),
@@ -113,7 +112,7 @@ const routes = [
       {
         path: "developer",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <DeveloperContainer />
           </Suspense>
         ),
@@ -121,7 +120,7 @@ const routes = [
       {
         path: "affialiated",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <Facilainers />
           </Suspense>
         ),
@@ -159,7 +158,7 @@ const routes = [
       {
         path: "sales-encoding",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <SalesEncodingContainer />
           </Suspense>
         ),
@@ -167,7 +166,7 @@ const routes = [
       {
         path: "brokerage-property",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <BrokerageProperty />
           </Suspense>
         ),
@@ -175,7 +174,7 @@ const routes = [
       {
         path: "sales-report",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <SalesReport />
           </Suspense>
         ),
@@ -197,7 +196,7 @@ const routes = [
       {
         path: "user-dashboard",
         element: (
-          <Suspense fallback={<LoaderAdmin />}>
+          <Suspense fallback={<Loader />}>
             <DashboardAgentBroker />
           </Suspense>
         ),

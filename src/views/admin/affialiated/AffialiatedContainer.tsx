@@ -11,7 +11,7 @@ const FacilainersPage = () => {
     <div className="py-4 md:pt-20">
       <div className="ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5 ">
         <Navigation />
-        <Card className="border-b-4 border-primary bg-[#eff6ff] h-full md:h-full">
+        <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left">
           <CardContent>
             <nav className="flex flex-row md:grid-cols-2 md:grid gap-4 pt-5 md:overflow-auto">
               {navItems.map((item) => (

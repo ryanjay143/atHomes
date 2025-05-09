@@ -1,91 +1,131 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { faArrowRight, faEye, faPen, faPlus, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Navigation from './navigation/NavigationDeveloper';
 import axios from "../../../plugin/axios";
 import Swal from 'sweetalert2';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import AddDeveloper from './children/AddDeveloper';
+import AddProject from './children/AddProject';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
-const DeveloperContainer = () => {
-    const [projects, setProjects] = useState([{ name: '', location: '', contact: '' }]);
-    const [newProject, setNewProject] = useState({ name: '', location: '', contact: '' });
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [developerData, setDeveloperData] = useState({
+interface Developer {
+    id: number;
+    dev_name: string;
+    dev_email: string;
+    dev_phone: string;
+    dev_location: string;
+    image: string | File | null;
+    status: number;
+    created_at: string;
+    updated_at: string;
+    projects?: {
+        id: number;
+        project_name: string;
+        project_location: string;
+        project_category: string;
+        total_units: number;
+        available_units: number;
+        status: string;
+    }[];
+}
+
+interface Project {
+    id: number;
+    name: string;
+    location: string;
+    category: string;
+    units: number;
+    status: string;
+    developer_id?: number; 
+}
+
+const DeveloperContainer: React.FC = () => {
+    const [developerData, setDeveloperData] = useState<Developer>({
+        id: 0,
         dev_name: '',
         dev_email: '',
         dev_phone: '',
         dev_location: '',
-        image: null as File | string | null,
+        image: null,
+        status: 0,
+        created_at: '',
+        updated_at: '',
     });
-    const [responseData, setResponseData] = useState<any>(null);
+    const [projects, setProjects] = useState<{ [key: number]: Project[] }>({});
+    const [getAllDeveloper, setGetAllDeveloper] = useState<Developer[]>([]);
+    const [entriesToShow, setEntriesToShow] = useState<number>(10); // State for number of entries to show
+    const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogOpenStates, setDialogOpenStates] = useState<{ [key: number]: boolean }>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({
         dev_name: '',
         dev_email: '',
         dev_phone: '',
         dev_location: '',
         image: '',
-        project_name: '',
-        project_location: '',
-        project_contact: '',
     });
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    // Add a new project
-    const addProject = () => {
+    const fetchDevelopers = async () => {
+        try {
+            const response = await axios.get('developers', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+                }
+            });
+            setGetAllDeveloper(response.data.developers);
 
-        setProjects([...projects, newProject]);
-        
-        setNewProject({ name: '', location: '', contact: '' });
+            // Initialize projects with a default project for each developer
+            const initialProjects: { [key: number]: Project[] } = {};
+            response.data.developers.forEach((developer: Developer) => {
+                initialProjects[developer.id] = [{ id: Date.now(), name: '', location: '', category: '', units: 0, status: '', developer_id: developer.id }];
+            });
+            setProjects(initialProjects);
+        } catch (error) {
+            console.error('Error fetching developers:', error);
+        }
     };
 
-    // Delete a project
-    const deleteProject = (index: number) => {
-        const updatedProjects = projects.filter((_, i) => i !== index);
-        setProjects(updatedProjects);
-    };
+    useEffect(() => {
+        fetchDevelopers();
+    }, []);
 
-    // Handle image selection
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             if (['image/jpeg', 'image/png', 'image/jpg', 'image/gif'].includes(file.type)) {
-                setImagePreview(URL.createObjectURL(file));
                 setDeveloperData({ ...developerData, image: file });
                 setErrors({ ...errors, image: '' });
             } else {
                 setErrors({ ...errors, image: 'Please upload a valid image file (jpeg, png, jpg, gif).' });
                 if (fileInputRef.current) {
-                    fileInputRef.current.value = ''; // Clear the file input
+                    fileInputRef.current.value = '';
                 }
             }
         }
     };
 
-    // Handle image error (fallback to default image)
     const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
         const target = event.currentTarget;
         target.src = '/path/to/default-image.jpg';
         target.alt = 'Default Image';
     };
 
-    // Remove selected image
     const handleRemoveImage = () => {
-        setImagePreview(null);
         setDeveloperData({ ...developerData, image: null });
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
     };
 
-    // Validate form inputs
     const validateForm = () => {
         const newErrors = {
             dev_name: developerData.dev_name ? '' : 'Developer name is required.',
@@ -93,15 +133,11 @@ const DeveloperContainer = () => {
             dev_phone: developerData.dev_phone ? '' : 'Phone number is required.',
             dev_location: developerData.dev_location ? '' : 'Location is required.',
             image: developerData.image ? '' : 'Image or logo is required.',
-            project_name: newProject.name ? '' : 'Project name is required.',
-            project_location: newProject.location ? '' : 'Project location is required.',
-            project_contact: newProject.contact ? '' : 'Project contact person is required.',
         };
         setErrors(newErrors);
         return Object.values(newErrors).every(error => error === '');
     };
 
-    // Submit developer and project data
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -109,10 +145,7 @@ const DeveloperContainer = () => {
             return;
         }
 
-        let updatedProjects = projects;
-        if (newProject.name && newProject.location && newProject.contact) {
-            updatedProjects = [newProject, ...projects];
-        }
+        setIsSubmitting(true);
 
         const formData = new FormData();
         formData.append('dev_name', developerData.dev_name);
@@ -123,12 +156,6 @@ const DeveloperContainer = () => {
             formData.append('image', developerData.image as File);
         }
 
-        updatedProjects.forEach((project, index) => {
-            formData.append(`projects[${index}][project_name]`, project.name);
-            formData.append(`projects[${index}][project_location]`, project.location);
-            formData.append(`projects[${index}][project_contact_person]`, project.contact);
-        });
-
         try {
             const response = await axios.post('developers', formData, {
                 headers: {
@@ -137,25 +164,28 @@ const DeveloperContainer = () => {
                 },
             });
 
+            fetchDevelopers();
             setIsDialogOpen(false);
-            setProjects([]);
-            setNewProject({ name: '', location: '', contact: '' });
             setDeveloperData({
+                id: response.data.id,
                 dev_name: '',
                 dev_email: '',
                 dev_phone: '',
                 dev_location: '',
                 image: null,
+                status: 0,
+                created_at: '',
+                updated_at: '',
             });
-            setImagePreview(null);
 
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
-                text: 'Developer and projects created successfully!',
-                confirmButtonText: 'OK',
+                text: 'Developer created successfully!',
+                showConfirmButton: false,
+                timer: 2000,
             });
-            setResponseData(response.data);
+              
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -163,296 +193,289 @@ const DeveloperContainer = () => {
                 text: 'There was an error submitting the form. Please check your input and try again.',
                 confirmButtonText: 'OK',
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
+    const addProject = (developerId: number) => {
+        setProjects(prevProjects => ({
+            ...prevProjects,
+            [developerId]: [...(prevProjects[developerId] || []), { id: Date.now(), name: '', location: '', category: '', units: 0, status: '', developer_id: developerId }]
+        }));
+    };
+
+    const handleProjectChange = (developerId: number, index: number, field: string, value: string | number) => {
+        setProjects(prevProjects => ({
+            ...prevProjects,
+            [developerId]: prevProjects[developerId].map((project, i) => 
+                i === index ? { ...project, [field]: value } : project
+            )
+        }));
+    };
+
+    const removeProject = (developerId: number, index: number) => {
+        setProjects(prevProjects => ({
+            ...prevProjects,
+            [developerId]: prevProjects[developerId].filter((_, i) => i !== index)
+        }));
+    };
+
+    const validateProjectFields = (developerId: number, index: number): boolean => {
+        const project = projects[developerId][index];
+        if (!project.name || !project.location || !project.category || project.units <= 0 || !project.status) {
+            return false;
+        }
+        return true;
+    };
+
+    const handleSubmitProjects = async (developerId: number) => {
+        if (loading) return;
+    
+        // Validate all project fields before proceeding
+        let isValid = true;
+        isValid = !projects[developerId].some((_, index) => !validateProjectFields(developerId, index));
+    
+        if (!isValid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please correct the errors in the project fields before submitting.',
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+    
+        setLoading(true);
+    
+        try {
+            await axios.post('admin/addProject', 
+                { 
+                    projects: projects[developerId].map(project => ({
+                        developer_id: developerId,
+                        project_name: project.name,
+                        project_location: project.location,
+                        project_category: project.category,
+                        status: project.status,
+                        total_units: project.units,
+                    })) 
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`, 
+                    }
+                }
+            );
+    
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Projects added successfully!',
+                confirmButtonText: 'OK',
+            });
+    
+            setDialogOpenStates(prevState => ({
+                ...prevState,
+                [developerId]: false,
+            }));
+            setProjects(prevProjects => ({
+                ...prevProjects,
+                [developerId]: [{ id: Date.now(), name: '', location: '', category: '', units: 0, status: '', developer_id: developerId }]
+            }));
+        } catch (error) {
+            console.error('Error adding projects:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an error adding the projects. Please try again.',
+                confirmButtonText: 'OK',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleDialogOpen = (developerId: number, isOpen: boolean) => {
+        setDialogOpenStates(prevState => ({
+            ...prevState,
+            [developerId]: isOpen,
+        }));
+    };
+
     return (
-        <div className='py-5 md:pt-20'>
-            <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mt-5 mr-5 md:px-5'>
-                <Navigation />
-                <Card className='bg-[#eff6ff] border-b-4 border-primary fade-in-left'>
-                    <CardHeader>
-                        <div className='flex flex-row justify-end'>
-                            <CardTitle className='text-[#172554]'>
-                                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                    <DialogTrigger asChild>
-                                        <Button className='border border-primary'>
-                                            <FontAwesomeIcon icon={faPlus} /> Add Developer
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className='md:pt-10 md:w-[80%] md:h-[80%] w-full max-w-6xl rounded-sm overflow-auto h-svh bg-[#eff6ff]'>
-                                        <DialogHeader className='text-start'>
-                                            <DialogTitle>Add Developer</DialogTitle>
-                                            <p className='text-[#172554]'>Please fill out the form below to add a new housing developer.</p>
-                                        </DialogHeader>
-                                        <div className='grid grid-cols-4 md:grid-cols-2 md:gap-2 gap-4'>
-                                            {/* Developer Form */}
-                                            <div>
-                                                <Label className='text-[#172554]'>Developer Name <span className='text-red-700'>*</span></Label>
-                                                <Input
-                                                    type="text"
-                                                    className="uppercase"
-                                                    placeholder="Enter developer name"
-                                                    value={developerData.dev_name}
-                                                    onChange={(e) => setDeveloperData({ ...developerData, dev_name: e.target.value })}
+        <div className="py-3 md:pt-20">
+        <div className="ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5 ">
+            <Navigation />
+            <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left">
+                <CardHeader>
+                    <div className='flex flex-row justify-end'>
+                        <CardTitle className='text-[#172554]'>
+                            <AddDeveloper
+                                developerData={developerData}
+                                setDeveloperData={setDeveloperData}
+                                isDialogOpen={isDialogOpen}
+                                setIsDialogOpen={setIsDialogOpen}
+                                isSubmitting={isSubmitting}
+                                handleSubmit={handleSubmit}
+                                handleImageChange={handleImageChange}
+                                handleImageError={handleImageError}
+                                handleRemoveImage={handleRemoveImage}
+                                errors={errors}
+                                fileInputRef={fileInputRef}
+                            />
+                        </CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {/* Pagination and Table */}
+                    <div className='py-2 flex flex-row justify-between'>
+                        <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
+                            <SelectTrigger className="w-[120px] border border-primary">
+                                <span className='text-[#172554]'>Show</span>
+                                <SelectValue placeholder="10" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All</SelectItem>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="20">20</SelectItem>
+                                <SelectItem value="30">30</SelectItem>
+                                <SelectItem value="40">40</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Input 
+                            type='text' 
+                            placeholder='Search' 
+                            className='w-52' 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className='h-full overflow-auto'>
+                        <Table className='w-full'>
+                            <TableHeader className="sticky top-0 bg-primary">
+                                <TableRow>
+                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">#</TableHead>
+                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Photo</TableHead>
+                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Developer name</TableHead>
+                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Email address</TableHead>
+                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Location</TableHead>
+                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Phone number</TableHead>
+                                    <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Action</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {
+                                    getAllDeveloper.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={7} className="text-center">No developers found.</TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                                {getAllDeveloper
+                                    .filter(developer => 
+                                        developer.dev_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_phone.toLowerCase().includes(searchQuery.toLowerCase())
+                                    )
+                                    .slice(0, entriesToShow)
+                                    .map((developer, index) => (
+                                        <TableRow key={developer.id}>
+                                            <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
+                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">
+                                                {developer.dev_name ? (
+                                                <img
+                                                    src={`${import.meta.env.VITE_URL}/storage/${developer.image}`}
+                                                    alt={developer.dev_name}
+                                                    className="rounded-full h-10 w-10"
                                                 />
-                                                {errors.dev_name && <p className='text-red-600 text-xs'>{errors.dev_name}</p>}
-                                            </div>
-                                            <div>
-                                                <Label className='text-[#172554]'>Email Address <span className='text-red-700'>*</span></Label>
-                                                <Input
-                                                    type="email"
-                                                    placeholder="Enter email"
-                                                    value={developerData.dev_email}
-                                                    onChange={(e) => setDeveloperData({ ...developerData, dev_email: e.target.value })}
-                                                />
-                                                {errors.dev_email && <p className='text-red-600 text-xs'>{errors.dev_email}</p>}
-                                            </div>
-                                            <div>
-                                                <Label className='text-[#172554]'>Phone Number <span className='text-red-700'>*</span></Label>
-                                                <Input
-                                                    type="tel"
-                                                    placeholder="Enter phone number"
-                                                    value={developerData.dev_phone}
-                                                    onChange={(e) => setDeveloperData({ ...developerData, dev_phone: e.target.value })}
-                                                />
-                                                {errors.dev_phone && <p className='text-red-600 text-xs'>{errors.dev_phone}</p>}
-                                            </div>
-                                            <div>
-                                                <Label className='text-[#172554]'>Location <span className='text-red-700'>*</span></Label>
-                                                <Input
-                                                    type="text"
-                                                    placeholder="Enter location"
-                                                    value={developerData.dev_location}
-                                                    onChange={(e) => setDeveloperData({ ...developerData, dev_location: e.target.value })}
-                                                />
-                                                {errors.dev_location && <p className='text-red-600 text-xs'>{errors.dev_location}</p>}
-                                            </div>
-                                            <div>
-                                                <Label className='text-[#172554]'>Image or Logo</Label>
-                                                <Input
-                                                    type='file'
-                                                    accept="image/jpeg, image/png, image/jpg, image/gif"
-                                                    onChange={handleImageChange}
-                                                    ref={fileInputRef}
-                                                />
-                                                {errors.image && <p className='text-red-600 text-xs'>{errors.image}</p>}
-                                            </div>
-                                            {/* Image Preview */}
-                                            {imagePreview && (
-                                                <div className="mt-2 relative w-36 h-36 group">
-                                                    <img
-                                                        src={imagePreview}
-                                                        alt="Preview"
-                                                        className="max-w-full max-h-[80vh] rounded-md"
-                                                        onError={handleImageError}
+                                                ) : (
+                                                <Avatar>
+                                                    <AvatarImage src="https://github.com/shadcn.png" />
+                                                    <AvatarFallback>CN</AvatarFallback>
+                                                </Avatar>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">{developer.dev_name}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_location}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
+                                            <TableCell className="text-right border border-[#bfdbfe]">
+                                                <div className='flex flex-row gap-1 justify-end'>
+                                                    <AddProject
+                                                        developer={developer}
+                                                        projects={projects[developer.id] || []}
+                                                        dialogOpenState={dialogOpenStates[developer.id] || false}
+                                                        toggleDialogOpen={toggleDialogOpen}
+                                                        handleProjectChange={handleProjectChange}
+                                                        addProject={addProject}
+                                                        removeProject={removeProject}
+                                                        handleSubmitProjects={handleSubmitProjects}
+                                                        loading={loading}
+                                                        setLoading={setLoading}
                                                     />
-                                                    <button
-                                                        onClick={handleRemoveImage}
-                                                        className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                                                        aria-label="Remove image"
-                                                    >
-                                                        &times;
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                        {/* Project Details */}
-                                        <div className='mt-5'>
-                                            <DialogHeader>
-                                                <DialogTitle className='text-start'>Project Details</DialogTitle>
-                                            </DialogHeader>
 
-                                            {/* New Project Input Fields */}
-                                            <div className='mt-5 grid grid-cols-3 md:grid-cols-1 md:gap-2 gap-4'>
-                                                <div>
-                                                    <Label className='text-[#172554]'>Project Name <span className='text-red-700'>*</span></Label>
-                                                    <Input
-                                                        type='text'
-                                                        className='uppercase'
-                                                        placeholder='Enter project name'
-                                                        value={newProject.name}
-                                                        onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                                                    />
-                                                    {errors.project_name && <p className='text-red-600 text-xs'>{errors.project_name}</p>}
+                                                    <Dialog>
+                                                    <DialogTrigger>
+                                                        <Button className='w-8 h-8 rounded-md' onClick={() => fetchDevelopers()}>
+                                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                        <DialogContent className='w-full max-w-6xl'>
+                                                            <DialogHeader>
+                                                                <DialogTitle className='text-start mb-10'>{developer.dev_name} Projects</DialogTitle>
+                                                                <DialogDescription>
+                                                                    {developer.projects && developer.projects.length > 0 ? (
+                                                                        <Table>
+                                                                            <TableHeader>
+                                                                                <TableRow>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">#</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Project name</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Location</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Category</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Total Units</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Total Available</TableHead>
+                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Status</TableHead>
+                                                                                </TableRow>
+                                                                            </TableHeader>
+                                                                            <TableBody>
+                                                                                {developer.projects.map((project, index) => (
+                                                                                    <TableRow key={project.id}>
+                                                                                        <TableCell className='border border-[#bfdbfe]'>{index + 1}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_name}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_location}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_category}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe] text-green-500'>{project.total_units}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe] text-red-500'>{project.available_units}</TableCell>
+                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.status}</TableCell>
+                                                                                    </TableRow>
+                                                                                ))}
+                                                                            </TableBody>
+                                                                        </Table>
+                                                                    ) : (
+                                                                        <p>No projects available for this developer.</p>
+                                                                    )}
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                        </DialogContent>
+                                                    </Dialog>
                                                 </div>
-
-                                                <div>
-                                                    <Label className='text-[#172554]'>Location <span className='text-red-700'>*</span></Label>
-                                                    <Input
-                                                        type='text'
-                                                        placeholder='Enter location'
-                                                        value={newProject.location}
-                                                        onChange={(e) => setNewProject({ ...newProject, location: e.target.value })}
-                                                    />
-                                                    {errors.project_location && <p className='text-red-600 text-xs'>{errors.project_location}</p>}
-                                                </div>
-                                                <div>
-                                                    <Label className='text-[#172554]'>Contact Person <span className='text-red-700'>*</span></Label>
-                                                    <Input
-                                                        type='text'
-                                                        placeholder='Enter contact person'
-                                                        value={newProject.contact}
-                                                        onChange={(e) => setNewProject({ ...newProject, contact: e.target.value })}
-                                                    />
-                                                    {errors.project_contact && <p className='text-red-600 text-xs'>{errors.project_contact}</p>}
-                                                </div>
-                                            </div>
-
-                                        
-
-                                            {/* Existing Projects */}
-                                            <div className='mt-5 grid grid-cols-3 md:grid-cols-1 md:gap-2 gap-4'>
-                                                {projects.map((project, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <div>
-                                                            <Label className='text-[#172554]'>Project Name</Label>
-                                                            <Input
-                                                                type='text'
-                                                                className='uppercase'
-                                                                placeholder='Enter project name'
-                                                                value={project.name}
-                                                                onChange={(e) => {
-                                                                    const updatedProjects = [...projects];
-                                                                    updatedProjects[index].name = e.target.value;
-                                                                    setProjects(updatedProjects);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <Label className='text-[#172554]'>Location</Label>
-                                                            <Input
-                                                                type='text'
-                                                                placeholder='Enter location'
-                                                                value={project.location}
-                                                                onChange={(e) => {
-                                                                    const updatedProjects = [...projects];
-                                                                    updatedProjects[index].location = e.target.value;
-                                                                    setProjects(updatedProjects);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                        <div className='flex items-center'>
-                                                            <div className='flex-1'>
-                                                                <Label className='text-[#172554]'>Contact Person</Label>
-                                                                <Input
-                                                                    type='text'
-                                                                    placeholder='Enter contact person'
-                                                                    value={project.contact}
-                                                                    onChange={(e) => {
-                                                                        const updatedProjects = [...projects];
-                                                                        updatedProjects[index].contact = e.target.value;
-                                                                        setProjects(updatedProjects);
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                            <button
-                                                                className='ml-2 mt-6 rounded-md'
-                                                                onClick={() => deleteProject(index)}
-                                                            >
-                                                                <FontAwesomeIcon icon={faTrashCan} className='text-red-600 w-5 h-5' />
-                                                            </button>
-                                                        </div>
-                                                    </React.Fragment>
-                                                ))}
-                                            </div>
-                                            {/* Add Project Button */}
-                                        <div className='col-span-4 mt-2'>
-                                                <Button type="button" className='w-32 h-8' onClick={addProject}>
-                                                    <FontAwesomeIcon icon={faPlus} /> Add Project
-                                                </Button>
-                                            </div>
-                                        </div>
-
-                                        {/* Submit Button */}
-                                        <div className='flex justify-end'>
-                                            <DialogFooter>
-                                                <div className='flex flex-row gap-2'>
-                                                    <DialogClose asChild>
-                                                        <button className='bg-red-600 text-accent w-20 h-9 rounded-md'>Cancel</button>
-                                                    </DialogClose>
-                                                    <Button type="submit" onClick={handleSubmit}>
-                                                        <FontAwesomeIcon icon={faArrowRight} /> Submit
-                                                    </Button>
-                                                </div>
-                                            </DialogFooter>
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
-                            </CardTitle>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {/* Pagination and Table */}
-                        <div className='py-2 flex flex-row justify-between'>
-                            <Select>
-                                <SelectTrigger className="w-[120px] border border-primary">
-                                    <span className='text-[#172554]'>Show</span>
-                                    <SelectValue placeholder="10" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="10">10</SelectItem>
-                                    <SelectItem value="20">20</SelectItem>
-                                    <SelectItem value="30">30</SelectItem>
-                                    <SelectItem value="40">40</SelectItem>
-                                    <SelectItem value="50">50</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <Input type='text' placeholder='Search' className='w-52' />
-                        </div>
-                        <div className='h-full overflow-auto'>
-                            <Table className='w-full'>
-                                <TableHeader className="sticky top-0 bg-primary">
-                                    <TableRow>
-                                        <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Developer name</TableHead>
-                                        <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Email address</TableHead>
-                                        <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Phone number</TableHead>
-                                        <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Action</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell className="font-medium border border-[#bfdbfe]">INV001</TableCell>
-                                        <TableCell className='border border-[#bfdbfe]'>Paid</TableCell>
-                                        <TableCell className='border border-[#bfdbfe]'>Credit Card</TableCell>
-                                        <TableCell className="text-right border border-[#bfdbfe]">
-                                            <div className='flex flex-row gap-1 justify-end'>
-                                                <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                                    <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                            <div className='flex flex-row justify-between mt-3'>
-                                <div>
-                                    <p className='text-[#172554] text-sm w-full'>Showing 1 to 10 of 57 entries</p>
-                                </div>
-                                <div>
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious href="#" />
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationLink href="#">1</PaginationLink>
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationEllipsis />
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationNext href="#" />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                        <div className='flex flex-row justify-end mt-3'>
+                            <div>
+                                <p className='text-[#172554] text-sm w-full'>Showing 1 to {Math.min(entriesToShow, getAllDeveloper.length)} of {getAllDeveloper.length} entries</p>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
+    </div>
     );
 };
 

@@ -1,404 +1,292 @@
+import { useEffect, useState } from 'react';
 import NavigationSalesEncoding from './navigation/NavigationSalesEncoding';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faFile, faPen, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
+import axios from "../../../plugin/axios";
+import AddSales from './dialog/AddSales';
+import ViewReceipt from './dialog/ViewReceipt';
+import EditSalesDialog from './dialog/EditSalesDialog';
+import Swal from 'sweetalert2';
 
+// Types
+interface Agent {
+  id: string;
+  personal_info: {
+    first_name: string;
+    middle_name: string;
+    last_name: string;
+    extension_name?: string;
+  };
+}
 
+interface SalesEncoding {
+  id: number;
+  agent: Agent;
+  category: string;
+  date_on_sale: string;
+  amount: number;
+  location: string;
+  remarks: string;
+  image: string;
+  client_name: string; // Add client_name to the SalesEncoding interface
+}
 
 function SalesEncodingContainer() {
-    const [selectedValueDeveloper, setSelectedValueDeveloper] = useState<any>("");
-    const [selectedValueFilterProject, setSelectedFilterProject] = useState<any>("");
-    const [selectedDate, setSelectedDate] = useState<any>('');
+  const [salesEncodings, setSalesEncodings] = useState<SalesEncoding[]>([]);
+  const [getAgentBroker, setAgentBroker] = useState<Agent[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [entriesToShow, setEntriesToShow] = useState<number>(10);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<string>('');
+  const [editDialogOpenId, setEditDialogOpenId] = useState<number | null>(null);
 
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedDate(event.target.value);
-        console.log(event.target.value);
-    };
+  // Fetch agents and sales encodings
+  useEffect(() => {
+    fetchAgent();
+  }, []);
 
-    localStorage.setItem("selectedValueDeveloper", selectedValueDeveloper);
-    localStorage.setItem("selectedValueFilterProject", selectedValueFilterProject);
-    localStorage.setItem("SelectedDate", selectedDate);
+  const fetchAgent = async () => {
+    try {
+      const response = await axios.get('sales-encoding', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+      setSalesEncodings(
+        response.data.salesEncoding.map((item: any) => ({
+          ...item,
+          amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount),
+        }))
+      );
+      setAgentBroker(response.data.agents);
+      setEntriesToShow(response.data.salesEncoding.length);
+      setSalesEncodings(response.data.salesEncoding);
+      console.log("List of Sales:", response.data.salesEncoding)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
+  // Filtering logic
+  const filteredSalesEncodings = salesEncodings.filter((sales) => {
+    const matchesSearch =
+      sales.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      new Date(sales.date_on_sale).toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.amount.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.remarks.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${sales.agent.personal_info.first_name} ${sales.agent.personal_info.middle_name} ${sales.agent.personal_info.last_name} ${sales.agent.personal_info?.extension_name || ''}`.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory = categoryFilter && categoryFilter !== "all" ? sales.category === categoryFilter : true;
+    const matchesDate = dateFilter ? sales.date_on_sale.split('T')[0] === dateFilter : true;
+
+    return matchesSearch && matchesCategory && matchesDate;
+  });
+
+  const salesEncodingData = filteredSalesEncodings.slice(0, entriesToShow);
+
+  // Formatters
+  const currencyFormatter = new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+  });
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+  });
+
+const handleDelete = async (id: number) => {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'Sale cant be revert — feel free to make a new one.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await axios.delete(`sales-encoding/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: 'Sales encoding has been deleted.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      fetchAgent(); 
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Failed to delete sales encoding.',
+      });
+    }
+  }
+};
 
   return (
     <div className='py-5 md:pt-20'>
-    <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mt-5 mr-5 md:px-5'>
-    <NavigationSalesEncoding/>
+      <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5'>
+        <NavigationSalesEncoding />
         <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
-            <CardHeader>
-                <div className='flex flex-row justify-between md:justify-none'>
-                    <div className='grid grid-cols-4 md:grid-cols-2 gap-4 md:mt-10'>
-                        <div className="grid w-full items-center gap-1.5">
-                            <Label htmlFor="Filter Developer">Filter Developer</Label>
-                                <Select onValueChange={(value) => {
-                                    setSelectedValueDeveloper(value);
-                                    console.log(value);
-                                }}>
-                                <SelectTrigger className="w-[180px] border border-primary">
-                                    <SelectValue placeholder="Select developer" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Select developer</SelectLabel>
-                                        <SelectItem value="JOHNDORF VENTURES">JOHNDORF VENTURES</SelectItem>
-                                        <SelectItem value="CEBU LANDMASTERS INC">CEBU LANDMASTERS INC</SelectItem>
-                                        <SelectItem value="IDC-ITALPINAS">IDC-ITALPINAS</SelectItem>
-                                        <SelectItem value="DEVELOPMENT CORP">DEVELOPMENT CORP</SelectItem>
-                                        <SelectItem value="PUEBLO DE ORO">PUEBLO DE ORO</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                                </Select>
-                        </div>
-                        <div className="grid w-full items-center gap-1.5">
-                            <Label htmlFor="Filter Project">Filter Project</Label>
-                                <Select onValueChange={(value) => {
-                                    setSelectedFilterProject(value);
-                                    console.log(value);
-                                }}>
-                                <SelectTrigger className="w-[180px] border border-primary">
-                                    <SelectValue placeholder="Select project" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Select project</SelectLabel>
-                                        <SelectItem value="TierraNava Tagoloan">TierraNava Tagoloan</SelectItem>
-                                        <SelectItem value="TierraNava Opol">TierraNava Opol</SelectItem>
-                                        <SelectItem value="TierraNava Lumbia">TierraNava Lumbia</SelectItem>
-                                        <SelectItem value="Navona Court">Navona Court</SelectItem>
-                                        <SelectItem value="Villa Castena">Villa Castena</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                                </Select>
-                        </div>
-                        <div className="grid w-full items-center gap-1.5">
-                            <Label htmlFor="Filter Reservation date">Filter Reservation date</Label>
-                            <Input type="date" 
-                                value={selectedDate} 
-                                onChange={handleDateChange}
-                            />
-                        </div>
-                        <div className="grid w-full items-center gap-1.5">
-                            <Label htmlFor="Filter Project">Filter Status</Label>
-                                <Select onValueChange={(value) => {
-                                    setSelectedFilterProject(value);
-                                    console.log(value);
-                                }}>
-                                <SelectTrigger className="w-[180px] border border-primary">
-                                    <SelectValue placeholder="Choose status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Select status</SelectLabel>
-                                        <SelectItem value="TierraNava Tagoloan">Non-Ready for Occupancy (NRFO)</SelectItem>
-                                        <SelectItem value="TierraNava Opol">Ready for Occupancy (RFO)</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                                </Select>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-row gap-1'>
-                        <div>
-                            <Button className='h-10'>
-                                <FontAwesomeIcon icon={faPrint} />
-                                Print
-                            </Button>
-                        </div>
-                       <div>
-                            <button className='bg-red-500 p-2 h-10 rounded-md text-accent'>
-                                <FontAwesomeIcon icon={faFile} />
-                                <span className='ml-2'>PDF</span>
-                            </button>
-                          
-                       </div>
-                      
-                    </div>
+          <CardHeader>
+            <div className='flex flex-row justify-between'>
+              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-14'>
+                <div className="grid w-full gap-1.5">
+                  <Label>Category</Label>
+                  <Select onValueChange={setCategoryFilter} value={categoryFilter}>
+                    <SelectTrigger className="md:w-[340px]">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="Lot only">Lot only</SelectItem>
+                      <SelectItem value="House and lot">House and lot</SelectItem>
+                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
+                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
+                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
+                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                
-            </CardHeader>
-            
-            <CardContent>
-                <div className='py-2 flex flex-row justify-between'>
-                        <Select>
-                        <SelectTrigger className="w-[120px] border border-primary">
-                            <span className='text-[#172554]'>Show</span>
-                            <SelectValue placeholder="10" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="10">10</SelectItem>
-                            <SelectItem value="20">20</SelectItem>
-                            <SelectItem value="30">30</SelectItem>
-                            <SelectItem value="40">40</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
-                            <SelectItem value="all">All</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Input type='text' placeholder='Search' className='w-52 '/>
+                <div className="grid w-full items-center gap-1.5">
+                  <Label>Reservation date</Label>
+                  <Input type="date" className="md:w-[340px]" onChange={e => setDateFilter(e.target.value)} />
                 </div>
-                <div className="h-80 overflow-y-auto fade-in-left ">
-                    <Table className='w-full'>
-                        <TableHeader className="bg-primary text-base h-12 sticky top-0 z-10">
-                            <TableRow>
-                                <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Developer Name</TableHead>
-                                <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Reservation Date</TableHead>
-                                <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Project Name</TableHead>
-                                <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Status</TableHead>
-                                <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">JOHNDORF VENTURES</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Tagoloan</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
-                                        Non-Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">JOHNDORF VENTURES</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Tagoloan</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
-                                        Non-Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">JOHNDORF VENTURES</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Tagoloan</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
-                                        Non-Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">JOHNDORF VENTURES</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Tagoloan</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-blue-700/10 ring-inset">
-                                        Non-Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="font-medium border border-[#bfdbfe]">CEBU LANDMASTERS INC</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>Feb. 14, 2025</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>TierraNava Opol</TableCell>
-                                <TableCell className='border border-[#bfdbfe]'>
-                                    <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset">
-                                        Ready for Occupancy
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right border border-[#bfdbfe]">
-                                    <div className='flex flex-row gap-1 justify-end'>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]'/>
-                                        </Button>
-                                        <Button className='w-8 h-8 rounded-xl border border-primary'>
-                                            <FontAwesomeIcon icon={faPen} className='text-[#eff6ff]'/>
-                                        </Button>
-                                    </div>
-                                    
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                       
-                        
-                </Table>
-                </div>
-                <div className='flex flex-row justify-between mt-3'>
-                    <div>
-                        <p className='text-[#172554] text-sm w-full'>Showing 1 to 10 of 57 entries</p>
-                    </div>
-                    <div>
-                        <Pagination>
-                            <PaginationContent>
-                                <PaginationItem>
-                                <PaginationPrevious href="#" />
-                                </PaginationItem>
-                                <PaginationItem>
-                                <PaginationLink href="#">1</PaginationLink>
-                                </PaginationItem>
-                                <PaginationItem>
-                                <PaginationEllipsis />
-                                </PaginationItem>
-                                <PaginationItem>
-                                <PaginationNext href="#" />
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
-                    </div>
-                </div>
-            
-                
-
-            </CardContent>
+              </div>
+              <div>
+                <AddSales fetchAgent={fetchAgent} />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className='py-2 flex flex-row justify-between'>
+              <Select onValueChange={value => setEntriesToShow(value === 'all' ? filteredSalesEncodings.length : parseInt(value, 10))}>
+                <SelectTrigger className="w-[120px] border border-primary">
+                  <span className='text-[#172554]'>Show</span>
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                  <SelectItem value="40">40</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                type='text'
+                placeholder='Search'
+                className='w-52'
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="h-80 overflow-y-auto fade-in-left ">
+              <Table className='w-full'>
+                <TableHeader className="bg-primary text-base">
+                  <TableRow>
+                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
+                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Client name</TableHead>
+                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Category</TableHead>
+                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Date</TableHead>
+                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Amount</TableHead>
+                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Location</TableHead>
+                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Remarks</TableHead>
+                    <TableHead className="text-right border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {salesEncodingData.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className='text-center text-sm font-medium text-gray-500'>
+                        No record found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {salesEncodingData.map((sales, index) => (
+                    <TableRow key={sales.id}>
+                      <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
+                      <TableCell className='border border-[#bfdbfe]'>{sales.client_name}</TableCell>
+                      <TableCell className="font-medium border border-[#bfdbfe]">{sales.category}</TableCell>
+                      <TableCell className='border border-[#bfdbfe]'>{dateFormatter.format(new Date(sales.date_on_sale))}</TableCell>
+                      <TableCell className='border border-[#bfdbfe]'>
+                        <span>{currencyFormatter.format(sales.amount)}</span>
+                      </TableCell>
+                      <TableCell className='border border-[#bfdbfe]'>{sales.location}</TableCell>
+                      <TableCell className='border border-[#bfdbfe]'>{sales.remarks}</TableCell>
+                      <TableCell className="text-right border border-[#bfdbfe]">
+                        <div className='flex flex-row gap-1 justify-end'>
+                          <ViewReceipt sales={sales} dateFormatter={dateFormatter} currencyFormatter={currencyFormatter}/>
+                          <Button
+                            className='h-8 w-8 font-medium bg-green-500 hover:bg-green-400 text-sm rounded-md'
+                            onClick={() => setEditDialogOpenId(sales.id)}
+                          >
+                            <FontAwesomeIcon icon={faPen} />
+                          </Button>
+                          <EditSalesDialog
+                            sales={sales}
+                            open={editDialogOpenId === sales.id}
+                            onOpenChange={(open) => setEditDialogOpenId(open ? sales.id : null)}
+                            getAgentBroker={getAgentBroker}
+                            fetchAgent={fetchAgent}
+                          />
+                          <Button
+                            className='h-8 w-8 font-medium bg-red-500 hover:bg-red-400 text-sm rounded-md'
+                            onClick={() => handleDelete(sales.id)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <div className='flex flex-row justify-end mt-3'>
+              <div>
+                <p className='text-[#172554] text-sm w-full'>
+                  Showing 1 to {Math.min(entriesToShow, filteredSalesEncodings.length)} of {filteredSalesEncodings.length} entries
+                </p>
+              </div>
+            </div>
+          </CardContent>
         </Card>
+      </div>
     </div>
-</div>
-  )
+  );
 }
 
-export default SalesEncodingContainer
+export default SalesEncodingContainer;

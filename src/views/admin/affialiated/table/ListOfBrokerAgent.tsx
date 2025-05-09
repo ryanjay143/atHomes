@@ -1,31 +1,37 @@
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-
+import axios from '../../../../plugin/axios'
+import { useEffect, useState } from 'react';
+import { formatDateToMMDDYYYYDateApproved } from "@/helper/dateUtils";
 
 function ListOfBrokerAgent() {
-  const tableData = [
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    { invoice: "INV001", status: "Paid", method: "Credit Card" },
-    { invoice: "INV002", status: "Pending", method: "Bank Transfer" },
-    // Add more data as needed
-  ];
+  const [listtofAgents, setAgentList] = useState<any[]>([]);
+  
+  const agentList = async () => {
+    try {
+      const response = await axios.get('agent-broker', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+
+      // Log the entire response to see the structure
+      console.log('API Response:', response);
+      console.log('List of Approved:', response.data.agentList);
+      setAgentList(response.data.agentList);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+  };
+
+  useEffect(() => {
+    agentList();
+  }, []);
 
 
   return (
@@ -48,64 +54,44 @@ function ListOfBrokerAgent() {
     </div>
     <div className="fade-in-left">
       <Table>
-      <TableHeader className="bg-primary text-base h-12 sticky top-0 z-10">
+      <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px] border border-[#bfdbfe] text-accent font-bold bg-primary">
-            Invoice
-          </TableHead>
-          <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">
-            Status
-          </TableHead>
-          <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">
-            Method
-          </TableHead>
-          <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">
-            Action
-          </TableHead>
+            <TableHead>#</TableHead>
+            <TableHead>Fullname</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Email address</TableHead>
+            <TableHead>Contact number</TableHead>
+            <TableHead>Date Approved</TableHead>
+            <TableHead className="text-center">Action</TableHead>
         </TableRow>
       </TableHeader>
         <TableBody>
-          {tableData?.map((row:any, index:any) => (
-            <TableRow key={index}>
-              <TableCell className="font-medium border border-[#bfdbfe]">{row?.invoice}</TableCell>
-              <TableCell className="border border-[#bfdbfe]">{row?.status}</TableCell>
-              <TableCell className="border border-[#bfdbfe]">{row?.method}</TableCell>
+         {listtofAgents.map((agent:any, index:any) => (
+           
+            <TableRow key={agent.id}>
+              <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
+              <TableCell className="border border-[#bfdbfe]">{agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}</TableCell>
+              <TableCell className="font-medium border border-[#bfdbfe]">{agent?.user.role === 1 ? "Agent" : agent?.user.role === 2 ? "Broker" : "N/A"}</TableCell>
+              <TableCell className="border border-[#bfdbfe]">{agent?.user.email}</TableCell>
+              <TableCell className="border border-[#bfdbfe]">{agent?.personal_info.phone}</TableCell>
+              <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.updated_at)}</TableCell>
               <TableCell className="text-right border border-[#bfdbfe]">
                 <div className="flex flex-row gap-1 justify-end">
-                  <Button className="w-8 h-8 rounded-xl border border-primary">
+                  <Button className="w-8 h-8 rounded-md border border-primary">
                     <FontAwesomeIcon icon={faEye} className="text-[#eff6ff]" />
-                  </Button>
-                  <Button className="w-8 h-8 rounded-xl border border-primary">
-                    <FontAwesomeIcon icon={faPen} className="text-[#eff6ff]" />
                   </Button>
                 </div>
               </TableCell>
             </TableRow>
-          ))}
+         ))}
+            
+        
         </TableBody>
       </Table>
     </div>
-    <div className='flex flex-row justify-between mt-3'>
+    <div className='flex flex-row justify-end mt-3'>
       <div>
-        <p className='text-[#172554] text-sm w-full'>Showing 1 to 10 of 57 entries</p>
-      </div>
-      <div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <p className='text-[#172554] text-sm w-full'>Showing 1 to {listtofAgents.length} of 57 entries</p>
       </div>
     </div>
   </div>

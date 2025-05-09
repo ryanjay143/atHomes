@@ -8,7 +8,11 @@ function NavigationSalesEncoding() {
             <Breadcrumb >
                 <BreadcrumbList>
                     <BreadcrumbItem className="text-accent">
+<<<<<<< HEAD
                         <Link to="#" >List of Sales Encoding</Link>
+=======
+                        <Link to="/athomes/admin/sales-encoding" >List of Sales Encoding</Link>
+>>>>>>> 69cab2f124d33b12174b1edafe0a92534ec11019
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                 </BreadcrumbList>
