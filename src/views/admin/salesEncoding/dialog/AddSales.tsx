@@ -177,7 +177,7 @@ function AddSales({ fetchAgent }: AddSalesProps) {
 
       Swal.fire({
         icon: 'success',
-        title: 'Sales encoding created successfully',
+        title: 'Success',
         text: 'Sales created successfully.',
         showConfirmButton: false,
         timer: 3000,

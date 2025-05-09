@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { faCheck, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatDateToMMDDYYYY } from "@/helper/dateUtils";
@@ -87,6 +87,13 @@ function ViewDetails({ item, getPendingRegistered }: ViewDetailsProps) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
+          <div className='flex flex-row gap-2 justify-end'>
+            <DialogClose asChild>
+              <Button className='bg-red-500 hover:bg-red-400'>
+                Cancel
+              </Button>
+            </DialogClose>
+          
           <Button className="bg-green-500 hover:bg-green-400" type="button" onClick={updateStatus} disabled={loading}>
             
             {loading ? (
@@ -102,6 +109,8 @@ function ViewDetails({ item, getPendingRegistered }: ViewDetailsProps) {
               )}
             
           </Button>
+          </div>
+         
         </DialogFooter>
       </DialogContent>
     </Dialog>

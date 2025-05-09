@@ -234,12 +234,14 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 Remarks:
               </Label>
               <Select value={remarks} onValueChange={setRemarks}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select remarks" />
+                <SelectTrigger className='col-span-3'>
+                  <SelectValue  placeholder="Select remarks" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Full Payment">Full Payment</SelectItem>
-                  <SelectItem value="Partial Payment">Partial Payment</SelectItem>
+                    <SelectItem value="Sold">Sold</SelectItem>
+                    <SelectItem value="Not Sold">Not Sold</SelectItem>
+                    <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                    <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

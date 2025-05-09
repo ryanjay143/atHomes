@@ -62,9 +62,9 @@ const AddDeveloper: React.FC<AddDeveloperProps> = ({
             <DialogContent className='md:pt-10 md:w-[80%] md:h-[80%] rounded-sm overflow-auto bg-[#eff6ff]'>
                 <DialogHeader className='text-start'>
                     <DialogTitle>Add Developer</DialogTitle>
-                    <p className='text-[#172554]'>Please fill out the form below to add a new housing developer.</p>
+                    <p className='text-[#172554] md:text-sm'>Please fill out the form below to add a new housing developer.</p>
                 </DialogHeader>
-                <div className='grid grid-cols-1 md:grid-cols-2 md:gap-2 gap-4'>
+                <div className='grid grid-cols-1 md:grid-cols-1 md:gap-2 gap-4'>
                     <div>
                         <Label className='text-[#172554]'>Developer Name <span className='text-red-700'>*</span></Label>
                         <Input
@@ -107,7 +107,7 @@ const AddDeveloper: React.FC<AddDeveloperProps> = ({
                         {errors.dev_location && <p className='text-red-600 text-xs'>{errors.dev_location}</p>}
                     </div>
                     <div>
-                        <Label className='text-[#172554]'>Image or Logo</Label>
+                        <Label className='text-[#172554]'>Image or Logo <span className='text-red-700'>*</span></Label>
                         <Input
                             type='file'
                             accept="image/jpeg, image/png, image/jpg, image/gif"

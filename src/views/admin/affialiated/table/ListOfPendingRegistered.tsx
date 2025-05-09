@@ -37,8 +37,8 @@ function ListOfPendingRegistered() {
         },
       })
       .then((e: any) => {
-        console.log('API Response:', e.data); // Log the response
-        setPendingRegistered(e.data);
+        console.log('API Response:', e.data.agent); // Log the response
+        setPendingRegistered(e.data.agent);
       })
       .catch((e: any) => {
         console.log(e);

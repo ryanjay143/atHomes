@@ -422,9 +422,9 @@ const DeveloperContainer: React.FC = () => {
                                                             <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
                                                         </Button>
                                                     </DialogTrigger>
-                                                        <DialogContent className='w-full max-w-6xl'>
+                                                        <DialogContent className='w-full max-w-6xl md:w-[90%] overflow-auto'>
                                                             <DialogHeader>
-                                                                <DialogTitle className='text-start mb-10'>{developer.dev_name} Projects</DialogTitle>
+                                                                <DialogTitle className='text-start mb-10'><span className='uppercase'>{developer.dev_name}</span> Projects</DialogTitle>
                                                                 <DialogDescription>
                                                                     {developer.projects && developer.projects.length > 0 ? (
                                                                         <Table>

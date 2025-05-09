@@ -108,7 +108,7 @@ const AddProject: React.FC<AddProjectProps> = ({
 
                         <div className='mt-5 '>
                             {projects.map((project, index) => (
-                                <div key={project.id} className='grid grid-cols-5 gap-4 mb-4'>
+                                <div key={project.id} className='grid grid-cols-5 gap-4 mb-4 md:grid-cols-2 md:p-4'>
                                     <div className="hidden">
                                         <Input 
                                             type="text" 
