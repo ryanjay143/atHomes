@@ -95,7 +95,7 @@ function SalesEncodingContainer() {
       sales.amount.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
       sales.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sales.remarks.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      `${sales.agent.personal_info.first_name} ${sales.agent.personal_info.middle_name} ${sales.agent.personal_info.last_name} ${sales.agent.personal_info?.extension_name || ''}`.toLowerCase().includes(searchQuery.toLowerCase());
+     sales.client_name.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesCategory = categoryFilter && categoryFilter !== "all" ? sales.category === categoryFilter : true;
     const matchesDate = dateFilter ? sales.date_on_sale.split('T')[0] === dateFilter : true;
@@ -220,7 +220,7 @@ const handleDelete = async (id: number) => {
                     <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
                     <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Client name</TableHead>
                     <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Category</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Date</TableHead>
+                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Reservation Date</TableHead>
                     <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Amount</TableHead>
                     <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Location</TableHead>
                     <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Remarks</TableHead>

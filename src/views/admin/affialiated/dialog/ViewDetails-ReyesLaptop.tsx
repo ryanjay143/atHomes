@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 interface ViewDetailsProps {
   item: any;
-  getPendingRegistered: () => void; 
+  getPendingRegistered: () => void; // Add this prop
 }
 
 function ViewDetails({ item, getPendingRegistered }: ViewDetailsProps) {

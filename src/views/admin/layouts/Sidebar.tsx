@@ -69,7 +69,7 @@ function AdminSidebar() {
             className="flex justify-center cursor-pointer mb-7"
             onClick={() => handleNavigation("/athomes/admin/user-dashboard")}
           >
-            <img src="../../../../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
+            <img src="../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
           </div>
 
           {/* Navigation Menu */}

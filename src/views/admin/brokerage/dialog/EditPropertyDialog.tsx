@@ -260,7 +260,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
                     onClick={() => setSelectedImage(`${import.meta.env.VITE_URL}/storage/${image}`)}
                   >
                     <img
-                      src={`${import.meta.env.VITE_URL}/storage/${image.images}`}
+                      src={`${import.meta.env.VITE_URL}/${image.images}`}
                       className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
                       alt={`Property Image ${index + 1}`}
                     />

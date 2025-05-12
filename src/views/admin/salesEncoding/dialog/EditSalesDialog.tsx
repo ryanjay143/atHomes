@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle 
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -47,16 +47,69 @@ interface EditSalesDialogProps {
 const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   sales, open, onOpenChange, getAgentBroker, fetchAgent
 }) => {
+  const defaultImageUrl = `${import.meta.env.VITE_URL}/${sales.image}`; // Default image URL
   const [agentId, setAgentId] = useState(sales.agent?.id ? String(sales.agent.id) : '');
   const [category, setCategory] = useState(sales.category || '');
   const [dateOnSale, setDateOnSale] = useState(sales.date_on_sale?.split('T')[0] || '');
   const [amount, setAmount] = useState(sales.amount.toString() || '');
   const [location, setLocation] = useState(sales.location || '');
+  const [preview, setPreview] = useState<string>(defaultImageUrl);
   const [remarks, setRemarks] = useState(sales.remarks || '');
-  const [clientName, setClientName] = useState(sales.client_name || ''); // New state for client_name
+  const [clientName, setClientName] = useState(sales.client_name || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ amount?: string }>({}); // Declare errors state
+  const [imageFile, setImageFile] = useState<File | null>(null); // Track the selected image file
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const validExtensions = ['image/jpeg', 'image/png', 'image/gif'];
+    const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+    if (!file.type.startsWith('image/') || !validExtensions.includes(file.type)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid File',
+        text: 'Please select a valid image file (JPEG, PNG, or GIF).',
+      });
+      return;
+    }
+
+    if (file.size > maxFileSize) {
+      Swal.fire({
+        icon: 'error',
+        title: 'File Too Large',
+        text: 'The selected file exceeds the maximum size of 5MB.',
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        setPreview(reader.result);
+        setImageFile(file); // Set the selected image file
+      }
+    };
+    reader.readAsDataURL(file);
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Invalid File',
+      text: 'Please select a valid image file.',
+    });
+  }
+};
+
+  const handleRemoveImage = () => {
+    setPreview(defaultImageUrl); // Reset to default image
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Clear the file input
+    }
+    setImageFile(null); // Clear the image file
+  };
 
   useEffect(() => {
     if (open) {
@@ -66,42 +119,55 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       setAmount(sales.amount.toString() || '');
       setLocation(sales.location || '');
       setRemarks(sales.remarks || '');
-      setClientName(sales.client_name || ''); // Initialize client_name
+      setClientName(sales.client_name || '');
+      setPreview(defaultImageUrl); // Initialize preview with default image
       setError(null);
+      setImageFile(null); // Reset image file
     }
     // eslint-disable-next-line
   }, [open, sales]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     setError(null);
-
+  
     try {
-      const payload = {
-        agent_id: agentId,
-        category,
-        date_on_sale: dateOnSale,
-        amount,
-        location,
-        remarks,
-        client_name: clientName, // Include client_name in the payload
-      };
-
-      const response = await axios.put(
-        `sales-encoding/${sales.id}`,
-        payload,
+      // Create a FormData object to handle the payload
+      const formData = new FormData();
+      formData.append('agent_id', agentId);
+      formData.append('category', category);
+      formData.append('date_on_sale', dateOnSale);
+      formData.append('amount', amount);
+      formData.append('location', location);
+      formData.append('remarks', remarks);
+      formData.append('client_name', clientName);
+  
+      // Append the image file only if a new one is selected
+      if (imageFile) {
+        formData.append('image', imageFile); // Append the new image file
+      }
+  
+      // Debugging: Log FormData entries
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+  
+      const response = await axios.post(
+        `updateSalesEncoding/${sales.id}`,
+        formData,
         {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            'Content-Type': 'multipart/form-data', // Ensure the correct content type
           },
         }
       );
-
+  
       if (response.status === 200) {
         onOpenChange(false);
+        setAmount('');
         fetchAgent();
         Swal.fire({
           icon: 'success',
@@ -113,7 +179,8 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       }
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.errors) {
-        setError(JSON.stringify(err.response.data.errors));
+        const errorMessages = Object.values(err.response.data.errors).flat().join(', ');
+        setError(errorMessages);
       } else {
         setError('An error occurred while updating.');
       }
@@ -125,18 +192,11 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const handleChangeAmount = (values: any) => {
     const { value } = values;
     setAmount(value);
-
-    // Add validation logic if needed
-    if (value === '') {
-      setErrors({ amount: 'Amount is required' });
-    } else {
-      setErrors({});
-    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[425px] ">
+      <DialogContent className="md:max-w-[425px] h-full max-h-[700px] overflow-auto">
         <DialogHeader className='text-start'>
           <DialogTitle>Edit Sales Encoding</DialogTitle>
           <DialogDescription>
@@ -153,12 +213,12 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 value={agentId}
                 onValueChange={setAgentId}
               >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Choose agent or broker" />
+                <SelectTrigger className="col-span-3 uppercase ">
+                  <SelectValue className='' placeholder="Choose agent or broker" />
                 </SelectTrigger>
                 <SelectContent>
                   {getAgentBroker.map((agent) => (
-                    <SelectItem key={agent.id} value={String(agent.id)}>
+                    <SelectItem className='uppercase' key={agent.id} value={String(agent.id)}>
                       {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
                     </SelectItem>
                   ))}
@@ -245,7 +305,32 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 </SelectContent>
               </Select>
             </div>
-            
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="Image" className="text-start">
+                Proof of Transaction:
+              </Label>
+              <Input
+                type='file'
+                onChange={handleImageChange}
+                ref={fileInputRef}
+                className="col-span-3"
+              />
+            </div>
+            {preview && (
+              <div className="relative mt-4 flex justify-end">
+                <img src={preview} alt="Selected Preview" className="h-full object-cover rounded-sm" />
+                {preview !== defaultImageUrl && (
+                  <Button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-0 right-0 h-8 w-8 bg-red-500 hover:bg-red-400 rounded-full p-1 shadow-md"
+                  >
+                    <FontAwesomeIcon icon={faTimes} className="text-white" />
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
           {error && <div className="text-red-500">{error}</div>}
           <DialogFooter>

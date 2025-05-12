@@ -18,7 +18,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -36,7 +36,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/venus.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/venus.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -54,7 +54,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/venet.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/venet.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -72,7 +72,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/riki.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/riki.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -90,7 +90,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/ryan.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/ryan.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -108,7 +108,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -126,7 +126,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/venus.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/venus.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -144,7 +144,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/venet.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/venet.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -162,7 +162,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/riki.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/riki.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
@@ -180,7 +180,7 @@ function TopAgent () {
               <Popover>
                 <PopoverTrigger asChild>
                   <Avatar className='cursor-pointer h-16 w-16 border-primary border-4'>
-                    <AvatarImage src='../../../../image/ryan.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
+                    <AvatarImage src='../image/ryan.jpg' alt='profile' className='rounded-full border border-border object-cover ' />
                   </Avatar>
                 </PopoverTrigger>
                 <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>

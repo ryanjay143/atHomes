@@ -31,12 +31,14 @@ interface User {
 
 const ROLES = {
   ADMIN: 0,
-  BROKER: 1
+  AGENT: 1,
+  BROKER: 2
 } as const;
 
 const ROUTES = {
   [ROLES.ADMIN]: '/athomes/admin',
-  [ROLES.BROKER]: '/athomes/agent-broker'
+  [ROLES.AGENT]: '/athomes/agent-broker/user-dashboard',
+  [ROLES.BROKER]: '/athomes/agent-broker/user-dashboard'
 } as const;
 
 const Login = () => {
@@ -128,7 +130,7 @@ const Login = () => {
       <div className='sm:absolute lg:w-96 lg:absolute xs:w-80 xs:mr-1 2xl:absolute 2xl:mt-0 2xl:mb-24 lg:mt-48 fade-in-left w-96 rounded-lg'>
         <CardHeader>
           <Link to="/" className="flex justify-center">
-            <img src="./../athomes.png" alt="logo" className="w-56 h-40" />
+            <img src="./athomes.png" alt="logo" className="w-56 h-40" />
           </Link>
         </CardHeader>
 
@@ -184,7 +186,7 @@ const Login = () => {
               {loading ? (
                 <>
                   <span>Logging in...</span>
-                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
+                  <span className="animate-spin cursor-not-allowed border-2 border-white border-t-transparent rounded-full w-4 h-4" />
                 </>
               ) : (
                 <>

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -99,93 +98,100 @@ function Register() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-    setLoading(true);
+  e.preventDefault();
+  if (loading) return;
+  setLoading(true);
 
-    // Validation logic
-    const newErrors: FormErrors = {};
-    if (!formData.first_name) newErrors.first_name = "First name is required.";
-    if (!formData.last_name) newErrors.last_name = "Last name is required.";
-    if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.phone) newErrors.phone = "Mobile number is required.";
-    if (!formData.gender) newErrors.gender = "Gender is required.";
-    if (!formData.role) newErrors.role = "Account type is required.";
-    if (!formData.complete_address) newErrors.complete_address = "Complete address is required.";
-    if (!formData.username) newErrors.username = "Username is required.";
-    if (!formData.password) newErrors.password = "Password is required.";
-    if (!formData.confirm_password) newErrors.confirm_password = "Confirm password is required.";
-    if (formData.password !== formData.confirm_password) newErrors.confirm_password = "Passwords do not match.";
-    if (!formData.last_school_att) newErrors.last_school_att = "Last school or course attended is required.";
+  // Validation logic
+  const newErrors: FormErrors = {};
+  if (!formData.first_name) newErrors.first_name = "First name is required.";
+  if (!formData.last_name) newErrors.last_name = "Last name is required.";
+  if (!formData.email) newErrors.email = "Email is required.";
+  if (!formData.phone) newErrors.phone = "Mobile number is required.";
+  if (!formData.gender) newErrors.gender = "Gender is required.";
+  if (!formData.role) newErrors.role = "Account type is required.";
+  if (!formData.complete_address) newErrors.complete_address = "Complete address is required.";
+  if (!formData.username) newErrors.username = "Username is required.";
+  if (!formData.password) newErrors.password = "Password is required.";
+  if (!formData.confirm_password) newErrors.confirm_password = "Confirm password is required.";
+  if (formData.password !== formData.confirm_password) newErrors.confirm_password = "Passwords do not match.";
+  if (!formData.last_school_att) newErrors.last_school_att = "Last school or course attended is required.";
 
-    setErrors(newErrors);
+  // Conditional validation for Broker
+  if (formData.role === "2") { // Assuming "2" is the value for Broker
+    if (!formData.prc_liscence_number) newErrors.prc_liscence_number = "PRC License Number is required for Brokers.";
+    if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
+    if (!formData.validation_date) newErrors.validation_date = "Validity Date is required for Brokers."; // Add this line
+  }
 
-    if (Object.keys(newErrors).length > 0) {
-      setLoading(false);
-      return;
-    }
+  setErrors(newErrors);
 
-    try {
-      const response = await axios.post('register', formData);
+  if (Object.keys(newErrors).length > 0) {
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const response = await axios.post('register', formData);
+    Swal.fire({
+      title: "Registration successful!",
+      text: "Please wait for approval.",
+      icon: "success",
+      showConfirmButton: false,
+      showCloseButton: true,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+
+    console.log(response.data);
+
+    setFormData({
+      acct_number: generateAccountNumber(),
+      first_name: '',
+      middle_name: '',
+      last_name: '',
+      extension_name: '',
+      email: '',
+      phone: '',
+      gender: '',
+      role: '',
+      complete_address: '',
+      username: '',
+      password: '',
+      confirm_password: '',
+      prc_liscence_number: '',
+      dhsud_registration_number: '',
+      validation_date: '',
+      last_school_att: '',
+    });
+    setErrors({});
+  } catch (error: any) {
+    console.error("Registration failed:", error);
+    if (error.response && error.response.data && error.response.data.message === "Email already taken") {
       Swal.fire({
-        title: "Registration successful!",
-        text: "Please wait for approval.",
-        icon: "success",
+        title: "Email already taken!",
+        text: "Please login instead.",
+        icon: "warning",
+        showConfirmButton: true,
+      }).then(() => {
+        navigate('/athomes/user-register');
+      });
+    } else {
+      Swal.fire({
+        title: "Error or Email already taken!",
+        text: "Please try again.",
+        icon: "error",
         showConfirmButton: false,
         showCloseButton: true,
         timer: 3000,
         timerProgressBar: true,
       });
-
-      console.log(response.data);
-
-      setFormData({
-        acct_number: generateAccountNumber(),
-        first_name: '',
-        middle_name: '',
-        last_name: '',
-        extension_name: '',
-        email: '',
-        phone: '',
-        gender: '',
-        role: '',
-        complete_address: '',
-        username: '',
-        password: '',
-        confirm_password: '',
-        prc_liscence_number: '',
-        dhsud_registration_number: '',
-        validation_date: '',
-        last_school_att: '',
-      });
-      setErrors({});
-    } catch (error: any) {
-      console.error("Registration failed:", error);
-      if (error.response && error.response.data && error.response.data.message === "Email already taken") {
-        Swal.fire({
-          title: "Email already taken!",
-          text: "Please login instead.",
-          icon: "warning",
-          showConfirmButton: true,
-        }).then(() => {
-          navigate('/athomes/user-register');
-        });
-      } else {
-        Swal.fire({
-          title: "Error or Email already taken!",
-          text: "Please try again.",
-          icon: "error",
-          showConfirmButton: false,
-          showCloseButton: true,
-          timer: 3000,
-          timerProgressBar: true,
-        });
-      }
-    } finally {
-      setLoading(false);
-      navigate("/");
     }
-  };
+  } finally {
+    setLoading(false);
+    navigate("/");
+  }
+};
 
   // JSX structure
   return (
@@ -313,24 +319,7 @@ function Register() {
 
           <div className="mb-4">
             <span className="block text-gray-700 text-lg font-bold mb-2">Identity Details</span>
-            <div className="grid grid-cols-5 gap-4 w-full max-w-6xl md:grid-cols-2">
-              <div>
-                <Label htmlFor="prc_liscence_number">PRC License Number</Label>
-                <Input type="text" name="prc_liscence_number" className="h-9 bg-white" placeholder="Enter PRC License No:" onChange={handleChange} />
-              </div>
-              <div>
-                <Label htmlFor="dhsud_registration_number" className="md:text-[9px] md:font-bold text-xs">DHSUD Registration Number</Label>
-                <Input
-                  type="text"
-                  name="dhsud_registration_number"
-                  className="h-9 bg-white"
-                  placeholder="Enter DHSUD Registration No:"
-                  onChange={(e) => {
-                    handleChange(e);
-                    console.log("DHSUD Registration Number:", e.target.value);
-                  }}
-                />
-              </div>
+            <div className="grid grid-cols-5 gap-4 w-full md:grid-cols-2">
               <div>
                 <Label htmlFor="type">Type</Label> <span className="text-red-500">*</span>
                 <Select
@@ -349,12 +338,33 @@ function Register() {
                 </Select>
                 {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
               </div>
+
+
+              <div>
+                <Label htmlFor="prc_liscence_number">PRC License Number</Label>
+                <Input type="text" name="prc_liscence_number" className="h-9 bg-white" placeholder="Enter PRC License No:" onChange={handleChange} />
+                {errors.prc_liscence_number && <span className="text-red-500 text-sm">{errors.prc_liscence_number}</span>}
+              </div>
+              <div>
+                <Label htmlFor="dhsud_registration_number" className="md:text-[9px] md:font-bold text-xs">DHSUD Registration Number</Label>
+                <Input
+                  type="text"
+                  name="dhsud_registration_number"
+                  className="h-9 bg-white"
+                  placeholder="Enter DHSUD Registration No:"
+                  onChange={(e) => {
+                    handleChange(e);
+                    console.log("DHSUD Registration Number:", e.target.value);
+                  }}
+                />
+                {errors.dhsud_registration_number && <span className="text-red-500 text-sm">{errors.dhsud_registration_number}</span>}
+              </div>
               <div>
                 <Label htmlFor="validation_date">Validity Date</Label>
                 <Input
                   type="date"
                   name="validation_date"
-                  className="h-9 bg-white"
+                  className="h-9 bg-white md:w-[183px]"
                   onChange={(e) => {
                     const rawDate = e.target.value;
                     const formattedDate = rawDate.split("-").reverse().join("-");
@@ -362,6 +372,7 @@ function Register() {
                     console.log("Validation Date:", formattedDate);
                   }}
                 />
+                {errors.validation_date && <span className="text-red-500 text-sm">{errors.validation_date}</span>}
               </div>
               <div>
                 <Label htmlFor="last_school_att" className="text-[11px] font-bold">Last School or Course attended</Label> <span className="text-red-500 ">*</span>

@@ -47,10 +47,10 @@ function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
                         <div
                           key={index}
                           className="w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
-                          onClick={() => setSelectedImage(`${import.meta.env.VITE_URL}/storage/${image.images}`)}
+                          onClick={() => setSelectedImage(`${import.meta.env.VITE_URL}/${image.images}`)}
                         >
                           <img
-                            src={`${import.meta.env.VITE_URL}/storage/${image.images}`}
+                            src={`${import.meta.env.VITE_URL}/${image.images}`}
                             className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
                             alt={`Property Image ${index + 1}`}
                           />

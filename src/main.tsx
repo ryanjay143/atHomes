@@ -66,7 +66,7 @@ const DashboardAgentBroker = lazy(() =>
 // Route configuration
 const routes = [
   {
-    path: "/",
+    path: "/athomes",
     element: <Navigate to="/athomes/user-login" />,
   },
   {

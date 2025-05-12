@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { faPlusCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPlusCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../../../plugin/axios";
 import Swal from "sweetalert2";
@@ -154,7 +154,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger>
         <Button className="">
-            <FontAwesomeIcon icon={faPlusCircle} />
+            <FontAwesomeIcon icon={faPlus} />
             Add Property
         </Button>
         </DialogTrigger>

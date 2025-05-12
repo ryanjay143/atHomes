@@ -91,60 +91,63 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: ViewReceiptPro
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className='bg-white shadow-md rounded-lg md:max-w-[400px]'>
+        <DialogContent className='md:max-w-[425px] h-full max-h-[700px] overflow-auto'>
           <DialogHeader>
             <DialogTitle className='text-start'>View Receipt</DialogTitle>
             <DialogDescription>
-              <div ref={receiptRef} className="grid gap-4 py-6 bg-white">
+              <div ref={receiptRef} className="grid gap-4 py-6 text-start bg-white">
                 <div className="grid grid-cols-4 md:grid-cols- items-center gap-4">
                   <Label htmlFor="category" className="text-gray-600 font-semibold">
                     Broker/Agent:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{sales.agent.personal_info.first_name} {sales.agent.personal_info.middle_name} {sales.agent.personal_info.last_name} {sales.agent.personal_info?.extension_name}</span>
+                  <span className="col-span-3 text-center text-gray-800">{sales.agent.personal_info.first_name} {sales.agent.personal_info.middle_name} {sales.agent.personal_info.last_name} {sales.agent.personal_info?.extension_name}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols- items-center gap-4">
                   <Label htmlFor="category" className="text-gray-600 font-semibold">
                     Client name:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{sales.client_name}</span>
+                  <span className="col-span-3 text-center text-gray-800">{sales.client_name}</span>
                 </div>
                 
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="category" className="text-gray-600 font-semibold">
                     Category:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{sales.category}</span>
+                  <span className="col-span-3 text-center text-gray-800">{sales.category}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="date" className="text-gray-600 font-semibold">
                     Date of Sale:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{dateFormatter.format(new Date(sales.date_on_sale))}</span>
+                  <span className="col-span-3 text-center text-gray-800">{dateFormatter.format(new Date(sales.date_on_sale))}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="amount" className="text-gray-600 font-semibold">
                     Amount:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{currencyFormatter.format(sales.amount)}</span>
+                  <span className="col-span-3 text-center text-gray-800">{currencyFormatter.format(sales.amount)}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="location" className="text-gray-600 font-semibold">
                     Location:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{sales.location}</span>
+                  <span className="col-span-3 text-center text-gray-800">{sales.location}</span>
                 </div>
                 <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="remarks" className="text-gray-600 font-semibold">
                     Remarks:
                   </Label>
-                  <span className="col-span-3 text-gray-800">{sales.remarks}</span>
+                  <span className="col-span-3 text-center text-gray-800">{sales.remarks}</span>
                 </div>
-                {/* Large Image at the Bottom */}
+              
+                <Label htmlFor="remarks" className="text-gray-600 text-start font-semibold">
+                  Proof of Transaction:
+                </Label>
                 <div className='mt-3'>
                   <img
-                    src={`${import.meta.env.VITE_URL}/storage/${sales.image}`}
+                    src={`${import.meta.env.VITE_URL}/${sales.image}`}
                     alt={sales.image}
-                    className='w-full max-h-[280px] rounded-lg shadow-md'
+                    className='h-full object-cover rounded-sm'
                     onLoad={() => setImgLoaded(true)}
                   />
                 </div>

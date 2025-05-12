@@ -33,11 +33,11 @@ const handleLogout = async (navigate: any) => {
     localStorage.clear();
 
     // Navigate to the home page
-    navigate('/');
+    navigate('/athomes');
   } catch (error) {
     console.error('Logout failed', error);
     removeToken();
-    navigate('/', { replace: true });
+    navigate('/athomes', { replace: true });
   }
 };
 
@@ -53,7 +53,7 @@ function Profile() {
               <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
             </div>
             <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
-              <AvatarImage src='../../../../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover' />
+              <AvatarImage src='../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover' />
             </Avatar>
           </div>
         </div>
