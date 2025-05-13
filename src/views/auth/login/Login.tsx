@@ -200,7 +200,7 @@ const Login = () => {
           {/* Forgot Password Link */}
           <div className='flex justify-end'>
             <Link 
-              to="/forgot-password" 
+              to="/athomes/forgot-password" 
               className='text-sm text-primary hover:text-primary-dark'
             >
               Forgot Password?

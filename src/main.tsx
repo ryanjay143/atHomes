@@ -11,12 +11,17 @@ import ProtectedRoute from './jwt/ProtectedRoute';
 import PublicRoute from './jwt/PublicRoute';
 import LoaderCard from './components/loaderCard'
 
+
 const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
 );
 
 const Register = lazy(() =>
   wait(3000).then(() => import("./views/auth/register/Register"))
+);
+
+const ForgotPassword = lazy(() =>
+  wait(3000).then(() => import("./views/auth/forgotPassword"))
 );
 
 const DashboardContainer = lazy(() =>
@@ -85,6 +90,16 @@ const routes = [
       <PublicRoute>
         <Suspense fallback={<Loader />}>
           <Register />
+        </Suspense>
+      </PublicRoute>
+    ),
+  },
+  {
+    path: "/athomes/forgot-password",
+    element: (
+      <PublicRoute>
+        <Suspense fallback={<Loader />}>
+          <ForgotPassword />
         </Suspense>
       </PublicRoute>
     ),

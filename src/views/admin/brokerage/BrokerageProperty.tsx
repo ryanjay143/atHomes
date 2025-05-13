@@ -194,7 +194,7 @@ function BrokerageProperty() {
                           
                           <Dialog>
                             <DialogTrigger onClick={() => setSelectedProperty(property)}>
-                              <Button className='h-8 w-8 font-medium bg-green-500 hover:bg-green-400 text-sm rounded-md'>
+                              <Button className='h-8 w-8 rounded-md font-medium bg-green-500 hover:bg-green-400 text-sm'>
                                 <FontAwesomeIcon icon={faPen} />
                               </Button>
                             </DialogTrigger>
