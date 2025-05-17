@@ -159,7 +159,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
         formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             'Content-Type': 'multipart/form-data', // Ensure the correct content type
           },
         }

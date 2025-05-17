@@ -19,7 +19,7 @@ function ListOfLiscenced() {
       const response = await axios.get('agent-broker', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 

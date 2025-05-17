@@ -9,18 +9,20 @@ import { useEffect, useState } from 'react';
 import { formatDateToMMDDYYYY, formatDateToMMDDYYYYDateApproved } from "@/helper/dateUtils";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import UpdateType from '../dialog/UpdateType';
 
 function ListOfBrokerAgent() {
   const [listtofAgents, setAgentList] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>(''); // State for search input
   const [entriesToShow, setEntriesToShow] = useState<number | 'all'>('all'); // Default to 'all'
 
+
   const agentList = async () => {
     try {
       const response = await axios.get('agent-broker', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
@@ -113,7 +115,7 @@ function ListOfBrokerAgent() {
                   </TableCell>
                   <TableCell className="border border-[#bfdbfe]">{agent?.user.email}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">{agent?.personal_info.phone}</TableCell>
-                  <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.updated_at)}</TableCell>
+                  <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.created_at)}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">
                     {agent?.prc_liscence_number !== "" ? (
                       <Badge className='bg-green-500 hover:bg-green-500 gap-1'>
@@ -131,7 +133,7 @@ function ListOfBrokerAgent() {
                     <div className="flex flex-row gap-1 justify-end">
                       <Dialog>
                         <DialogTrigger>
-                          <Button className="w-8 h-8 rounded-md border border-primary">
+                          <Button className="w-8 h-8 rounded-md">
                             <FontAwesomeIcon icon={faEye} className="text-[#eff6ff]" />
                           </Button>
                         </DialogTrigger>
@@ -167,6 +169,11 @@ function ListOfBrokerAgent() {
                           </DialogHeader>
                         </DialogContent>
                       </Dialog>
+
+                      
+
+                      <UpdateType agent={agent} agentList={agentList}/>
+
                     </div>
                   </TableCell>
                 </TableRow>

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Navigation from './navigation/NavigationDeveloper';
 import axios from "../../../plugin/axios";
@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AddDeveloper from './children/AddDeveloper';
 import AddProject from './children/AddProject';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import EditDeveloper from './dialog/EditDeveloper';
 
 interface Developer {
     id: number;
@@ -78,7 +79,7 @@ const DeveloperContainer: React.FC = () => {
         try {
             const response = await axios.get('developers', {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
                 }
             });
             setGetAllDeveloper(response.data.developers);
@@ -160,7 +161,7 @@ const DeveloperContainer: React.FC = () => {
             const response = await axios.post('developers', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
                 },
             });
 
@@ -262,7 +263,7 @@ const DeveloperContainer: React.FC = () => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`, 
+                        Authorization: `Bearer ${localStorage.getItem('access_token')}`, 
                     }
                 }
             );
@@ -351,7 +352,7 @@ const DeveloperContainer: React.FC = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <div className='h-full overflow-auto'>
+                    <div className='overflow-auto'>
                         <Table className='w-full'>
                             <TableHeader className="sticky top-0 bg-primary">
                                 <TableRow>
@@ -386,7 +387,7 @@ const DeveloperContainer: React.FC = () => {
                                             <TableCell className="font-medium border border-[#bfdbfe] uppercase">
                                                 {developer.dev_name ? (
                                                 <img
-                                                    src={`${import.meta.env.VITE_URL}/storage/${developer.image}`}
+                                                    src={`${import.meta.env.VITE_URL}/${developer.image}`}
                                                     alt={developer.dev_name}
                                                     className="rounded-full h-10 w-10"
                                                 />
@@ -460,6 +461,11 @@ const DeveloperContainer: React.FC = () => {
                                                             </DialogHeader>
                                                         </DialogContent>
                                                     </Dialog>
+
+                                                    <EditDeveloper developer={developer} fetchDevelopers={fetchDevelopers} />
+
+
+                                                    
                                                 </div>
                                             </TableCell>
                                         </TableRow>

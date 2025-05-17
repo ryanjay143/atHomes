@@ -79,7 +79,7 @@ function UpdateLicensed({ unlicensed, agentUnliscenced }: UpdateLicensedProps) {
       const response = await axios.put(`editLicense/${unlicensed.id}`, formData, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       console.log('License updated successfully:', response.data.message);

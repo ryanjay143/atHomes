@@ -69,7 +69,7 @@ function SalesEncodingContainer() {
       const response = await axios.get('sales-encoding', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       setSalesEncodings(
@@ -132,7 +132,7 @@ const handleDelete = async (id: number) => {
       await axios.delete(`sales-encoding/${id}`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       Swal.fire({
@@ -213,7 +213,7 @@ const handleDelete = async (id: number) => {
                 onChange={e => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="h-80 overflow-y-auto fade-in-left ">
+            <div className="fade-in-left ">
               <Table className='w-full'>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>

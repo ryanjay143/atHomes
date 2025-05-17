@@ -109,7 +109,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
       const response = await axios.post('property-listings', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
      

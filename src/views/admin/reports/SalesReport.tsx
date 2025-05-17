@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faHouseCircleCheck, faHouseCircleXmark, faList, faPesoSign, faPrint } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faHouseCircleCheck, faHouseCircleXmark, faList, faPesoSign, faPrint, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "../../../plugin/axios";
@@ -14,19 +14,25 @@ import ViewReceipt from "../salesEncoding/dialog/ViewReceipt";
 function Salesreport() {
   const [salesReport, setSalesReport] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [rowsToShow, setRowsToShow] = useState<number>(10); // Default to show 10 rows
-
+  const [rowsToShow, setRowsToShow] = useState<number>(10);
+  const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [selectedAgent, setSelectedAgent] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedRemarks, setSelectedRemarks] = useState<string>("");
+const [isHovered, setIsHovered] = useState(false);
   const fetchSalesReport = async () => {
     try {
       const response = await axios.get('sales-encoding', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
       setSalesReport(response.data.salesEncodingReports);
-      console.log("Sales Report list:", response.data.salesEncodingReports);
+      setAgentBroker(response.data.agents);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -65,13 +71,43 @@ function Salesreport() {
     setRowsToShow(value === "all" ? salesReport.length : parseInt(value, 10));
   };
 
+  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(event.target.value);
+  };
+
+  const handleAgentChange = (value: string) => {
+    setSelectedAgent(value);
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+  };
+
+  const handleRemarksChange = (value: string) => {
+    setSelectedRemarks(value);
+  };
+
   const filteredSalesReport = salesReport.filter((report) => {
     const fullName = `${report.agent.personal_info.first_name} ${report.agent.personal_info.middle_name} ${report.agent.personal_info.last_name}`.toLowerCase();
+    const reportDate = new Date(report.date_on_sale);
+    const isWithinDateRange = (!startDate || reportDate >= new Date(startDate)) && (!endDate || reportDate <= new Date(endDate));
+    const isAgentMatch = !selectedAgent || report.agent.id === selectedAgent;
+    const isCategoryMatch = !selectedCategory || report.category === selectedCategory;
+    const isRemarksMatch = !selectedRemarks || report.remarks.toLowerCase() === selectedRemarks.toLowerCase();
+
     return (
-      report.agent.user.acct_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      isWithinDateRange &&
+      isAgentMatch &&
+      isCategoryMatch &&
+      isRemarksMatch &&
+      (report.agent.user.acct_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       fullName.includes(searchQuery.toLowerCase()) ||
-      report.category.toLowerCase().includes(searchQuery.toLowerCase())
+      report.category.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   });
 
@@ -96,52 +132,55 @@ function Salesreport() {
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Date Range</Label>
                   <div className="flex space-x-2">
-                    <Input type="date" className="w-full md:w-[160px]" placeholder="Start Date" />
+                    <Input type="date" className="w-full md:w-[160px]" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
                     <span className="flex items-center">-</span>
-                    <Input type="date" className="w-full md:w-[160px]" placeholder="End Date" />
+                    <Input type="date" className="w-full md:w-[160px]" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
                   </div>
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Agent/Broker</Label>
-                  <Select>
+                  <Select onValueChange={handleAgentChange} value={selectedAgent}>
                     <SelectTrigger className="w-full md:w-[340px]">
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder="Select agent or broker" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Lot only">Lot only</SelectItem>
-                      <SelectItem value="House and lot">House and lot</SelectItem>
-                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                      {getAgentBroker.map((agent) => (
+                        <SelectItem key={agent.id} value={agent.id}>
+                           {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
+                        </SelectItem>
+                      ))}
+                     
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Category</Label>
-                  <Select>
-                    <SelectTrigger className="w-full md:w-[340px]">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Sold">Sold</SelectItem>
-                      <SelectItem value="Not Sold">Not Sold</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    <Select onValueChange={handleCategoryChange} value={selectedCategory}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Lot only">Lot only</SelectItem>
+                        <SelectItem value="House and lot">House and lot</SelectItem>
+                        <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
+                        <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
+                        <SelectItem value="Rental Properties">Rental Properties</SelectItem>
+                        <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                      </SelectContent>
+                    </Select>
                 </div>
 
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Remarks</Label>
-                  <Select>
-                    <SelectTrigger className="w-full md:w-[340px]">
-                      <SelectValue placeholder="Select status" />
+                  <Select onValueChange={handleRemarksChange} value={selectedRemarks}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select remarks" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Sold">Sold</SelectItem>
-                      <SelectItem value="Not Sold">Not Sold</SelectItem>
+                        <SelectItem value="Sold">Sold</SelectItem>
+                        <SelectItem value="Not Sold">Not Sold</SelectItem>
+                        <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                        <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -215,6 +254,25 @@ function Salesreport() {
               </div>
             </div>
             <div className="flex flex-row md:grid md:grid-cols-2 justify-end items-start md:items-center gap-2 md:gap-4 pt-5">
+              <Button
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onClick={() => {
+                  setRowsToShow(salesReport.length);
+                  setSearchQuery("");
+                  setStartDate("");
+                  setEndDate("");
+                  setSelectedAgent("");
+                  setSelectedCategory("");
+                  setSelectedRemarks("");
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faRefresh}
+                  className={`${isHovered ? "animate-spin" : ""}`}
+                />
+                Refresh list
+              </Button>
               <Button className="bg-red-500 text-white hover:bg-red-400 hover:text-white">
                 <FontAwesomeIcon icon={faDownload} />
                 Export to PDF
@@ -252,8 +310,8 @@ function Salesreport() {
                 onChange={handleSearch}
               />
             </div>
-            <div className="h-80 overflow-y-auto fade-in-left ">
-              <Table className='w-full'>
+            <div className="fade-in-left ">
+              <Table>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>
                     <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
@@ -269,6 +327,13 @@ function Salesreport() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                  {displayedSalesReport.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center">
+                        No data found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {displayedSalesReport.map((report, index) => (
                     <TableRow key={report.id}>
                       <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>

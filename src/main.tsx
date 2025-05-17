@@ -7,9 +7,9 @@ import Admin from './views/admin/AdminLayouts';
 import AgentBrokerLayout from './views/agent/AgentBrokerLayout';
 import Loader from './components/loader';
 import ListOfBrokerAgent from './views/admin/affialiated/table/ListOfBrokerAgent';
-import ProtectedRoute from './jwt/ProtectedRoute';
-import PublicRoute from './jwt/PublicRoute';
 import LoaderCard from './components/loaderCard'
+import ProtectedRoute from './sanctum/ProtectedRoute';
+import PublicRoute from './sanctum/PublicRoute';
 
 
 const Login = lazy(() =>
@@ -77,39 +77,38 @@ const routes = [
   {
     path: "/athomes/user-login",
     element: (
-      <PublicRoute>
         <Suspense fallback={<Loader />}>
-          <Login />
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
         </Suspense>
-      </PublicRoute>
     ),
   },
   {
     path: "/athomes/user-register",
     element: (
-      <PublicRoute>
         <Suspense fallback={<Loader />}>
-          <Register />
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+         
         </Suspense>
-      </PublicRoute>
     ),
   },
   {
     path: "/athomes/forgot-password",
     element: (
-      <PublicRoute>
         <Suspense fallback={<Loader />}>
-          <ForgotPassword />
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
         </Suspense>
-      </PublicRoute>
     ),
   },
   {
     path: "/athomes/admin",
     element: (
-      <ProtectedRoute>
-        <Admin />
-      </ProtectedRoute>
+        <ProtectedRoute element={<Admin />} allowedRoles={['0']}/>
     ),
     children: [
       {
@@ -199,9 +198,7 @@ const routes = [
   {
     path: "/athomes/agent-broker",
     element: (
-      <ProtectedRoute>
-        <AgentBrokerLayout />
-      </ProtectedRoute>
+        <ProtectedRoute element={<AgentBrokerLayout />} allowedRoles={['0', '1', '2']}/>
     ),
     children: [
       {

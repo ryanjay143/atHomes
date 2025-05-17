@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../plugin/axios";
@@ -12,6 +13,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -114,6 +117,7 @@ function ForgotPassword() {
                 onClick={() => 
                   navigate('/athomes/user-login')}
               >
+                <FontAwesomeIcon icon={faArrowLeft} />
                 Back
               </Button>
             </div>

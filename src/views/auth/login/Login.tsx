@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from '@/plugin/axios';
 import Swal from "sweetalert2";
-import { storeToken } from '@/jwt/JWTUtils';
+import { storeToken } from '@/sanctum/Token';
 
 interface LoginFormInputs {
   credential: string;
@@ -72,10 +72,10 @@ const Login = () => {
 
     try {
         const response = await axios.post('login', data);
-        const { access_token: token, user } = response.data;
+        const { access_token: access_token, user } = response.data;
 
         // Store authentication data
-        storeToken(token);
+        storeToken(access_token);
         if (user) {
             localStorage.setItem("user", JSON.stringify(user));
         }

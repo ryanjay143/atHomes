@@ -43,13 +43,14 @@ function AddSales({ fetchAgent }: AddSalesProps) {
   const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
   const [amount, setAmount] = React.useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         const response = await axios.get('sales-encoding', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         });
         setAgentBroker(response.data.agents);
@@ -60,6 +61,8 @@ function AddSales({ fetchAgent }: AddSalesProps) {
 
     fetchAgents();
   }, []);
+
+  
 
   const handleChangeAmount = (values: any) => {
     const { value } = values;
@@ -123,6 +126,17 @@ function AddSales({ fetchAgent }: AddSalesProps) {
         setFormData({ ...formData, image: file });
       }
     }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.onerror = () => {
+        setFileError('Failed to read file');
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const validateForm = () => {
@@ -155,7 +169,7 @@ function AddSales({ fetchAgent }: AddSalesProps) {
       const response = await axios.post('sales-encoding', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
       console.log('Response:', response.data);
@@ -172,8 +186,10 @@ function AddSales({ fetchAgent }: AddSalesProps) {
         image: null,
         client_name: '',
       });
+      setAmount('')
       setSelectedAgentName('Choose agent or broker');
       setIsDialogOpen(false);
+      setImagePreview(null)
 
       Swal.fire({
         icon: 'success',
@@ -297,11 +313,12 @@ function AddSales({ fetchAgent }: AddSalesProps) {
                     {errors.remarks && <p className="text-red-500 text-sm">{errors.remarks}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
+                  <div className="grid w-full gap-1.5">
                     <Label>Upload Proof of Transaction</Label>
                     <Input type="file" name="image" onChange={handleFileChange} />
                     {fileError && <p className="text-red-500 text-sm">{fileError}</p>}
                     {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
+                    {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 max-w-md rounded-md" />}
                   </div>
 
                   <DialogFooter>

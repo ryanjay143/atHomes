@@ -33,7 +33,7 @@ function ListOfPendingRegistered() {
     axios
       .get("agent-broker", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       })
       .then((e: any) => {
@@ -59,7 +59,7 @@ function ListOfPendingRegistered() {
         try {
           const response = await axios.delete(`agent-broker/${id}`, {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           });
   

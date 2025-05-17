@@ -29,7 +29,7 @@ function BrokerageProperty() {
       const response = await axios.get('property-listings', {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
@@ -141,8 +141,8 @@ function BrokerageProperty() {
                 onChange={e => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="h-80 overflow-y-auto fade-in-left ">
-              <Table className='w-full'>
+            <div className="fade-in-left ">
+              <Table>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>
                     <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>

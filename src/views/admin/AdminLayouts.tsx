@@ -30,6 +30,8 @@ function Admin() {
       iconColor: '#16a34a',
       showConfirmButton: false,
       showCloseButton: true,
+      timer: 1500,
+      timerProgressBar: true
     });
     navigate("/athomes/agent-broker"); 
      

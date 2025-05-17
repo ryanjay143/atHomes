@@ -40,13 +40,15 @@ function Admin() {
   const role = localStorage.getItem("role");
   const handleSwitchAccount = () => {
     if (role === "0") {
-      Swal.fire({
-        title:"Switch Account Success",
-        iconColor: '#16a34a',
-        icon: "success",
-        showConfirmButton: false,
-        showCloseButton: true,
-      });
+       Swal.fire({
+            title: "Switch Account Success",
+            icon: "success",
+            iconColor: '#16a34a',
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: 1500,
+            timerProgressBar: true
+          });
       navigate("/athomes/admin"); 
     }
   };
@@ -59,7 +61,7 @@ function Admin() {
           <Header />
           <div className="flex flex-row items-center">
           <div className="flex items-center space-x-2">
-      {role !== "1" && ( // Conditionally render the button if role is not 1
+      {role !== "1" && role !== "2" && ( 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>

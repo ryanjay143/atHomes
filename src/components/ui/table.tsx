@@ -7,7 +7,7 @@ const Table = React.forwardRef<
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
   <div className="relative w-full">
-    <div className="overflow-auto max-h-[700px]"> {/* Add scrollable container */}
+    <div className="overflow-auto max-h-[450px]"> {/* Add scrollable container */}
       <table
         ref={ref}
         className={cn("w-full caption-bottom text-sm ", className)}
@@ -18,21 +18,21 @@ const Table = React.forwardRef<
 ))
 Table.displayName = "Table"
 
-const TableReport = React.forwardRef<
+const TableDashboard = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
   <div className="relative w-full">
-    <div className="overflow-auto"> {/* Add scrollable container */}
+    <div className="overflow-auto max-h-[223px]"> {/* Add scrollable container */}
       <table
         ref={ref}
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm ", className)}
         {...props}
       />
     </div>
   </div>
 ))
-Table.displayName = "TableReport"
+Table.displayName = "Table"
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
@@ -40,7 +40,7 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn("[&_tr]:border-b sticky top-0 z-10 h-10 ", className)} // Make header sticky
+    className={cn("[&_tr]:border-b sticky top-0 z-10 h-10 overflow-hidden", className)} // Make header sticky
     {...props}
   />
 ))
@@ -132,7 +132,6 @@ TableCaption.displayName = "TableCaption"
 
 export {
   Table,
-  TableReport,
   TableHeader,
   TableBody,
   TableFooter,
@@ -140,4 +139,5 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  TableDashboard
 }

@@ -4,39 +4,28 @@ import { faAngleDown, faRightFromBracket, faUser } from '@fortawesome/free-solid
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../plugin/axios';
-import { getToken, isTokenExpired, removeToken } from '../../jwt/JWTUtils';
 
 const handleLogout = async (navigate: any) => {
   try {
-    const token = getToken();
-    if (!token) {
-      console.error('No token found');
-      return;
-    }
+    // Define headers for the request
+    const headers = {
+      'Content-Type': 'application/json',
+      // Add any other headers you need here
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    };
 
-    if (isTokenExpired(token)) {
-      console.error('Token is expired');
-      removeToken();
-      navigate('/', { replace: true });
-      return;
-    }
+    // Call the backend API to invalidate the Sanctum session with headers
+    await axios.post('logout', {}, { headers });
 
-    // Call the backend API to invalidate the JWT token
-    await axios.post('logout', {}, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    // Clear the token from localStorage
-    removeToken();
+    // Clear any client-side state related to authentication
     localStorage.clear();
+    console.clear();
 
     // Navigate to the home page
     navigate('/athomes');
   } catch (error) {
     console.error('Logout failed', error);
-    removeToken();
+    localStorage.clear();
     navigate('/athomes', { replace: true });
   }
 };

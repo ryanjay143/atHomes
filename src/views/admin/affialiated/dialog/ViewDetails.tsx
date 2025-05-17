@@ -26,7 +26,7 @@ function ViewDetails({ item, getPendingRegistered }: ViewDetailsProps) {
         status: 0
       }, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 

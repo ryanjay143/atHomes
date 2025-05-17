@@ -7,14 +7,14 @@ interface PublicRouteProps {
 
 function PublicRoute({ children }: PublicRouteProps) {
   const navigate = useNavigate();
-  const token = localStorage.getItem('jwtToken');
+  const token = localStorage.getItem('access_token');
   const role = localStorage.getItem('role'); // Assuming role is stored as a string in localStorage
 
   useEffect(() => {
     if (token) {
       if (role === '0') {
         navigate('/athomes/admin/user-dashboard'); // Redirect for admin
-      } else if (role === '1') {
+      } else if (role === '1' || role === '2') {
         navigate('/athomes/agent-broker'); // Redirect for agent-broker
       }
     }

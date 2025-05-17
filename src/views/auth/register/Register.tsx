@@ -87,6 +87,22 @@ function Register() {
     const { value } = e.target;
     setIsPasswordGenerated(false);
     setFormData({ ...formData, password: value, confirm_password: '' });
+
+    // Check password length and complexity
+    const hasUpperCase = /[A-Z]/.test(value);
+    const hasSymbol = /[!@#$%^&*()]/.test(value);
+
+    if (value.length < 8 || !hasUpperCase || !hasSymbol) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: "Password must be at least 8 characters long, include an uppercase letter and a symbol.",
+      }));
+    } else {
+      setErrors((prevErrors) => {
+        const { password, ...rest } = prevErrors;
+        return rest;
+      });
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -98,100 +114,110 @@ function Register() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (loading) return;
-  setLoading(true);
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);
 
-  // Validation logic
-  const newErrors: FormErrors = {};
-  if (!formData.first_name) newErrors.first_name = "First name is required.";
-  if (!formData.last_name) newErrors.last_name = "Last name is required.";
-  if (!formData.email) newErrors.email = "Email is required.";
-  if (!formData.phone) newErrors.phone = "Mobile number is required.";
-  if (!formData.gender) newErrors.gender = "Gender is required.";
-  if (!formData.role) newErrors.role = "Account type is required.";
-  if (!formData.complete_address) newErrors.complete_address = "Complete address is required.";
-  if (!formData.username) newErrors.username = "Username is required.";
-  if (!formData.password) newErrors.password = "Password is required.";
-  if (!formData.confirm_password) newErrors.confirm_password = "Confirm password is required.";
-  if (formData.password !== formData.confirm_password) newErrors.confirm_password = "Passwords do not match.";
-  if (!formData.last_school_att) newErrors.last_school_att = "Last school or course attended is required.";
+    // Validation logic
+    const newErrors: FormErrors = {};
+    if (!formData.first_name) newErrors.first_name = "First name is required.";
+    if (!formData.last_name) newErrors.last_name = "Last name is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.phone) newErrors.phone = "Mobile number is required.";
+    if (!formData.gender) newErrors.gender = "Gender is required.";
+    if (!formData.role) newErrors.role = "Account type is required.";
+    if (!formData.complete_address) newErrors.complete_address = "Complete address is required.";
+    if (!formData.username) newErrors.username = "Username is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (!formData.confirm_password) newErrors.confirm_password = "Confirm password is required.";
+    if (formData.password !== formData.confirm_password) newErrors.confirm_password = "Passwords do not match.";
+    if (!formData.last_school_att) newErrors.last_school_att = "Last school or course attended is required.";
 
-  // Conditional validation for Broker
-  if (formData.role === "2") { // Assuming "2" is the value for Broker
-    if (!formData.prc_liscence_number) newErrors.prc_liscence_number = "PRC License Number is required for Brokers.";
-    if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
-    if (!formData.validation_date) newErrors.validation_date = "Validity Date is required for Brokers."; // Add this line
-  }
+    // Conditional validation for Broker
+    if (formData.role === "2") { // Assuming "2" is the value for Broker
+      if (!formData.prc_liscence_number) newErrors.prc_liscence_number = "PRC License Number is required for Brokers.";
+      if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
+      if (!formData.validation_date) newErrors.validation_date = "Validity Date is required for Brokers.";
+    }
 
-  setErrors(newErrors);
+    setErrors(newErrors);
 
-  if (Object.keys(newErrors).length > 0) {
-    setLoading(false);
-    return;
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setLoading(false);
+      return;
+    }
 
-  try {
-    const response = await axios.post('register', formData);
-    Swal.fire({
-      title: "Registration successful!",
-      text: "Please wait for approval.",
-      icon: "success",
-      showConfirmButton: false,
-      showCloseButton: true,
-      timer: 3000,
-      timerProgressBar: true,
-    });
-
-    console.log(response.data);
-
-    setFormData({
-      acct_number: generateAccountNumber(),
-      first_name: '',
-      middle_name: '',
-      last_name: '',
-      extension_name: '',
-      email: '',
-      phone: '',
-      gender: '',
-      role: '',
-      complete_address: '',
-      username: '',
-      password: '',
-      confirm_password: '',
-      prc_liscence_number: '',
-      dhsud_registration_number: '',
-      validation_date: '',
-      last_school_att: '',
-    });
-    setErrors({});
-  } catch (error: any) {
-    console.error("Registration failed:", error);
-    if (error.response && error.response.data && error.response.data.message === "Email already taken") {
+    try {
+      const response = await axios.post('register', formData);
       Swal.fire({
-        title: "Email already taken!",
-        text: "Please login instead.",
-        icon: "warning",
-        showConfirmButton: true,
-      }).then(() => {
-        navigate('/athomes/user-register');
-      });
-    } else {
-      Swal.fire({
-        title: "Error or Email already taken!",
-        text: "Please try again.",
-        icon: "error",
+        title: "Registration successful!",
+        text: "Please wait for approval.",
+        icon: "success",
         showConfirmButton: false,
         showCloseButton: true,
         timer: 3000,
         timerProgressBar: true,
       });
+
+      console.log(response.data);
+
+      setFormData({
+        acct_number: generateAccountNumber(),
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        extension_name: '',
+        email: '',
+        phone: '',
+        gender: '',
+        role: '',
+        complete_address: '',
+        username: '',
+        password: '',
+        confirm_password: '',
+        prc_liscence_number: '',
+        dhsud_registration_number: '',
+        validation_date: '',
+        last_school_att: '',
+      });
+      setErrors({});
+    } catch (error: any) {
+      console.error("Registration failed:", error);
+      if (error.response && error.response.data && error.response.data.message === "Email already taken") {
+        Swal.fire({
+          title: "Email already taken!",
+          text: "Please login instead.",
+          icon: "warning",
+          showConfirmButton: true,
+        }).then(() => {
+          navigate('/athomes/user-register');
+        });
+      } else {
+        Swal.fire({
+          title: "Error or Email already taken!",
+          text: "Please try again.",
+          icon: "error",
+          showConfirmButton: false,
+          showCloseButton: true,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      }
+    } finally {
+      setLoading(false);
+      navigate("/athomes");
     }
-  } finally {
-    setLoading(false);
-    navigate("/");
-  }
-};
+  };
+
+  const generateRandomPassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    let password = '';
+    for (let i = 0; i < 8; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setFormData({ ...formData, password, confirm_password: password });
+    setIsPasswordGenerated(true);
+  };
 
   // JSX structure
   return (
@@ -264,15 +290,24 @@ function Register() {
             <div className="grid grid-cols-3 gap-4 md:grid-cols-2">
               <div className="hidden">
                 <Label htmlFor="acct_number">Account number</Label>
-                <Input type="text" name="acct_number"  className="h-9 bg-white" value={accountNumber} readOnly />
+                <Input type="text" name="acct_number" className="h-9 bg-white" value={accountNumber} readOnly />
               </div>
               <div>
                 <Label htmlFor="username">Username</Label> <span className="text-red-500">*</span>
                 <Input type="text" name="username" className="h-9 bg-white" placeholder="Enter username" onChange={handleChange} />
                 {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
               </div>
-              <div>
-                <Label htmlFor="password">Password</Label> <span className="text-red-500">*</span>
+              <div className="mt-1">
+                <div className="flex justify-between">
+                  <Label htmlFor="password">Password <span className="text-red-500">*</span> </Label> 
+                  <button
+                    type="button"
+                    className="text-blue-500 text-sm hover:underline md:text-[10px]"
+                    onClick={generateRandomPassword}
+                  >
+                    Generate Password
+                  </button>
+                </div>
                 <div className="relative">
                   <Input
                     type={passwordVisible ? "text" : "password"}
@@ -290,7 +325,7 @@ function Register() {
                     <FontAwesomeIcon icon={passwordVisible ? faEye : faEyeSlash} className="text-gray-500" />
                   </button>
                 </div>
-                {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
+                {errors.password && <span className="text-red-500 text-xs">{errors.password}</span>}
               </div>
               <div>
                 <Label htmlFor="confirm_password">Confirm Password</Label> <span className="text-red-500">*</span>
@@ -302,7 +337,7 @@ function Register() {
                     placeholder="Confirm Password"
                     value={formData.confirm_password}
                     onChange={handleChange}
-                    readOnly={isPasswordGenerated}
+                    readOnly={isPasswordGenerated} // Set readOnly based on isPasswordGenerated state
                   />
                   <button
                     type="button"
@@ -338,8 +373,6 @@ function Register() {
                 </Select>
                 {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
               </div>
-
-
               <div>
                 <Label htmlFor="prc_liscence_number">PRC License Number</Label>
                 <Input type="text" name="prc_liscence_number" className="h-9 bg-white" placeholder="Enter PRC License No:" onChange={handleChange} />

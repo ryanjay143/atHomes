@@ -102,7 +102,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
       await axios.post(`property-listings/${property.id}?_method=PUT`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
 
@@ -128,7 +128,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
     try {
       await axios.delete(`property-listings/${imageId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
   
