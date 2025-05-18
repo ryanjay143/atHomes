@@ -110,7 +110,7 @@ function ListOfUnliscenced() {
                   <TableCell className='border border-[#bfdbfe]'>{unlicensed?.user?.email}</TableCell>
                   <TableCell className='border border-[#bfdbfe]'>{unlicensed?.personal_info?.phone}</TableCell>
                   <TableCell className='border border-[#bfdbfe]'>
-                    {formatDateToMMDDYYYYDateApproved(unlicensed?.personal_info?.created_at)}
+                    {formatDateToMMDDYYYYDateApproved(unlicensed?.user.updated_at)}
                   </TableCell>
                   <TableCell className="text-right border border-[#bfdbfe]">
                     <div className="flex flex-row gap-1 justify-end">

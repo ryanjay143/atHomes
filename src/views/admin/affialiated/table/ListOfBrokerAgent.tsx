@@ -115,7 +115,7 @@ function ListOfBrokerAgent() {
                   </TableCell>
                   <TableCell className="border border-[#bfdbfe]">{agent?.user.email}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">{agent?.personal_info.phone}</TableCell>
-                  <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.created_at)}</TableCell>
+                  <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.updated_at)}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">
                     {agent?.prc_liscence_number !== "" ? (
                       <Badge className='bg-green-500 hover:bg-green-500 gap-1'>
@@ -172,7 +172,7 @@ function ListOfBrokerAgent() {
 
                       
 
-                      <UpdateType agent={agent} agentList={agentList}/>
+                      <UpdateType agent={agent} agentList={agentList} />
 
                     </div>
                   </TableCell>

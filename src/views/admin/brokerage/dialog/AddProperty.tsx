@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { faPlus, faPlusCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../../../plugin/axios";
 import Swal from "sweetalert2";
@@ -34,6 +35,8 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [rentalRate, setRentalRate] = useState('');
+  const [sellingPrice, setSellingPrice] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref for file input
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,87 +71,106 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
+  e.preventDefault();
+  if (loading) return;
 
-    const newErrors: { [key: string]: string } = {};
+  const newErrors: { [key: string]: string } = {};
 
-    if (!category) newErrors.category = 'Category is required.';
-    if (!dateListed) newErrors.dateListed = 'Date listed is required.';
-    if (!lotArea) newErrors.lotArea = 'Lot area is required.';
-    if (!floorArea) newErrors.floorArea = 'Floor area is required.';
-    if (!otherDetails) newErrors.otherDetails = 'Other details are required.';
-    if (!location) newErrors.location = 'Location is required.';
-    if (!type) newErrors.type = 'Type of listing is required.';
-    if (!status) newErrors.status = 'Status is required.';
-    if (images.length === 0) newErrors.images = 'At least one image is required.';
+  if (!category) newErrors.category = 'Category is required.';
+  if (!dateListed) newErrors.dateListed = 'Date listed is required.';
+  if (!lotArea) newErrors.lotArea = 'Lot area is required.';
+  if (!floorArea) newErrors.floorArea = 'Floor area is required.';
+  if (!otherDetails) newErrors.otherDetails = 'Other details are required.';
+  if (!location) newErrors.location = 'Location is required.';
+  if (!type) newErrors.type = 'Type of listing is required.';
+  if (!status) newErrors.status = 'Status is required.';
+  if (images.length === 0) newErrors.images = 'At least one image is required.';
 
-    setErrors(newErrors);
+  // Make rentalRate required only for 'Rental Properties'
+  if (category === 'Rental Properties' && !rentalRate) {
+    newErrors.rentalRate = 'Rental rate is required.';
+  }
 
-    if (Object.keys(newErrors).length > 0) {
-      return; // Stop submission if there are errors
-    }
+  // Make sellingPrice required only for 'Commercial Properties'
+  if (category === 'Commercial Properties' && !sellingPrice) {
+    newErrors.sellingPrice = 'Selling price is required.';
+  }
 
-    setLoading(true);
+  setErrors(newErrors);
 
-    const formData = new FormData();
-    formData.append('category', category);
-    formData.append('date_listed', dateListed);
-    formData.append('lot_area', lotArea);
-    formData.append('floor_area', floorArea);
-    formData.append('details', otherDetails);
-    formData.append('location', location);
-    formData.append('type_of_listing', type);
-    formData.append('status', status);
+  if (Object.keys(newErrors).length > 0) {
+    return; // Stop submission if there are errors
+  }
 
-    images.forEach((image) => {
-      formData.append('images[]', image);
+  setLoading(true);
+
+  const formData = new FormData();
+  formData.append('category', category);
+  formData.append('date_listed', dateListed);
+  formData.append('lot_area', lotArea);
+  formData.append('floor_area', floorArea);
+  formData.append('details', otherDetails);
+  formData.append('location', location);
+  formData.append('type_of_listing', type);
+  formData.append('status', status);
+
+  // Append price_and_rate based on category
+  if (category === 'Rental Properties') {
+    formData.append('price_and_rate', rentalRate);
+  } else if (category === 'Commercial Properties') {
+    formData.append('price_and_rate', sellingPrice);
+  }
+
+  images.forEach((image) => {
+    formData.append('images[]', image);
+  });
+
+  try {
+    const response = await axios.post('property-listings', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
     });
 
-    try {
-      const response = await axios.post('property-listings', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
-     
-      setIsDialogOpen(false);
-      fetchPropertiesData();
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Property listing created successfully.',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-      });
+    setIsDialogOpen(false);
+    fetchPropertiesData();
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: 'Property listing created successfully.',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
 
-      console.log('Property listing created successfully:', response.data);
+    console.log('Property listing created successfully:', response.data);
 
-      // Reset form fields after successful submission
-      setCategory('');
-      setLotArea('');
-      setFloorArea('');
-      setOtherDetails('');
-      setLocation('');
-      setType('');
-      setStatus('');
-      setImages([]);
-      setImagePreviews([]);
-     
-      onClose();
-    } catch (error) {
-      console.error('Error creating property listing:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'There was an error creating the property listing. Please try again.',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Reset form fields after successful submission
+    setCategory('');
+    setLotArea('');
+    setFloorArea('');
+    setOtherDetails('');
+    setLocation('');
+    setType('');
+    setStatus('');
+    setImages([]);
+    setImagePreviews([]);
+    setRentalRate('');
+    setSellingPrice('');
+
+    onClose();
+  } catch (error) {
+    console.error('Error creating property listing:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'There was an error creating the property listing. Please try again.',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -181,6 +203,20 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     </Select>
                     {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
                 </div>
+                {category === 'Rental Properties' && (
+                  <div>
+                    <Label>Rental Rate</Label>
+                    <Input type="number" value={rentalRate} onChange={e => setRentalRate(e.target.value)} placeholder='0.00'/>
+                    {errors.rentalRate && <p className="text-red-500 text-sm">{errors.rentalRate}</p>}
+                  </div>
+                )}
+                {category === 'Commercial Properties' && (
+                  <div>
+                    <Label>Selling Price</Label>
+                    <Input type="number" value={sellingPrice} onChange={e => setSellingPrice(e.target.value)} placeholder='0.00'/>
+                    {errors.sellingPrice && <p className="text-red-500 text-sm">{errors.sellingPrice}</p>}
+                  </div>
+                )}
                 <div>
                     <Label>Date Listed</Label>
                     <Input
@@ -256,6 +292,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     </Select>
                     {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
                 </div>
+                
                 <div>
                     <Label>Upload Property Images</Label>
                     <Input type="file" multiple onChange={handleImageChange} ref={fileInputRef} />

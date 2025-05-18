@@ -38,7 +38,7 @@ useEffect(() => {
     <Card className="fade-in-left w-full md:w-full bg-[#eff6ff] border-b-4 border-primary ">
       <CardHeader>
         <CardTitle>Top Performers</CardTitle>
-        <CardDescription>Current month</CardDescription>
+        <CardDescription>of this month</CardDescription>
       </CardHeader>
           <CardContent>
         <TableDashboard >
@@ -52,7 +52,6 @@ useEffect(() => {
           </TableHeader>
           <TableBody>
             {topPerformers.map((top, index) => (
-
               <TableRow key={top.id}>
                 <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
                 <TableCell className="font-medium border border-[#bfdbfe]">{top.first_name} {top.middle_name} {top.last_name} {top.extension_name}</TableCell>

@@ -38,7 +38,7 @@ const ROLES = {
 const ROUTES = {
   [ROLES.ADMIN]: '/athomes/admin',
   [ROLES.AGENT]: '/athomes/agent-broker/user-dashboard',
-  [ROLES.BROKER]: '/athomes/agent-broker/user-dashboard'
+  [ROLES.BROKER]:'/athomes/agent-broker/user-dashboard'
 } as const;
 
 const Login = () => {

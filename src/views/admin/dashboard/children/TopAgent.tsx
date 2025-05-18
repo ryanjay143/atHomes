@@ -12,7 +12,7 @@ function TopAgent () {
             <CardDescription>of the month</CardDescription>
           </CardHeader>
           <CardContent>
-          <div className="grid grid-cols-5 gap-4 h-56 ">
+          <div className="grid grid-cols-5 md:grid-cols-3 overflow-auto gap-4 h-56 ">
             <div className='relative flex flex-col items-center'>
               <div className='absolute top-0 left-3 bg-[#172554] rounded-full z-50 px-2 py-1 text-[#eff6ff]'>1</div>
               <Popover>

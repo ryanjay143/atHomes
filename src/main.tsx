@@ -198,7 +198,7 @@ const routes = [
   {
     path: "/athomes/agent-broker",
     element: (
-        <ProtectedRoute element={<AgentBrokerLayout />} allowedRoles={['0', '1', '2']}/>
+        <ProtectedRoute element={<AgentBrokerLayout />} allowedRoles={['1']}/>
     ),
     children: [
       {
@@ -215,6 +215,26 @@ const routes = [
       },
     ],
   },
+  // {
+  //   path: "/athomes/broker",
+  //   element: (
+  //       <ProtectedRoute element={<BrokerLayout />} allowedRoles={['0', '2']}/>
+  //   ),
+  //   children: [
+  //     {
+  //       path: "",
+  //       element: <Navigate to="/athomes/broker/broker-dashboard" />,
+  //     },
+  //     {
+  //       path: "broker-dashboard",
+  //       element: (
+  //         <Suspense fallback={<Loader />}>
+  //           <DashboardBroker />
+  //         </Suspense>
+  //       ),
+  //     },
+  //   ],
+  // },
   {
     path: "*", 
     element: <NotFound />,

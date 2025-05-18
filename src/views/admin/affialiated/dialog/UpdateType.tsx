@@ -60,11 +60,20 @@ function UpdateType({ agent, agentList }: any) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger>
-        <Button className='w-8 h-8 rounded-md bg-green-500 hover:bg-green-400'>
-          <FontAwesomeIcon icon={faPen} className="text-[#eff6ff]" />
-        </Button>
-      </DialogTrigger>
+     {agent?.prc_liscence_number !== "" && (
+        <DialogTrigger>
+          <Button 
+            className={`w-8 h-8 rounded-md ${
+              agent?.prc_liscence_number === "" 
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                : "bg-green-500 hover:bg-green-400"
+            }`}
+            disabled={agent?.prc_liscence_number === ""}
+          >
+            <FontAwesomeIcon icon={faPen} className="text-[#eff6ff]" />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="md:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className='text-start'>Edit Type</DialogTitle>
