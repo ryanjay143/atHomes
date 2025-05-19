@@ -2,16 +2,16 @@ import { ThemeProvider } from "@/components/themeProvider";
 import Profile from "../profile/Profile";
 // import Sidebar from "../admin/layouts/Sidebar";
 import { Outlet } from "react-router-dom";
-import Header from "../agent/layouts/Header";
+import BrokerHeader from "../broker/layouts/Header";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import AgentSidebar from "./../agent/layouts/Sidebar";
+import BrokerSidebar from "./../broker/layouts/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-function AgentBrokerLayout() {
+function BrokerLayout() {
   const [isHovered, setIsHovered] = useState(false);
   const [showScroll, setShowScroll] = useState(false); // Added missing state
   const navigate = useNavigate(); // Initialize useNavigate
@@ -56,9 +56,9 @@ function AgentBrokerLayout() {
   return (
     <>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <AgentSidebar />
+        <BrokerSidebar />
         <div className="bg-primary md:h-16 md:z-30 md:fixed border ml-72 md:ml-0 md:w-full flex flex-row md:rounded-b-[5px] rounded-bl-lg justify-between items-center px-6 py-2">
-          <Header />
+          <BrokerHeader />
           <div className="flex flex-row items-center">
           <div className="flex items-center space-x-2">
       {role !== "1" && role !== "2" && ( 
@@ -103,4 +103,4 @@ function AgentBrokerLayout() {
   );
 }
 
-export default AgentBrokerLayout;
+export default BrokerLayout;

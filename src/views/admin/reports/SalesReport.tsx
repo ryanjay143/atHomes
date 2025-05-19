@@ -314,16 +314,16 @@ const [isHovered, setIsHovered] = useState(false);
               <Table>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Account No.</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Affiliated</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Client name</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Category</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Reservation date</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Location</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Amount</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Remarks</TableHead>
-                    <TableHead className="text-right border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Action</TableHead>
+                    <TableHead>#</TableHead>
+                    <TableHead>Account No.</TableHead>
+                    <TableHead>Affiliated</TableHead>
+                    <TableHead>Client name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Reservation date</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Remarks</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

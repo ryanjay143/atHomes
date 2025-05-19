@@ -217,14 +217,14 @@ const handleDelete = async (id: number) => {
               <Table className='w-full'>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Client name</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Category</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Reservation Date</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Amount</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Location</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Remarks</TableHead>
-                    <TableHead className="text-right border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Action</TableHead>
+                    <TableHead>#</TableHead>
+                    <TableHead>Client name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Reservation Date</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Remarks</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

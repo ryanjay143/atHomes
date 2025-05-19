@@ -177,7 +177,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
         <DialogTrigger>
         <Button className="">
             <FontAwesomeIcon icon={faPlus} />
-            Add Property
+            Add Brokerage
         </Button>
         </DialogTrigger>
         <DialogContent className="md:max-w-[400px] overflow-auto max-h-[95%]">

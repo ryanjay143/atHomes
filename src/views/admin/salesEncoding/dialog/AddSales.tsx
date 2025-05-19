@@ -271,7 +271,7 @@ function AddSales({ fetchAgent }: AddSalesProps) {
                   </div>
 
                   <div className="grid w-full items-center gap-1.5">
-                    <Label>Date of Sale</Label>
+                    <Label>Reservation Date</Label>
                     <Input type="date" name="date_on_sale" value={formData.date_on_sale} onChange={handleDateChange} />
                     {errors.date_on_sale && <p className="text-red-500 text-sm">{errors.date_on_sale}</p>}
                   </div>

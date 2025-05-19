@@ -81,7 +81,7 @@ function ListOfUnliscenced() {
               <TableHead>Email address</TableHead>
               <TableHead>Contact number</TableHead>
               <TableHead>Date Approved</TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -38,7 +38,7 @@ const ROLES = {
 const ROUTES = {
   [ROLES.ADMIN]: '/athomes/admin',
   [ROLES.AGENT]: '/athomes/agent-broker/user-dashboard',
-  [ROLES.BROKER]:'/athomes/agent-broker/user-dashboard'
+  [ROLES.BROKER]:'/athomes/broker/broker-dashboard'
 } as const;
 
 const Login = () => {
@@ -199,9 +199,9 @@ const Login = () => {
 
           {/* Forgot Password Link */}
           <div className='flex justify-end'>
-            <Link 
+            <Link
               to="/athomes/forgot-password" 
-              className='text-sm text-primary hover:text-primary-dark'
+              className={`text-sm text-primary hover:text-primary-dark${loading ? ' pointer-events-none opacity-50' : ''}`}
             >
               Forgot Password?
             </Link>
@@ -213,7 +213,7 @@ const Login = () => {
               Don't have an account?
               <Link 
                 to="/athomes/user-register" 
-                className='text-primary hover:text-primary-dark ml-1'
+                className={`text-primary hover:text-primary-dark ml-1${loading ? ' pointer-events-none opacity-50' : ''} `}
               >
                 Register
               </Link>

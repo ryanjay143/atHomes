@@ -145,13 +145,13 @@ function BrokerageProperty() {
               <Table>
                 <TableHeader className="bg-primary text-base">
                   <TableRow>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">#</TableHead>
-                    <TableHead className="border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Category</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Date Listed</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Location</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Type</TableHead>
-                    <TableHead className='border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary'>Status</TableHead>
-                    <TableHead className="text-right border border-[#bfdbfe] md:text-sm text-accent font-bold bg-primary">Action</TableHead>
+                    <TableHead>#</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Date Listed</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

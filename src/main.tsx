@@ -3,17 +3,29 @@ import { Navigate, RouterProvider, createBrowserRouter } from "react-router-dom"
 import React, { Suspense, lazy } from "react";
 import NotFound from './notFound';
 import './index.css';
+
+
 import Admin from './views/admin/AdminLayouts';
 import AgentBrokerLayout from './views/agent/AgentBrokerLayout';
+import Brokerlayout from './views/broker/BrokerLayout';
+
 import Loader from './components/loader';
-import ListOfBrokerAgent from './views/admin/affialiated/table/ListOfBrokerAgent';
 import LoaderCard from './components/loaderCard'
 import ProtectedRoute from './sanctum/ProtectedRoute';
 import PublicRoute from './sanctum/PublicRoute';
 
 
+
 const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
+);
+
+const ListOfBrokerAgent = lazy(() =>
+  wait(3000).then(() => import("./views/admin/affialiated/table/ListOfBrokerAgent"))
+);
+
+const DashboardBroker = lazy(() =>
+  wait(3000).then(() => import("./views/broker/dashboard/DashboardBroker"))
 );
 
 const Register = lazy(() =>
@@ -215,26 +227,26 @@ const routes = [
       },
     ],
   },
-  // {
-  //   path: "/athomes/broker",
-  //   element: (
-  //       <ProtectedRoute element={<BrokerLayout />} allowedRoles={['0', '2']}/>
-  //   ),
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: <Navigate to="/athomes/broker/broker-dashboard" />,
-  //     },
-  //     {
-  //       path: "broker-dashboard",
-  //       element: (
-  //         <Suspense fallback={<Loader />}>
-  //           <DashboardBroker />
-  //         </Suspense>
-  //       ),
-  //     },
-  //   ],
-  // },
+  {
+    path: "/athomes/broker",
+    element: (
+        <ProtectedRoute element={<Brokerlayout />} allowedRoles={['2']}/>
+    ),
+    children: [
+      {
+        path: "",
+        element: <Navigate to="/athomes/broker/broker-dashboard" />,
+      },
+      {
+        path: "broker-dashboard",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <DashboardBroker />
+          </Suspense>
+        ),
+      },
+    ],
+  },
   {
     path: "*", 
     element: <NotFound />,

@@ -13,9 +13,11 @@ function PublicRoute({ children }: PublicRouteProps) {
   useEffect(() => {
     if (token) {
       if (role === '0') {
-        navigate('/athomes/admin/user-dashboard'); // Redirect for admin
-      } else if (role === '1' || role === '2') {
-        navigate('/athomes/agent-broker'); // Redirect for agent-broker
+        navigate('/athomes/admin/user-dashboard');
+      } else if (role === '1') {
+        navigate('/athomes/agent-broker'); 
+      }  else if (role === '2') {
+        navigate('/athomes/broker'); 
       }
     }
   }, [token, role, navigate]);

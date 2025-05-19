@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { faEye, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Navigation from './navigation/NavigationDeveloper';
 import axios from "../../../plugin/axios";
@@ -356,13 +356,13 @@ const DeveloperContainer: React.FC = () => {
                         <Table className='w-full'>
                             <TableHeader className="sticky top-0 bg-primary">
                                 <TableRow>
-                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">#</TableHead>
-                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Photo</TableHead>
-                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Developer name</TableHead>
-                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Email address</TableHead>
-                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Location</TableHead>
-                                    <TableHead className='border border-[#bfdbfe] text-accent font-bold bg-primary'>Phone number</TableHead>
-                                    <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Action</TableHead>
+                                    <TableHead>#</TableHead>
+                                    <TableHead>Photo</TableHead>
+                                    <TableHead>Developer name</TableHead>
+                                    <TableHead>Email address</TableHead>
+                                    <TableHead>Location</TableHead>
+                                    <TableHead>Phone number</TableHead>
+                                    <TableHead className="text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

@@ -44,10 +44,10 @@ useEffect(() => {
         <TableDashboard >
           <TableHeader>
             <TableRow>
-              <TableHead className="border border-[#bfdbfe] bg-primary">Top</TableHead>
-              <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary">Affiliated</TableHead>
-              <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Total Reserved</TableHead>
-              <TableHead className="text-right border border-[#bfdbfe] text-accent font-bold bg-primary">Total Sales</TableHead>
+              <TableHead>Rank</TableHead>
+              <TableHead>Affiliated</TableHead>
+              <TableHead>Total Reserved</TableHead>
+              <TableHead>Total Sales</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
