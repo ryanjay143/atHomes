@@ -14,10 +14,16 @@ import LoaderCard from './components/loaderCard'
 import ProtectedRoute from './sanctum/ProtectedRoute';
 import PublicRoute from './sanctum/PublicRoute';
 
-
-
 const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
+);
+
+const SalesAgentEncoding = lazy(() =>
+  wait(3000).then(() => import("./views/agent/salesEncoding/SalesAgentEncoding"))
+);
+
+const AgentBrokerage = lazy(() =>
+  wait(3000).then(() => import("./views/agent/brokerage/AgentBrokerage"))
 );
 
 const ListOfBrokerAgent = lazy(() =>
@@ -225,6 +231,22 @@ const routes = [
           </Suspense>
         ),
       },
+      {
+        path: "agent-salesEncoding",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SalesAgentEncoding />
+          </Suspense>
+        ),
+      },
+      {
+        path: "agent-brokerage",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AgentBrokerage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -245,6 +267,7 @@ const routes = [
           </Suspense>
         ),
       },
+      
     ],
   },
   {

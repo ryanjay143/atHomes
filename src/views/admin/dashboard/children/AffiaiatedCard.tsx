@@ -3,7 +3,8 @@ import axios from "../../../../plugin/axios"
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileCircleXmark, faIdBadge, faUserClock, faUsers } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function AffiaiatedCard() {
     const [brokeraAgentCount, setBrokerAgent] = useState<number>(0);  
@@ -11,6 +12,7 @@ function AffiaiatedCard() {
     const [agentLicensed, setAgentLicensed] = useState<number>(0);
     const [agentUnLicensed, setagentUnLicensed] = useState<number>(0);
     
+    const navigate = useNavigate();
 
     const cardCounts = async () => {
     try {
@@ -31,7 +33,18 @@ function AffiaiatedCard() {
       console.log("Unlicensed Agents Count:", response.data.agentsUnlicensedCount);
       
     } catch (error) {
+
       console.error('Error fetching members:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to fetch data. Please login again.',
+        confirmButtonText: 'OK',
+      })
+      localStorage.clear();
+      console.clear();
+      navigate('/athomes');
+      
     }
   };
 

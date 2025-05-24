@@ -74,7 +74,7 @@ function AdminSidebar() {
 
           {/* Navigation Menu */}
           <nav className="w-full">
-            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2 ">
+            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2">
               {links.map((link) => (
                 <li
                   key={link.path}

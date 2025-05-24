@@ -114,11 +114,13 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   formData.append('type_of_listing', type);
   formData.append('status', status);
 
-  // Append price_and_rate based on category
+  // Append price_and_rate based on category, or an empty string if not applicable
   if (category === 'Rental Properties') {
     formData.append('price_and_rate', rentalRate);
   } else if (category === 'Commercial Properties') {
     formData.append('price_and_rate', sellingPrice);
+  } else {
+    formData.append('price_and_rate', ''); // Ensure the field is always present
   }
 
   images.forEach((image) => {

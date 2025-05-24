@@ -6,22 +6,10 @@ import { Label } from '@/components/ui/label';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-// Define the Developer interface if not imported
-interface Developer {
-    id: number;
-    dev_name: string;
-    dev_email: string;
-    dev_phone: string;
-    dev_location: string;
-    image: string | File | null;
-    status: number;
-    created_at: string;
-    updated_at: string;
-}
 
 interface AddDeveloperProps {
-    developerData: Developer;
-    setDeveloperData: React.Dispatch<React.SetStateAction<Developer>>;
+    developerData: any;
+    setDeveloperData: React.Dispatch<React.SetStateAction<any>>;
     isDialogOpen: boolean;
     setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isSubmitting: boolean;

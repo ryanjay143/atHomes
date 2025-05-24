@@ -46,6 +46,7 @@ useEffect(() => {
             <TableRow>
               <TableHead>Rank</TableHead>
               <TableHead>Affiliated</TableHead>
+              <TableHead>Role</TableHead>
               <TableHead>Total Reserved</TableHead>
               <TableHead>Total Sales</TableHead>
             </TableRow>
@@ -55,6 +56,7 @@ useEffect(() => {
               <TableRow key={top.id}>
                 <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
                 <TableCell className="font-medium border border-[#bfdbfe]">{top.first_name} {top.middle_name} {top.last_name} {top.extension_name}</TableCell>
+                <TableCell className="text-right border border-[#bfdbfe]">{top.role}</TableCell>
                 <TableCell className="text-right border border-[#bfdbfe]">{top.totalReserved}</TableCell>
                 <TableCell className="text-right border border-[#bfdbfe]">{currencyFormatter.format(top.totalSales)}</TableCell>
               </TableRow>

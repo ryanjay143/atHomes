@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Developer, Project } from '../../../../helper/developer'; // Adjust the path as necessary
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -9,8 +8,8 @@ import { faPlus, faArrowRight, faTrash } from "@fortawesome/free-solid-svg-icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface AddProjectProps {
-    developer: Developer;
-    projects: Project[];
+    developer: any;
+    projects: any[];
     dialogOpenState: boolean;
     toggleDialogOpen: (developerId: number, isOpen: boolean) => void;
     handleProjectChange: (developerId: number, index: number, field: string, value: string | number) => void;

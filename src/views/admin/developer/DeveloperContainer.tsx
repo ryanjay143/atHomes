@@ -14,40 +14,10 @@ import AddDeveloper from './children/AddDeveloper';
 import AddProject from './children/AddProject';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import EditDeveloper from './dialog/EditDeveloper';
-
-interface Developer {
-    id: number;
-    dev_name: string;
-    dev_email: string;
-    dev_phone: string;
-    dev_location: string;
-    image: string | File | null;
-    status: number;
-    created_at: string;
-    updated_at: string;
-    projects?: {
-        id: number;
-        project_name: string;
-        project_location: string;
-        project_category: string;
-        total_units: number;
-        available_units: number;
-        status: string;
-    }[];
-}
-
-interface Project {
-    id: number;
-    name: string;
-    location: string;
-    category: string;
-    units: number;
-    status: string;
-    developer_id?: number; 
-}
+import { useNavigate } from 'react-router-dom';
 
 const DeveloperContainer: React.FC = () => {
-    const [developerData, setDeveloperData] = useState<Developer>({
+    const [developerData, setDeveloperData] = useState<any>({
         id: 0,
         dev_name: '',
         dev_email: '',
@@ -58,8 +28,8 @@ const DeveloperContainer: React.FC = () => {
         created_at: '',
         updated_at: '',
     });
-    const [projects, setProjects] = useState<{ [key: number]: Project[] }>({});
-    const [getAllDeveloper, setGetAllDeveloper] = useState<Developer[]>([]);
+    const [projects, setProjects] = useState<{ [key: number]: any[] }>({});
+    const [getAllDeveloper, setGetAllDeveloper] = useState<any[]>([]);
     const [entriesToShow, setEntriesToShow] = useState<number>(10); // State for number of entries to show
     const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -74,6 +44,8 @@ const DeveloperContainer: React.FC = () => {
         dev_location: '',
         image: '',
     });
+    const navigate = useNavigate();
+
 
     const fetchDevelopers = async () => {
         try {
@@ -85,13 +57,22 @@ const DeveloperContainer: React.FC = () => {
             setGetAllDeveloper(response.data.developers);
 
             // Initialize projects with a default project for each developer
-            const initialProjects: { [key: number]: Project[] } = {};
-            response.data.developers.forEach((developer: Developer) => {
+            const initialProjects: { [key: number]: any[] } = {};
+            response.data.developers.forEach((developer: any) => {
                 initialProjects[developer.id] = [{ id: Date.now(), name: '', location: '', category: '', units: 0, status: '', developer_id: developer.id }];
             });
             setProjects(initialProjects);
         } catch (error) {
             console.error('Error fetching developers:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to fetch developers. Please login again.',
+                confirmButtonText: 'OK',
+            })
+            localStorage.clear();
+            console.clear();
+            navigate('/athomes');
         }
     };
 
@@ -272,7 +253,9 @@ const DeveloperContainer: React.FC = () => {
                 icon: 'success',
                 title: 'Success',
                 text: 'Projects added successfully!',
-                confirmButtonText: 'OK',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
             });
     
             setDialogOpenStates(prevState => ({
@@ -427,21 +410,22 @@ const DeveloperContainer: React.FC = () => {
                                                             <DialogHeader>
                                                                 <DialogTitle className='text-start mb-10'><span className='uppercase'>{developer.dev_name}</span> Projects</DialogTitle>
                                                                 <DialogDescription>
-                                                                    {developer.projects && developer.projects.length > 0 ? (
+                                                                    
                                                                         <Table>
                                                                             <TableHeader>
                                                                                 <TableRow>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">#</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Project name</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Location</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Category</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Total Units</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Total Available</TableHead>
-                                                                                    <TableHead className="border border-[#bfdbfe] text-accent font-bold bg-primary text-center">Status</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">#</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Project name</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Location</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Category</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Total Units</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Total Available</TableHead>
+                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Status</TableHead>
                                                                                 </TableRow>
                                                                             </TableHeader>
                                                                             <TableBody>
-                                                                                {developer.projects.map((project, index) => (
+                                                                                {developer.projects && developer.projects.length > 0 ? (
+                                                                                developer.projects.map((project:any, index:any) => (
                                                                                     <TableRow key={project.id}>
                                                                                         <TableCell className='border border-[#bfdbfe]'>{index + 1}</TableCell>
                                                                                         <TableCell className='border border-[#bfdbfe]'>{project.project_name}</TableCell>
@@ -451,12 +435,14 @@ const DeveloperContainer: React.FC = () => {
                                                                                         <TableCell className='border border-[#bfdbfe] text-red-500'>{project.available_units}</TableCell>
                                                                                         <TableCell className='border border-[#bfdbfe]'>{project.status}</TableCell>
                                                                                     </TableRow>
-                                                                                ))}
+                                                                                ))
+                                                                                ) : (
+                                                                                    <TableRow>
+                                                                                        <TableCell colSpan={7} className="text-center">No projects available.</TableCell>
+                                                                                    </TableRow>
+                                                                                )}
                                                                             </TableBody>
                                                                         </Table>
-                                                                    ) : (
-                                                                        <p>No projects available for this developer.</p>
-                                                                    )}
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                         </DialogContent>

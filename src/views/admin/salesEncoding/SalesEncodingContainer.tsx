@@ -28,31 +28,31 @@ import EditSalesDialog from './dialog/EditSalesDialog';
 import Swal from 'sweetalert2';
 
 // Types
-interface Agent {
-  id: string;
-  personal_info: {
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    extension_name?: string;
-  };
-}
+// interface Agent {
+//   id: string;
+//   personal_info: {
+//     first_name: string;
+//     middle_name: string;
+//     last_name: string;
+//     extension_name?: string;
+//   };
+// }
 
-interface SalesEncoding {
-  id: number;
-  agent: Agent;
-  category: string;
-  date_on_sale: string;
-  amount: number;
-  location: string;
-  remarks: string;
-  image: string;
-  client_name: string; // Add client_name to the SalesEncoding interface
-}
+// interface SalesEncoding {
+//   id: number;
+//   agent: Agent;
+//   category: string;
+//   date_on_sale: string;
+//   amount: number;
+//   location: string;
+//   remarks: string;
+//   image: string;
+//   client_name: string; // Add client_name to the SalesEncoding interface
+// }
 
 function SalesEncodingContainer() {
-  const [salesEncodings, setSalesEncodings] = useState<SalesEncoding[]>([]);
-  const [getAgentBroker, setAgentBroker] = useState<Agent[]>([]);
+  const [salesEncodings, setSalesEncodings] = useState<any[]>([]);
+  const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [entriesToShow, setEntriesToShow] = useState<number>(10);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');

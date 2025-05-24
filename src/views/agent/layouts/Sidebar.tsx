@@ -22,8 +22,8 @@ function AdminSidebar() {
   // Navigation links
   const links = [
     { path: "/athomes/agent-broker/user-dashboard", icon: faTachometerAlt, label: "Dashboard" },
-    { path: "/athomes/admin/sales-encoding", icon: faKeyboard, label: "Sales Encoding" },
-    { path: "/athomes/admin/brokerage-property", icon: faHome, label: "Brokerage/Property" },
+    { path: "/athomes/agent-broker/agent-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
+    { path: "/athomes/agent-broker/agent-brokerage", icon: faHome, label: "Brokerage/Property" },
     { path: "/athomes/admin/sales-report", icon: faChartLine, label: "Sales Report" },
   ];
 

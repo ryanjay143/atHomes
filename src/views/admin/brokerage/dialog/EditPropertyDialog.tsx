@@ -8,14 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "../../../../plugin/axios";
 import Swal from 'sweetalert2';
 
-interface EditPropertyDialogProps {
-  property: any;
-  onClose: () => void;
-  fetchPropertiesData: () => void;
-}
-
-function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditPropertyDialogProps) {
+function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   const [category, setCategory] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [dateListed, setDateListed] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
@@ -23,12 +18,12 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
   const [lotArea, setLotArea] = useState('');
   const [floorArea, setFloorArea] = useState('');
   const [otherDetails, setOtherDetails] = useState('');
+  const [priceAndRate, setPriceAndRate] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (property) {
@@ -40,6 +35,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
       setLotArea(property.lot_area || '');
       setFloorArea(property.floor_area || '');
       setOtherDetails(property.details || '');
+      setPriceAndRate(property.price_and_rate || '');
       setExistingImages(property.property_images || []);
     }
   }, [property]);
@@ -63,11 +59,14 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
     }
   };
 
-  const handleRemoveImage = (index: number, e: React.MouseEvent) => {
+  const handleRemoveImagePreview = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(newPreviews);
     const newImages = images.filter((_, i) => i !== index);
     setImages(newImages);
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+
     if (fileInputRef.current) {
       const dataTransfer = new DataTransfer();
       newImages.forEach(file => dataTransfer.items.add(file));
@@ -93,6 +92,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
     formData.append('location', location);
     formData.append('type_of_listing', type);
     formData.append('status', status);
+    formData.append('price_and_rate', priceAndRate);
 
     images.forEach((image) => {
       formData.append('images[]', image);
@@ -132,19 +132,9 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
         },
       });
   
-      // Update the UI after successful deletion
       const updatedImages = existingImages.filter((_, i) => i !== index);
       updatePropertyImages(updatedImages);
       fetchPropertiesData();
-  
-      // Swal.fire({
-      //   icon: 'success',
-      //   title: 'Deleted',
-      //   text: 'Image deleted successfully.',
-      //   showConfirmButton: false,
-      //   timer: 2000,
-      //   timerProgressBar: true,
-      // });
     } catch (error) {
       console.error('Error deleting image:', error);
       Swal.fire({
@@ -158,9 +148,9 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
   return (
     <DialogContent className="md:max-w-[400px] overflow-auto max-h-[95%] p-6 bg-white rounded-lg shadow-lg">
       <DialogHeader className='text-start'>
-        <DialogTitle className="text-xl font-bold">Edit Property Listing</DialogTitle>
+        <DialogTitle className="text-xl font-bold">Edit Brokerage Listing</DialogTitle>
         <DialogDescription>
-          Make changes to your property here. Click save when you're done.
+          Make changes to your brokerage here. Click save when you're done.
         </DialogDescription>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -181,6 +171,19 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
               </SelectContent>
             </Select>
           </div>
+
+          {/* Conditionally render the price or rate input */}
+          {(category === "Commercial Properties" || category === "Rental Properties") && (
+            <div>
+              <Label>{category === "Commercial Properties" ? "Selling Price" : "Rental Rate"}</Label>
+              <Input
+                type="text"
+                value={priceAndRate}
+                onChange={e => setPriceAndRate(e.target.value)}
+              />
+            </div>
+          )}
+
           <div>
             <Label>Date Listed</Label>
             <Input type="date" value={dateListed} onChange={e => setDateListed(e.target.value)} />
@@ -269,7 +272,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        deleteImage(image.id, index); // Call the delete function with image ID and index
+                        deleteImage(image.id, index);
                       }}
                     >
                       &times;
@@ -292,12 +295,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: EditProp
                   />
                   <button
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      const newPreviews = imagePreviews.filter((_: string, i: number) => i !== index);
-                      setImagePreviews(newPreviews);
-                    }}
+                    onClick={(e) => handleRemoveImagePreview(index, e)}
                   >
                     &times;
                   </button>

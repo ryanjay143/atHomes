@@ -160,7 +160,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            'Content-Type': 'multipart/form-data', // Ensure the correct content type
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -174,6 +174,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
           title: 'Success',
           text: 'Sales encoding updated successfully!',
           timer: 2000,
+          timerProgressBar: true,
           showConfirmButton: false,
         });
       }
@@ -334,7 +335,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
           </div>
           {error && <div className="text-red-500">{error}</div>}
           <DialogFooter>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className='bg-green-500 hover:bg-green-400'>
               {loading ? (
                 <>
                   <span>Saving...</span>
