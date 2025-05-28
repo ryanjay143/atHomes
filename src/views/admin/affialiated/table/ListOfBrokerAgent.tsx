@@ -10,12 +10,14 @@ import { formatDateToMMDDYYYY, formatDateToMMDDYYYYDateApproved } from "@/helper
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import UpdateType from '../dialog/UpdateType';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 function ListOfBrokerAgent() {
   const [listtofAgents, setAgentList] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>(''); // State for search input
   const [entriesToShow, setEntriesToShow] = useState<number | 'all'>('all'); // Default to 'all'
-
+  const navigate = useNavigate();
 
   const agentList = async () => {
     try {
@@ -30,7 +32,17 @@ function ListOfBrokerAgent() {
       console.log('List of Approved:', response.data.agentList);
       setAgentList(response.data.agentList);
     } catch (error) {
-      console.error('Error fetching members:', error);
+
+      console.error('Error fetching agent and broker:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to fetching agent and broker. Please login again.',
+        confirmButtonText: 'OK',
+      })
+      localStorage.clear();
+      console.clear();
+      navigate('/athomes');
     }
   };
 

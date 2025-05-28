@@ -1,138 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { NumericFormat } from 'react-number-format'; // Import NumericFormat
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { faArrowRight, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState, useEffect } from "react";
+import { NumericFormat } from "react-number-format";
+import axios from '../../../../plugin/axios';
+import Swal from "sweetalert2";
+import { Input } from "@/components/ui/input";
 
-function AddSales({ fetchAgent }:any) {
-  const [formData, setFormData] = useState<{
-    agent_id: string;
-    category: string;
-    date_on_sale: string;
-    amount: string;
-    location: string;
-    remarks: string;
-    image: File | null; // Allow both File and null
-    client_name: string;
-  }>({
-    agent_id: '',
+
+function AddSales({ fetchAgent, identityDetails }: any) {
+  const [formData, setFormData] = useState<any>({
+    agent_id: identityDetails.id,
     category: '',
     date_on_sale: new Date().toISOString().split('T')[0],
     amount: '',
     location: '',
     remarks: '',
-    image: null, // Initialize as null
+    image: null,
     client_name: '',
   });
 
-  const [selectedAgentName, setSelectedAgentName] = useState('Choose agent or broker');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [amount, setAmount] = React.useState('');
+  const [amount, setAmount] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  
+  const [fileError, setFileError] = useState<string | null>(null);
+
   useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const response = await axios.get('sales-encoding', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-        setAgentBroker(response.data.agents);
-      } catch (error) {
-        console.error('Error fetching agents:', error);
-      }
-    };
-
-    fetchAgents();
-  }, []);
-
-  
-
-  const handleChangeAmount = (values: any) => {
-    const { value } = values;
-    setAmount(value);
-    setFormData({
-      ...formData,
-      amount: value,
-    });
-    // Add validation logic if needed
-    if (value === '') {
-      setErrors({ amount: 'Amount is required' });
-    } else {
-      setErrors({});
-    }
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    const selectedAgent = getAgentBroker.find(agent => agent.id === value);
-    if (selectedAgent) {
-      const fullName = `${selectedAgent.personal_info.first_name} ${selectedAgent.personal_info.middle_name} ${selectedAgent.personal_info.last_name} ${selectedAgent.personal_info.extension_name}`;
-      setSelectedAgentName(fullName);
-      console.log('Selected Agent:', fullName);
-    }
-  };
-
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = event.target.value;
-    setFormData({
-      ...formData,
-      date_on_sale: selectedDate,
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null; // Allow null
-    if (file) {
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-      const maxSize = 2048 * 1024; // 2MB
-
-      if (!validTypes.includes(file.type)) {
-        setFileError('Invalid file type. Only JPEG, PNG, JPG, and GIF are allowed.');
-        setFormData({ ...formData, image: null });
-      } else if (file.size > maxSize) {
-        setFileError('File size exceeds the maximum limit of 2MB.');
-        setFormData({ ...formData, image: null });
-      } else {
-        setFileError(null);
-        setFormData({ ...formData, image: file });
-      }
-    }
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.onerror = () => {
-        setFileError('Failed to read file');
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    // Update agent_id whenever identityDetails changes
+    setFormData((prevData:any) => ({
+      ...prevData,
+      agent_id: identityDetails.id,
+    }));
+  }, [identityDetails]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -161,7 +65,7 @@ function AddSales({ fetchAgent }:any) {
     });
 
     try {
-      const response = await axios.post('sales-encoding', formDataToSend, {
+      const response = await axios.post('user/agent-sales', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -172,7 +76,7 @@ function AddSales({ fetchAgent }:any) {
       fetchAgent();
 
       setFormData({
-        agent_id: '',
+        agent_id: identityDetails.id,
         category: '',
         date_on_sale: new Date().toISOString().split('T')[0],
         amount: '',
@@ -181,10 +85,9 @@ function AddSales({ fetchAgent }:any) {
         image: null,
         client_name: '',
       });
-      setAmount('')
-      setSelectedAgentName('Choose agent or broker');
+      setAmount('');
       setIsDialogOpen(false);
-      setImagePreview(null)
+      setImagePreview(null);
 
       Swal.fire({
         icon: 'success',
@@ -209,6 +112,73 @@ function AddSales({ fetchAgent }:any) {
     }
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = event.target.value;
+    setFormData({
+      ...formData,
+      date_on_sale: selectedDate,
+    });
+  };
+
+  const handleChangeAmount = (values: any) => {
+    const { value } = values;
+    setAmount(value);
+    setFormData({
+      ...formData,
+      amount: value,
+    });
+    if (value === '') {
+      setErrors({ amount: 'Amount is required' });
+    } else {
+      setErrors({});
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+      const maxSize = 2048 * 1024;
+
+      if (!validTypes.includes(file.type)) {
+        setFileError('Invalid file type. Only JPEG, PNG, JPG, and GIF are allowed.');
+        setFormData({ ...formData, image: null });
+      } else if (file.size > maxSize) {
+        setFileError('File size exceeds the maximum limit of 2MB.');
+        setFormData({ ...formData, image: null });
+      } else {
+        setFileError(null);
+        setFormData({ ...formData, image: file });
+      }
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.onerror = () => {
+        setFileError('Failed to read file');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -223,24 +193,12 @@ function AddSales({ fetchAgent }:any) {
             <DialogTitle className='text-start'>ADD SALES ENCODING</DialogTitle>
             <DialogDescription>
               <form onSubmit={addSalesSubmit}>
-                <div className='text-start flex flex-col gap-4'>
-                  <div className="grid mt-5 w-full items-start gap-1.5">
-                    <Label>Agent/Broker</Label>
-                    <Select onValueChange={(value) => handleSelectChange('agent_id', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose agent or broker">{selectedAgentName}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getAgentBroker.map((agent) => (
-                          <SelectItem key={agent.id} value={agent.id}>
-                            {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.agent_id && <p className="text-red-500 text-sm">{errors.agent_id}</p>}
-                  </div>
-
+                <div className='text-start flex flex-col gap-4 mt-5'>
+                  {false && (
+                    <div className="grid  w-full items-start gap-1.5">
+                        <Input value={identityDetails.id} />
+                    </div>
+                    )}
                   <div className="grid w-full items-start gap-1.5">
                     <Label>Category</Label>
                     <Select onValueChange={(value) => handleSelectChange('category', value)}>
@@ -281,7 +239,7 @@ function AddSales({ fetchAgent }:any) {
                       allowNegative={false}
                       placeholder="0.00"
                       onValueChange={handleChangeAmount}
-                      className="flex h-9 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" // Add your input class here
+                      className="flex h-9 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                     />
                     {errors.amount && <p className="text-red-500 text-sm">{errors.amount}</p>}
                   </div>
@@ -299,10 +257,10 @@ function AddSales({ fetchAgent }:any) {
                         <SelectValue placeholder="Select remarks" />
                       </SelectTrigger>
                       <SelectContent>
-                          <SelectItem value="Sold">Sold</SelectItem>
-                          <SelectItem value="Not Sold">Not Sold</SelectItem>
-                          <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
-                          <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
+                        <SelectItem value="Sold">Sold</SelectItem>
+                        <SelectItem value="Not Sold">Not Sold</SelectItem>
+                        <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                        <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.remarks && <p className="text-red-500 text-sm">{errors.remarks}</p>}

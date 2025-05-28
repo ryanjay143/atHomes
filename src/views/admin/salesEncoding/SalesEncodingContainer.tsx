@@ -26,29 +26,8 @@ import AddSales from './dialog/AddSales';
 import ViewReceipt from './dialog/ViewReceipt';
 import EditSalesDialog from './dialog/EditSalesDialog';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
-// Types
-// interface Agent {
-//   id: string;
-//   personal_info: {
-//     first_name: string;
-//     middle_name: string;
-//     last_name: string;
-//     extension_name?: string;
-//   };
-// }
-
-// interface SalesEncoding {
-//   id: number;
-//   agent: Agent;
-//   category: string;
-//   date_on_sale: string;
-//   amount: number;
-//   location: string;
-//   remarks: string;
-//   image: string;
-//   client_name: string; // Add client_name to the SalesEncoding interface
-// }
 
 function SalesEncodingContainer() {
   const [salesEncodings, setSalesEncodings] = useState<any[]>([]);
@@ -58,6 +37,7 @@ function SalesEncodingContainer() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('');
   const [editDialogOpenId, setEditDialogOpenId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   // Fetch agents and sales encodings
   useEffect(() => {
@@ -84,6 +64,15 @@ function SalesEncodingContainer() {
       console.log("List of Sales:", response.data.salesEncoding)
     } catch (error) {
       console.error('Error fetching data:', error);
+       Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetching data. Please login again.',
+          confirmButtonText: 'OK',
+        })
+        localStorage.clear();
+        console.clear();
+        navigate('/athomes');
     }
   };
 

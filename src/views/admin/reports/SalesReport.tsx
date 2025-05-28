@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "../../../plugin/axios";
 import ViewReceipt from "../salesEncoding/dialog/ViewReceipt";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Salesreport() {
   const [salesReport, setSalesReport] = useState<any[]>([]);
@@ -21,7 +23,9 @@ function Salesreport() {
   const [selectedAgent, setSelectedAgent] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedRemarks, setSelectedRemarks] = useState<string>("");
-const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const navigate = useNavigate();
   const fetchSalesReport = async () => {
     try {
       const response = await axios.get('sales-encoding', {
@@ -35,6 +39,15 @@ const [isHovered, setIsHovered] = useState(false);
       setAgentBroker(response.data.agents);
     } catch (error) {
       console.error('Error fetching data:', error);
+       Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to fetching data. Please login again.',
+        confirmButtonText: 'OK',
+      })
+      localStorage.clear();
+      console.clear();
+      navigate('/athomes');
     }
   };
 

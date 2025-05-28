@@ -13,6 +13,8 @@ import AddProperty from './dialog/AddProperty';
 import ViewProperty from './dialog/ViewProperty';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import EditPropertyDialog from './dialog/EditPropertyDialog';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 function BrokerageProperty() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -23,6 +25,7 @@ function BrokerageProperty() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const navigate = useNavigate();
 
   const fetchPropertiesData = async () => {
     try {
@@ -37,6 +40,15 @@ function BrokerageProperty() {
       console.log("Property:", response.data.property)
     } catch (error) {
       console.error('Error fetching data:', error);
+       Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetching data. Please login again.',
+          confirmButtonText: 'OK',
+        })
+        localStorage.clear();
+        console.clear();
+        navigate('/athomes');
     }
   };
 

@@ -19,13 +19,23 @@ import { Label } from '@/components/ui/label';
 import AgentSalesNavigation from '../../agent/salesEncoding/navigation/AgentSalesNavigation'
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import axios from '../../../plugin/axios';
+import AddSales from '../../agent/salesEncoding/dialog/AddSales'
+import ViewReceipt from './dialog/ViewReceipt';
+import EditSalesDialog from './dialog/EditSalesDialog';
 
 
 function SalesAgentEncoding() {
   const [salesEncodings, setSalesEncodings] = useState<any[]>([]);
+  const [personalInfo, setPersonalInfo] = useState<any>({});
+  const [identityDetails, setIdentityDetails] = useState<any>({});
+  const [editDialogOpenId, setEditDialogOpenId] = useState<number | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState<string>('');
+  const [entriesToShow, setEntriesToShow] = useState<number>(10);
 
   const fetchAgent = async () => {
     try {
@@ -35,9 +45,20 @@ function SalesAgentEncoding() {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
+
+      setSalesEncodings(
+        response.data.salesEncoding.map((item: any) => ({
+          ...item,
+          amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount),
+        }))
+      );
      
+      setPersonalInfo(response.data.personalInfo);
+      setIdentityDetails(response.data.identityDetails);
+
       setSalesEncodings(response.data.salesEncoding);
       console.log("List of Sales:", response.data.salesEncoding)
+      console.log("Personal Info:", response.data.personalInfo);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -58,6 +79,22 @@ function SalesAgentEncoding() {
     currency: 'PHP',
   });
 
+   const filteredSalesEncodings = salesEncodings.filter((sales) => {
+    const matchesSearch =
+      sales.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      new Date(sales.date_on_sale).toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.amount.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sales.remarks.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     sales.client_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory = categoryFilter && categoryFilter !== "all" ? sales.category === categoryFilter : true;
+    const matchesDate = dateFilter ? sales.date_on_sale.split('T')[0] === dateFilter : true;
+
+    return matchesSearch && matchesCategory && matchesDate;
+  });
+
+  const salesEncodingData = filteredSalesEncodings.slice(0, entriesToShow);
 
   return (
     <div className='py-5 md:pt-20'>
@@ -69,7 +106,7 @@ function SalesAgentEncoding() {
               <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-14'>
                 <div className="grid w-full gap-1.5">
                   <Label>Category</Label>
-                  <Select>
+                  <Select onValueChange={setCategoryFilter} value={categoryFilter}>
                     <SelectTrigger className="md:w-[340px]">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -86,20 +123,17 @@ function SalesAgentEncoding() {
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Reservation date</Label>
-                  <Input type="date" className="md:w-[340px]" />
+                   <Input type="date" className="md:w-[340px]" onChange={e => setDateFilter(e.target.value)} />
                 </div>
               </div>
                <div>
-                <Button>
-                  <FontAwesomeIcon icon={faPlus} />
-                  Add Sales
-                </Button>
+               <AddSales fetchAgent={fetchAgent} personalInfo={personalInfo} identityDetails={identityDetails}/>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className='py-2 flex flex-row justify-between'>
-              <Select>
+              <Select onValueChange={value => setEntriesToShow(value === 'all' ? filteredSalesEncodings.length : parseInt(value, 10))}>
                 <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
                   <SelectValue placeholder="All" />
@@ -114,10 +148,12 @@ function SalesAgentEncoding() {
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
-              <Input
+               <Input
                 type='text'
                 placeholder='Search'
                 className='w-52'
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="fade-in-left ">
@@ -135,7 +171,14 @@ function SalesAgentEncoding() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {salesEncodings.map((sales, index) => (
+                  {salesEncodingData.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className='text-center text-sm font-medium text-gray-500'>
+                        No record found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {salesEncodingData.map((sales, index) => (
                     <TableRow key={sales.id}>
                       <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
                       <TableCell className='border border-[#bfdbfe]'>{sales.client_name}</TableCell>
@@ -148,20 +191,22 @@ function SalesAgentEncoding() {
                       <TableCell className='border border-[#bfdbfe]'>{sales.remarks}</TableCell>
                       <TableCell className="text-right border border-[#bfdbfe]">
                         <div className='flex flex-row gap-1 justify-end'>
-                          <Button className='h-8 w-8 rounded-md'>
-                            <FontAwesomeIcon icon={faEye} />
-                          </Button>
-
-                          <Button className='h-8 w-8 rounded-md bg-green-500 hover:bg-green-400'>
+                          <ViewReceipt sales={sales} dateFormatter={dateFormatter} currencyFormatter={currencyFormatter}/>
+                          <Button
+                            className='h-8 w-8 font-medium bg-green-500 hover:bg-green-400 text-sm rounded-md'
+                            onClick={() => setEditDialogOpenId(sales.id)}
+                          >
                             <FontAwesomeIcon icon={faPen} />
                           </Button>
-
-                           <Button
-                              className='h-8 w-8 font-medium bg-red-500 hover:bg-red-400 text-sm rounded-md'>
-                              <FontAwesomeIcon icon={faTrash} />
-                            </Button>
+                          <EditSalesDialog
+                            sales={sales}
+                            open={editDialogOpenId === sales.id}
+                            onOpenChange={(open) => setEditDialogOpenId(open ? sales.id : null)}
+                            fetchAgent={fetchAgent}
+                            identityDetails={identityDetails}
+                          />
+                         
                         </div>
-                      
                       </TableCell>
                     </TableRow>
                   ))}
@@ -171,7 +216,7 @@ function SalesAgentEncoding() {
             <div className='flex flex-row justify-end mt-3'>
               <div>
                 <p className='text-[#172554] text-sm w-full'>
-                  Showing 1 to 10 of 50 entries
+                  Showing 1 to {Math.min(entriesToShow, filteredSalesEncodings.length)} of {filteredSalesEncodings.length} entries
                 </p>
               </div>
             </div>
