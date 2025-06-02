@@ -14,8 +14,25 @@ import LoaderCard from './components/loaderCard'
 import ProtectedRoute from './sanctum/ProtectedRoute';
 import PublicRoute from './sanctum/PublicRoute';
 
+
 const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
+);
+
+const ReportBroker = lazy(() =>
+  wait(3000).then(() => import("./views/broker/reports/Reports"))
+);
+
+const Brokerage = lazy(() =>
+  wait(3000).then(() => import("./views/broker/brokerage/Brokerage"))
+);
+
+const SalesBrokerEncoding = lazy(() =>
+  wait(3000).then(() => import("./views/broker/salesEncoding/SalesBrokerEncoding"))
+);
+
+const Reports = lazy(() =>
+  wait(3000).then(() => import("./views/agent/reports/Reports"))
 );
 
 const SalesAgentEncoding = lazy(() =>
@@ -247,6 +264,14 @@ const routes = [
           </Suspense>
         ),
       },
+      {
+        path: "agent-salesReport",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Reports />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -264,6 +289,30 @@ const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <DashboardBroker />
+          </Suspense>
+        ),
+      },
+      {
+        path: "broker-salesEncoding",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <SalesBrokerEncoding />
+          </Suspense>
+        ),
+      },
+      {
+        path: "broker-brokerage",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Brokerage/>
+          </Suspense>
+        ),
+      },
+      {
+        path: "broker-salesReport",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ReportBroker />
           </Suspense>
         ),
       },

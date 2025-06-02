@@ -24,12 +24,12 @@ function AdminSidebar() {
     { path: "/athomes/agent-broker/user-dashboard", icon: faTachometerAlt, label: "Dashboard" },
     { path: "/athomes/agent-broker/agent-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
     { path: "/athomes/agent-broker/agent-brokerage", icon: faHome, label: "Brokerage/Property" },
-    { path: "/athomes/admin/sales-report", icon: faChartLine, label: "Sales Report" },
+    { path: "/athomes/agent-broker/agent-salesReport", icon: faChartLine, label: "Sales Report" },
   ];
 
-  const notificationLink = { path: "/admin/products", icon: faBell, label: "Notification" };
-  const messageLink = { path: "/admin/products", icon: faEnvelope, label: "Message" };
-  const settingsLink = { path: "/admin/products", icon: faCog, label: "Settings" };
+  const notificationLink = { path: "#", icon: faBell, label: "Notification" };
+  const messageLink = { path: "#", icon: faEnvelope, label: "Message" };
+  const settingsLink = { path: "#", icon: faCog, label: "Settings" };
 
   // Event handlers
   const handleNavigation = (path: string) => {

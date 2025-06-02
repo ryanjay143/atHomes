@@ -5,12 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import axios from "../../../plugin/axios";
-import AddProperty from './dialog/AddProperty';
-import AgentBrokerageNavigation from '../../agent/brokerage/navigation/AgentBrokerageNavigation'
+
+import BrokerageNavigation from '../../broker/brokerage/navigation/BrokerageNavigation'
 
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import AddProperty from './dialog/Addproperty';
 import ViewProperty from './dialog/ViewProperty';
+
 
 function BrokerageProperty() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -24,7 +26,7 @@ function BrokerageProperty() {
 
   const fetchPropertiesData = async () => {
     try {
-      const response = await axios.get('user/agent-broker', {
+      const response = await axios.get('user/broker', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -74,7 +76,7 @@ function BrokerageProperty() {
   return (
     <div className='py-5 md:pt-20'>
       <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5'>
-        <AgentBrokerageNavigation />
+        <BrokerageNavigation />
         <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
           <CardHeader>
             <div className='flex flex-row md:flex-col gap-4 justify-between'>

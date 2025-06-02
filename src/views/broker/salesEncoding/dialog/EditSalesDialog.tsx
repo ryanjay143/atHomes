@@ -155,7 +155,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       }
   
       const response = await axios.post(
-        `updateSalesEncodingAgent/${sales.id}`,
+        `updateSalesEncodingBroker/${sales.id}`,
         formData,
         {
           headers: {

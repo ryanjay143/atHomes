@@ -128,7 +128,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   });
 
   try {
-    const response = await axios.post('user/agent-broker', formData, {
+    const response = await axios.post('user/broker', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,

@@ -1,112 +1,87 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Chart from 'react-apexcharts';
-import { Progress } from '@/components/ui/progress';
+import { useEffect, useState } from 'react';
+import axios from "../../../plugin/axios";
+import { formatDateToMMDDYYYY } from '@/helper/dateUtils';
 
-function DashboardBroker() {
-  const chartOptions = {
-    series: [{
-      name: 'Sales',
-      data: [30, 40, 35, 50, 49, 60, 70, 55, 65, 75, 85, 95] // Updated to include 12 data points
-    }],
-    chart: {
-      type: 'line' as const,
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] 
+
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import TotalSales from './cards/TotalSales';
+import TopAffiliated from './cards/TopAffiliated';
+import RecentSales from './cards/RecentSales';
+
+
+function DashboardContainer() {
+  const [topPerformers, setTopPerformers] = useState<any[]>([]);
+  const [sales, setSales] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<number[]>(Array(12).fill(0));
+  const [totalSales, setTotalSales] = useState<number>(0);
+  const navigate = useNavigate();
+  
+   const agentUser = async () => {
+    try {
+      const response = await axios.get('user/broker', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      const salesData = response.data.salesEncoding.map((item: any) => ({
+        ...item,
+        amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount),
+      }));
+      // Aggregate sales data by month
+      const monthlySales = Array(12).fill(0);
+      salesData.forEach((item: any) => {
+        const month = new Date(item.date_on_sale).getMonth();
+        monthlySales[month] += item.amount;
+      });
+      setChartData(monthlySales);
+
+      setTopPerformers(response.data.topPerformers);
+      setSales(response.data.salesEncodingTop5);
+      setTotalSales(salesData.reduce((total: number, item: any) => total + item.amount, 0));
+
+      console.log("List of Sales:", salesData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to fetching data. Please login again.',
+        confirmButtonText: 'OK',
+      })
+      localStorage.clear();
+      console.clear();
+      navigate('/athomes');
     }
   };
-  
+
+  useEffect(() => {
+    agentUser();
+  }, []);
+
+  const currencyFormatter = new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+  });
+
   return (
-   <div className="py-5 md:pt-20">
+    <div className="py-5 md:pt-20">
       <div className="flex justify-between md:flex-row">
         <h1 className="text-4xl font-bold ml-72 md:ml-0 md:grid-cols-1 md:text-2xl md:gap-2 md:p-5 md:mt-0">Dashboard</h1>
-
-        <div className="mr-3 md:mr-8 flex items-center md:justify-start">
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="This Month" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Last Week">Last Week</SelectItem>
-              <SelectItem value="This Month">This Month</SelectItem>
-              <SelectItem value="Last Month">Last Month</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
-      <div className="ml-72 md:ml-0 grid grid-cols-2 md:grid-cols-1 md:gap-2 md:p-5 md:mt-0 gap-2 items-start justify-center mt-5 md:px-5 mr-2">
-        <div>
-          <Card className="bg-[#eff6ff] border-b-4 border-primary w-full md:w-full">
-            <CardHeader>
-              <CardTitle>Total Sales</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>₱ 2,000,000.00</p>
-              <div className="w-full md:w-full mt-5">
-                <Chart
-                  options={chartOptions}
-                  series={chartOptions.series}
-                  type="line"
-                  width="100%"
-                />
-              </div>
-            </CardContent>
-            <hr className="border-primary mb-5"/>
-            <div className='flex flex-col items-start justify-start p-5 gap-4'>
-              <p>Monthly Sales</p>
-              <div className=''>
-                <p>₱ 2,000,000.00</p>
-              </div>
-              <div className='w-full md:w-full'>
-                <Progress value={33} />
-                <p>33% Achieved</p>
-              </div>
-            </div>
-          </Card>
-        </div>
+      <div className="ml-72 md:ml-0 grid grid-cols-2 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4">
+        <TotalSales chartData={chartData} totalSales={totalSales} currencyFormatter={currencyFormatter}/>
 
-        <div>
-          <Card className="bg-[#eff6ff] border-b-4 border-primary w-full md:w-full">
-            <CardHeader>
-              <CardTitle>Top Agent Rankings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Card Content</p>
-            </CardContent>
-            <CardFooter>
-              <p>Card Footer</p>
-            </CardFooter>
-          </Card>
-        </div>
+       <TopAffiliated topPerformers={topPerformers} currencyFormatter={currencyFormatter}/>
       </div>
 
-      <div className="ml-72 md:ml-0 grid grid-cols-1 md:grid-cols-1 md:gap-2 md:p-0 md:mt-0 gap-2 items-start justify-center mt-5 md:px-5 mr-2">
-        <div>
-          <Card className="bg-[#eff6ff] border-b-4 border-primary w-full md:w-full">
-            <CardHeader>
-              <CardTitle>Card Title</CardTitle>
-              <CardDescription>Card Description</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Card Content</p>
-            </CardContent>
-            <CardFooter>
-              <p>Card Footer</p>
-            </CardFooter>
-          </Card>
-        </div>
+      <div className='ml-72 md:ml-0 grid grid-cols-1 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4'>
+       <RecentSales sales={sales} formatDateToMMDDYYYY={formatDateToMMDDYYYY} currencyFormatter={currencyFormatter}/>
       </div>
     </div>
-  )
+  );
 }
 
-export default DashboardBroker
+export default DashboardContainer;

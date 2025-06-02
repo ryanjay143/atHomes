@@ -65,7 +65,7 @@ function AddSales({ fetchAgent, identityDetails }: any) {
     });
 
     try {
-      const response = await axios.post('user/agent-sales', formDataToSend, {
+      const response = await axios.post('user/broker-sales', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,

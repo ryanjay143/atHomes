@@ -67,7 +67,7 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className='md:w-[90%] h-full max-h-[700px] overflow-auto'>
+        <DialogContent className='md:max-w-[425px] h-full max-h-[700px] overflow-auto'>
           <DialogHeader>
             <DialogTitle className='text-start'>View Receipt</DialogTitle>
             <DialogDescription>
@@ -78,38 +78,38 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{sales.agent.personal_info.first_name} {sales.agent.personal_info.middle_name} {sales.agent.personal_info.last_name} {sales.agent.personal_info?.extension_name}</span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols- items-center gap-4">
                   <Label htmlFor="category" className="text-gray-600 font-semibold">
                     Client name:
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{sales.client_name}</span>
                 </div>
                 
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="category" className="text-gray-600 font-semibold">
                     Category:
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{sales.category}</span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="date" className="text-gray-600 font-semibold">
                     Date of Sale:
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{dateFormatter.format(new Date(sales.date_on_sale))}</span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="amount" className="text-gray-600 font-semibold">
                     Amount:
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{currencyFormatter.format(sales.amount)}</span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="location" className="text-gray-600 font-semibold">
                     Location:
                   </Label>
                   <span className="col-span-3 text-center text-gray-800">{sales.location}</span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-4 items-center gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
                   <Label htmlFor="remarks" className="text-gray-600 font-semibold">
                     Remarks:
                   </Label>
@@ -119,11 +119,11 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
                 <Label htmlFor="remarks" className="text-gray-600 text-start font-semibold">
                   Proof of Transaction:
                 </Label>
-                <div className='mt-3 md:mt-[-300px]'>
+                <div className='mt-3'>
                   <img
                     src={`${import.meta.env.VITE_URL}/${sales.image}`}
                     alt={sales.image}
-                    className='h-full object-cover rounded-sm md:max-w-[400px] max-w-[300px] mx-auto md:object-none'
+                    className='h-full object-cover rounded-sm'
                     onLoad={() => setImgLoaded(true)}
                   />
                 </div>
@@ -131,7 +131,7 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <div className='flex flex-row justify-end gap-2 md:mt-[-300px]'>
+            <div className='flex flex-row justify-end gap-2'>
               <DialogClose asChild>
                 <Button className='bg-red-500 hover:bg-red-400 h-8'>Cancel</Button>
               </DialogClose>

@@ -22,9 +22,9 @@ function AdminSidebar() {
   // Navigation links
   const links = [
     { path: "/athomes/broker/broker-dashboard", icon: faTachometerAlt, label: "Dashboard" },
-    { path: "/athomes/admin/sales-encoding", icon: faKeyboard, label: "Sales Encoding" },
-    { path: "/athomes/admin/brokerage-property", icon: faHome, label: "Brokerage/Property" },
-    { path: "/athomes/admin/sales-report", icon: faChartLine, label: "Sales Report" },
+    { path: "/athomes/broker/broker-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
+    { path: "/athomes/broker/broker-brokerage", icon: faHome, label: "Brokerage/Property" },
+    { path: "/athomes/broker/broker-salesReport", icon: faChartLine, label: "Sales Report" },
   ];
 
   const notificationLink = { path: "/admin/products", icon: faBell, label: "Notification" };

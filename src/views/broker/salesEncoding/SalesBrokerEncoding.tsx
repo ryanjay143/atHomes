@@ -16,18 +16,21 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
-import AgentSalesNavigation from '../../agent/salesEncoding/navigation/AgentSalesNavigation'
+import AgentSalesNavigation from '../../broker/salesEncoding/navigation/NavigationSalesEncoding'
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import axios from '../../../plugin/axios';
-import AddSales from '../../agent/salesEncoding/dialog/AddSales'
+
 import ViewReceipt from './dialog/ViewReceipt';
+
+import AddSales from './dialog/AddSales';
 import EditSalesDialog from './dialog/EditSalesDialog';
 
 
-function SalesAgentEncoding() {
+
+function SalesBrokerEncoding() {
   const [salesEncodings, setSalesEncodings] = useState<any[]>([]);
   const [personalInfo, setPersonalInfo] = useState<any>({});
   const [identityDetails, setIdentityDetails] = useState<any>({});
@@ -39,7 +42,7 @@ function SalesAgentEncoding() {
 
   const fetchAgent = async () => {
     try {
-      const response = await axios.get('user/agent-broker', {
+      const response = await axios.get('user/broker', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -227,4 +230,4 @@ function SalesAgentEncoding() {
   );
 }
 
-export default SalesAgentEncoding;
+export default SalesBrokerEncoding;
