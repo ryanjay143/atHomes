@@ -19,6 +19,18 @@ const Login = lazy(() =>
   wait(3000).then(() => import("./views/auth/login/Login"))
 );
 
+const BrokerProfile = lazy(() =>
+  wait(3000).then(() => import("./views/broker/profile/EditProfile"))
+);
+
+const AgentProfile = lazy(() =>
+  wait(3000).then(() => import("./views/agent/profile/EditProfile"))
+);
+
+const AdminProfile = lazy(() =>
+  wait(3000).then(() => import("./views/admin/profile/EditProfile"))
+);
+
 const ReportBroker = lazy(() =>
   wait(3000).then(() => import("./views/broker/reports/Reports"))
 );
@@ -159,6 +171,14 @@ const routes = [
         ),
       },
       {
+        path: "admin-profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminProfile />
+          </Suspense>
+        ),
+      },
+      {
         path: "developer",
         element: (
           <Suspense fallback={<Loader />}>
@@ -249,6 +269,14 @@ const routes = [
         ),
       },
       {
+        path: "agent-profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AgentProfile />
+          </Suspense>
+        ),
+      },
+      {
         path: "agent-salesEncoding",
         element: (
           <Suspense fallback={<Loader />}>
@@ -289,6 +317,14 @@ const routes = [
         element: (
           <Suspense fallback={<Loader />}>
             <DashboardBroker />
+          </Suspense>
+        ),
+      },
+      {
+        path: "broker-profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <BrokerProfile />
           </Suspense>
         ),
       },

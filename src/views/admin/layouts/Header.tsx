@@ -1,4 +1,4 @@
-import { faFaceSmile, faUserCog, faUserShield } from "@fortawesome/free-solid-svg-icons"
+import { faFaceSmile, faUserCog} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useEffect, useState } from "react"
 import axios from "../../../plugin/axios"
@@ -56,9 +56,9 @@ function Header() {
   return (
    <div className="flex flex-row items-center gap-4">
         <div className="flex flex-col items-start md:items-center md:justify-center md:ml-20">
-            <span className="text-accent text-2xl md:text-sm font-bold">
-              Hey, {capitalizeFirstLetter(personalinfo.first_name)} {capitalizeFirstLetter(personalinfo.middle_name)} {capitalizeFirstLetter(personalinfo.last_name)} {capitalizeFirstLetter(personalinfo.extension_name)}
-              <FontAwesomeIcon icon={faFaceSmile} />
+            <span className="text-accent text-2xl md:text-sm font-bold ">
+              Hey, {capitalizeFirstLetter(personalinfo.first_name)} {capitalizeFirstLetter(personalinfo.last_name)}
+              
             </span> 
             <div className="flex flex-row items-center gap-2">
                 <FontAwesomeIcon icon={faUserCog} className="text-accent" />

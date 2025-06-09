@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@/components/themeProvider";
-import Profile from "../profile/Profile";
 // import Sidebar from "../admin/layouts/Sidebar";
 import { Outlet } from "react-router-dom";
 import BrokerHeader from "../broker/layouts/Header";
@@ -10,6 +9,7 @@ import { faArrowsRotate, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import BrokerSidebar from "./../broker/layouts/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Profile from "./profile/Profile";
 
 function BrokerLayout() {
   const [isHovered, setIsHovered] = useState(false);

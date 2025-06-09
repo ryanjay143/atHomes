@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/themeProvider";
-import Profile from "../profile/Profile";
+
 // import Sidebar from "../admin/layouts/Sidebar";
 import { Outlet } from "react-router-dom";
 import Header from "../agent/layouts/Header";
@@ -10,6 +10,7 @@ import { faArrowsRotate, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import AgentSidebar from "./../agent/layouts/Sidebar";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Profile from "./profile/Profile";
 
 function AgentBrokerLayout() {
   const [isHovered, setIsHovered] = useState(false);

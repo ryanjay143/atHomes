@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@/components/themeProvider";
-import Profile from "../../views/profile/Profile";
 import Sidebar from "../../views/admin/layouts/Sidebar";
 import { Outlet } from "react-router-dom";
 import Header from "../../views/admin/layouts/Header";
@@ -9,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Profile from "./profile/Profile";
 
 function Admin() {
   const [isHovered, setIsHovered] = useState(false);

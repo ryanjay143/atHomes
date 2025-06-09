@@ -54,6 +54,8 @@ const DeveloperPartners = () => {
             const categories = data.map((item: SalesDashboardItem) => item.category);
             const reservations = data.map((item: SalesDashboardItem) => item.totalReserved);
 
+            console.log("Categories:", categories);
+
             setBarChartData({
                 series: [{
                     name: 'Total Reservation',

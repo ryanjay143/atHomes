@@ -58,10 +58,10 @@ function Header() {
   return (
     <div className="flex flex-row items-center gap-4">
         <div className="flex flex-col items-start md:items-center md:justify-center md:ml-20">
-            <span className="text-accent text-2xl md:text-sm font-bold">
-              Hey, {capitalizeFirstLetter(personalinfo.first_name)} {capitalizeFirstLetter(personalinfo.middle_name)} {capitalizeFirstLetter(personalinfo.last_name)} {capitalizeFirstLetter(personalinfo.extension_name)}
-              <FontAwesomeIcon icon={faFaceSmile} />
-            </span> 
+             <span className="text-accent text-2xl md:text-sm font-bold ">
+              Hey, {capitalizeFirstLetter(personalinfo.first_name)} {capitalizeFirstLetter(personalinfo.last_name)}
+              
+            </span>  
             <div className="flex flex-row items-center gap-2">
                 <FontAwesomeIcon icon={faUserShield} className="text-accent" />
                 <span className="text-accent text-base md:text-sm">Role: {role}</span> 

@@ -3,19 +3,22 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { faAngleDown, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../plugin/axios';
+import axios from '../../../plugin/axios';
+import { useEffect, useState } from 'react';
 
 const handleLogout = async (navigate: any) => {
   try {
     // Define headers for the request
-    const headers = {
-      'Content-Type': 'application/json',
-      // Add any other headers you need here
-      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-    };
+  
 
     // Call the backend API to invalidate the Sanctum session with headers
-    await axios.post('logout', {}, { headers });
+   await axios.post('logout', {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      }
+    });
+
 
     // Clear any client-side state related to authentication
     localStorage.clear();
@@ -32,6 +35,44 @@ const handleLogout = async (navigate: any) => {
 
 function Profile() {
   const navigate = useNavigate();
+  const [user, setUser] = useState<any>({
+      username: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+    });
+
+    const [personalinfo, setPersonalInfo] = useState<any>({
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        extension_name: '',
+        complete_address: '',
+        phone: '',
+        profile_pic: '', // Ensure this property is included
+      });
+
+  const adminProfile = async () => {
+    try {
+      const response = await axios.get('agent-broker', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      setUser(response.data.user);
+      setPersonalInfo(response.data.personalInfo);
+      console.log('User data:', response.data.user);
+      console.log('Personal info:', response.data.personalInfo);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+  };
+
+  useEffect(() => {
+    adminProfile();
+  }, []);
 
   return (
     <DropdownMenu>
@@ -42,15 +83,19 @@ function Profile() {
               <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
             </div>
             <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
-              <AvatarImage src='../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover' />
+              <AvatarImage src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`} alt='profile' className='rounded-full border border-border object-cover' />
             </Avatar>
           </div>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-10">
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-          <div className="flex items-center gap-2 text-foreground cursor-pointer">
-            <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-foreground" /> View Profile
+          <div
+            className="flex items-center gap-2 text-foreground cursor-pointer"
+            onClick={() => navigate('admin-profile')}
+          >
+            <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-foreground" />
+            View Profile
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
