@@ -157,7 +157,9 @@ function Register() {
         showCloseButton: true,
         timer: 3000,
         timerProgressBar: true,
-      });
+      }).then(() => 
+        navigate('/athomes')
+      );
 
       console.log(response.data);
 
@@ -205,7 +207,7 @@ function Register() {
       }
     } finally {
       setLoading(false);
-      navigate("/athomes");
+      navigate("/athomes/user-register");
     }
   };
 

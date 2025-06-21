@@ -233,7 +233,7 @@ function AddSales({ fetchAgent }:any) {
                       <SelectContent>
                         {getAgentBroker.map((agent) => (
                           <SelectItem key={agent.id} value={agent.id}>
-                            {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
+                            {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} 
                           </SelectItem>
                         ))}
                       </SelectContent>

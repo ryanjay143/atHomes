@@ -52,6 +52,13 @@ useEffect(() => {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {topPerformers.length === 0 && (
+              <TableRow>
+                <TableCell className="text-center border" colSpan={5}>
+                  No data available.
+                </TableCell>
+              </TableRow>
+            )}
             {topPerformers.map((top, index) => (
               <TableRow key={top.id}>
                 <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>

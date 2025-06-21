@@ -1,19 +1,21 @@
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from '../../../plugin/axios';
 import Swal from 'sweetalert2';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 const EditProfile: React.FC = () => {
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
   const [user, setUser] = useState<any>({
     username: '',
     email: '',
     password: '',
     password_confirmation: '',
   });
-
-  
 
   const [activeTab, setActiveTab] = useState<'account' | 'personal'>('account');
   const [personalinfo, setPersonalInfo] = useState<any>({
@@ -23,6 +25,7 @@ const EditProfile: React.FC = () => {
     extension_name: '',
     complete_address: '',
     phone: '',
+    profile_pic: '', // Ensure this property is included
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,26 +37,36 @@ const EditProfile: React.FC = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfilePicPreview(imageUrl);
+      setPersonalInfo({ ...personalinfo, profile_pic: file }); // store the file, not the URL
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
-   
-
-
     e.preventDefault();
 
-     if (loading) return;
+    if (loading) return;
     setLoading(true);
 
     const formData = new FormData();
     formData.append('username', user.username);
     formData.append('email', user.email);
-    formData.append('password', user.password);
-    formData.append('password_confirmation', user.password_confirmation);
+   
     formData.append('first_name', personalinfo.first_name);
     formData.append('middle_name', personalinfo.middle_name);
     formData.append('last_name', personalinfo.last_name);
-    formData.append('extension_name', personalinfo.extension_name);
+    formData.append('extension_name', personalinfo.extension_name || '');
     formData.append('phone', personalinfo.phone);
     formData.append('complete_address', personalinfo.complete_address);
+
+     if (user.password) {
+      formData.append('password', user.password);
+      formData.append('password_confirmation', user.password_confirmation);
+    }
 
     // Handle profile picture if available
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -70,18 +83,24 @@ const EditProfile: React.FC = () => {
       });
       console.log('Profile updated successfully:', response.data);
       Swal.fire({
-            title: "Success",
-            text: response.data.message,
-            icon: "success",
-            showConfirmButton: false,
-            showCloseButton: true,
-            timer: 3000,
-            timerProgressBar: true,
-        });
+        title: "Success",
+        text: response.data.message,
+        icon: "success",
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: 3000,
+        timerProgressBar: true,
+      }).then(() => {
+        // Optionally perform actions after the alert closes
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      });
+      adminProfile();
     } catch (error) {
       console.error('Error updating profile:', error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -244,33 +263,56 @@ const EditProfile: React.FC = () => {
 
               <div>
                 <div className="mb-4">
+                  <div className="flex justify-center items-center w-full">
+                    <Avatar className="h-32 w-32 md:h-12 md:w-12 border-primary border-4">
+                      {(profilePicPreview || personalinfo.profile_pic) ? (
+                        <AvatarImage
+                          src={
+                            profilePicPreview
+                              ? profilePicPreview
+                              : typeof personalinfo.profile_pic === 'string'
+                                ? `${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`
+                                : undefined
+                          }
+                          alt="Profile"
+                          className="rounded-full border border-border object-cover"
+                        />
+                      ) : null}
+                      <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff] '>
+                        {personalinfo.first_name
+                          ? personalinfo.first_name.charAt(0).toUpperCase()
+                          : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                   <label className="block text-gray-700">Profile Picture</label>
                   <Input
                     type="file"
                     name="profile_pic"
                     className="w-full px-3 py-2 border rounded-lg"
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
                   />
                 </div>
               </div>
             </>
           )}
-          <button
+          <Button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
             disabled={loading}
           >
-             {loading ? (
-            <>
+            {loading ? (
+              <>
                 <span>Saving...</span>
                 <span className="animate-spin cursor-not-allowed border-2 border-white border-t-transparent rounded-full w-4 h-4" />
-            </>
+              </>
             ) : (
-            <>
-                
+              <>
                 <span>Save changes</span>
-            </>
+              </>
             )}
-          </button>
+          </Button>
         </form>
       </Card>
     </div>

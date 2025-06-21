@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { faAngleDown, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -83,7 +83,19 @@ function Profile() {
               <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
             </div>
             <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
-              <AvatarImage src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`} alt='profile' className='rounded-full border border-border object-cover' />
+              {personalinfo.profile_pic ? (
+                <AvatarImage
+                  src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
+                  alt='profile'
+                  className='rounded-full border border-border object-cover'
+                />
+              ) : (
+                <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff]'>
+                  {personalinfo.first_name
+                    ? personalinfo.first_name.charAt(0).toUpperCase()
+                    : 'U'}
+                </AvatarFallback>
+              )}
             </Avatar>
           </div>
         </div>

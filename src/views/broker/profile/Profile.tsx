@@ -1,9 +1,10 @@
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { faAngleDown, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../plugin/axios';
+import { useEffect, useState } from 'react';
 
 const handleLogout = async (navigate: any) => {
   try {
@@ -34,6 +35,44 @@ const handleLogout = async (navigate: any) => {
 
 function Profile() {
   const navigate = useNavigate();
+  const [user, setUser] = useState<any>({
+      username: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+    });
+
+    const [personalinfo, setPersonalInfo] = useState<any>({
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        extension_name: '',
+        complete_address: '',
+        phone: '',
+        profile_pic: '', // Ensure this property is included
+      });
+
+  const adminProfile = async () => {
+    try {
+      const response = await axios.get('user/broker', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      setUser(response.data.user);
+      setPersonalInfo(response.data.personalInfo);
+      console.log('User data:', response.data.user);
+      console.log('Personal info:', response.data.personalInfo);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+  };
+
+  useEffect(() => {
+    adminProfile();
+  }, []);
 
   return (
     <DropdownMenu>
@@ -44,7 +83,19 @@ function Profile() {
               <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
             </div>
             <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
-              <AvatarImage src='../image/aldin.jpg' alt='profile' className='rounded-full border border-border object-cover' />
+              {personalinfo.profile_pic ? (
+                <AvatarImage
+                  src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
+                  alt='profile'
+                  className='rounded-full border border-border object-cover'
+                />
+              ) : (
+                <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff]'>
+                  {personalinfo.first_name
+                    ? personalinfo.first_name.charAt(0).toUpperCase()
+                    : 'U'}
+                </AvatarFallback>
+              )}
             </Avatar>
           </div>
         </div>
@@ -53,7 +104,7 @@ function Profile() {
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
           <div
             className="flex items-center gap-2 text-foreground cursor-pointer"
-            onClick={() => navigate('broker-profile')}
+            onClick={() => navigate('admin-profile')}
           >
             <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-foreground" />
             View Profile
