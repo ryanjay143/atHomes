@@ -10,7 +10,6 @@ import Swal from 'sweetalert2';
 
 function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   const [category, setCategory] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [dateListed, setDateListed] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
@@ -260,7 +259,6 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
                   <div
                     key={index}
                     className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedImage(`${import.meta.env.VITE_URL}/storage/${image}`)}
                   >
                     <img
                       src={`${import.meta.env.VITE_URL}/${image.images}`}
@@ -286,7 +284,6 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
                 <div
                   key={index}
                   className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
-                  onClick={() => setSelectedImage(preview)}
                 >
                   <img
                     src={preview}

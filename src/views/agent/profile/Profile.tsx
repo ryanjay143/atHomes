@@ -8,17 +8,13 @@ import { useEffect, useState } from 'react';
 
 const handleLogout = async (navigate: any) => {
   try {
-    // Define headers for the request
-  
-
     // Call the backend API to invalidate the Sanctum session with headers
-   await axios.post('logout', {}, {
+    await axios.post('logout', {}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       }
     });
-
 
     // Clear any client-side state related to authentication
     localStorage.clear();
@@ -36,25 +32,17 @@ const handleLogout = async (navigate: any) => {
 function Profile() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<any>({
-        username: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-      });
+  const [personalinfo, setPersonalInfo] = useState<any>({
+    first_name: '',
+    middle_name: '',
+    last_name: '',
+    extension_name: '',
+    complete_address: '',
+    phone: '',
+    profile_pic: '', // Ensure this property is included
+  });
 
-
-      const [personalinfo, setPersonalInfo] = useState<any>({
-        first_name: '',
-        middle_name: '',
-        last_name: '',
-        extension_name: '',
-        complete_address: '',
-        phone: '',
-        profile_pic: '', // Ensure this property is included
-      });
-
-      const agentProfile = async () => {
+  const agentProfile = async () => {
     try {
       const response = await axios.get('user/agent-broker', {
         headers: {
@@ -63,9 +51,7 @@ function Profile() {
         },
       });
 
-      setUser(response.data.user);
       setPersonalInfo(response.data.personalInfo);
-      console.log('User data:', response.data.user);
       console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -75,7 +61,6 @@ function Profile() {
   useEffect(() => {
     agentProfile();
   }, []);
-
 
   return (
     <DropdownMenu>
