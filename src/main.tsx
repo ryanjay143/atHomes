@@ -305,7 +305,7 @@ const routes = [
   {
     path: "/athomes/broker",
     element: (
-        <ProtectedRoute element={<Brokerlayout />} allowedRoles={['2']}/>
+        <ProtectedRoute element={<Brokerlayout />} allowedRoles={['2', '0']}/>
     ),
     children: [
       {
