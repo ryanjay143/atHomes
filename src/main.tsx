@@ -118,11 +118,11 @@ const DashboardAgentBroker = lazy(() =>
 // Route configuration
 const routes = [
   {
-    path: "/athomes",
-    element: <Navigate to="/athomes/user-login" />,
+    path: "/atHomes",
+    element: <Navigate to="/atHomes/user-login" />,
   },
   {
-    path: "/athomes/user-login",
+    path: "/atHomes/user-login",
     element: (
         <Suspense fallback={<Loader />}>
           <PublicRoute>
@@ -132,7 +132,7 @@ const routes = [
     ),
   },
   {
-    path: "/athomes/user-register",
+    path: "/atHomes/user-register",
     element: (
         <Suspense fallback={<Loader />}>
           <PublicRoute>
@@ -143,7 +143,7 @@ const routes = [
     ),
   },
   {
-    path: "/athomes/forgot-password",
+    path: "/atHomes/forgot-password",
     element: (
         <Suspense fallback={<Loader />}>
           <PublicRoute>
@@ -153,14 +153,14 @@ const routes = [
     ),
   },
   {
-    path: "/athomes/admin",
+    path: "/atHomes/admin",
     element: (
         <ProtectedRoute element={<Admin />} allowedRoles={['0']}/>
     ),
     children: [
       {
         path: "",
-        element: <Navigate to="/athomes/admin/user-dashboard" />,
+        element: <Navigate to="/atHomes/admin/user-dashboard" />,
       },
       {
         path: "user-dashboard",
@@ -251,14 +251,14 @@ const routes = [
     ],
   },
   {
-    path: "/athomes/agent-broker",
+    path: "/atHomes/agent-broker",
     element: (
         <ProtectedRoute element={<AgentBrokerLayout />} allowedRoles={['1']}/>
     ),
     children: [
       {
         path: "",
-        element: <Navigate to="/athomes/agent-broker/user-dashboard" />,
+        element: <Navigate to="/atHomes/agent-broker/user-dashboard" />,
       },
       {
         path: "user-dashboard",
@@ -303,14 +303,14 @@ const routes = [
     ],
   },
   {
-    path: "/athomes/broker",
+    path: "/atHomes/broker",
     element: (
         <ProtectedRoute element={<Brokerlayout />} allowedRoles={['2', '0']}/>
     ),
     children: [
       {
         path: "",
-        element: <Navigate to="/athomes/broker/broker-dashboard" />,
+        element: <Navigate to="/atHomes/broker/broker-dashboard" />,
       },
       {
         path: "broker-dashboard",
