@@ -8,7 +8,7 @@ function NavigationSalesReport() {
     <Breadcrumb >
         <BreadcrumbList>
             <BreadcrumbItem className="text-accent">
-                <Link to="/athomes/admin/sales-repor" >Sales Report</Link>
+                <Link to="/atHomes/admin/sales-repor" >Sales Report</Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
         </BreadcrumbList>

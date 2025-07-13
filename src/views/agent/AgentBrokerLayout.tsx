@@ -50,7 +50,7 @@ function AgentBrokerLayout() {
             timer: 1500,
             timerProgressBar: true
           });
-      navigate("/athomes/admin"); 
+      navigate("/atHomes/admin"); 
     }
   };
 

@@ -158,7 +158,7 @@ function Register() {
         timer: 3000,
         timerProgressBar: true,
       }).then(() => 
-        navigate('/athomes')
+        navigate('/atHomes')
       );
 
       console.log(response.data);
@@ -192,7 +192,7 @@ function Register() {
           icon: "warning",
           showConfirmButton: true,
         }).then(() => {
-          navigate('/athomes/user-register');
+          navigate('/atHomes/user-register');
         });
       } else {
         Swal.fire({
@@ -207,7 +207,7 @@ function Register() {
       }
     } finally {
       setLoading(false);
-      navigate("/athomes/user-register");
+      navigate("/atHomes/user-register");
     }
   };
 
@@ -418,7 +418,7 @@ function Register() {
           </div>
 
           <div className="flex justify-between items-center mt-6">
-            <Link to="/athomes/user-login">
+            <Link to="/atHomes/user-login">
               <Button className="bg-red-500 hover:bg-red-600">
                 <FontAwesomeIcon icon={faArrowLeft} />
                 Back
@@ -445,7 +445,7 @@ function Register() {
 
           <div className="flex justify-center space-x-2 mt-4">
             <span>Already have an account?</span>
-            <Link to="/athomes/user-login" className="text-primary">
+            <Link to="/atHomes/user-login" className="text-primary">
               Login here
             </Link>
           </div>

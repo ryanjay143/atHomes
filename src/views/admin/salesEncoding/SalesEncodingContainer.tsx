@@ -72,7 +72,7 @@ function SalesEncodingContainer() {
         })
         localStorage.clear();
         console.clear();
-        navigate('/athomes');
+        navigate('/atHomes');
     }
   };
 

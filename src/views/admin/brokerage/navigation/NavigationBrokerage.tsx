@@ -8,7 +8,7 @@ function NavigationBrokerage() {
     <Breadcrumb >
         <BreadcrumbList>
             <BreadcrumbItem className="text-accent">
-                <Link to="/athomes/admin/brokerage-property" >Property Listing</Link>
+                <Link to="/atHomes/admin/brokerage-property" >Property Listing</Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
         </BreadcrumbList>

@@ -21,10 +21,10 @@ function AdminSidebar() {
 
   // Navigation links
   const links = [
-    { path: "/athomes/broker/broker-dashboard", icon: faTachometerAlt, label: "Dashboard" },
-    { path: "/athomes/broker/broker-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
-    { path: "/athomes/broker/broker-brokerage", icon: faHome, label: "Brokerage/Property" },
-    { path: "/athomes/broker/broker-salesReport", icon: faChartLine, label: "Sales Report" },
+    { path: "/atHomes/broker/broker-dashboard", icon: faTachometerAlt, label: "Dashboard" },
+    { path: "/atHomes/broker/broker-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
+    { path: "/atHomes/broker/broker-brokerage", icon: faHome, label: "Brokerage/Property" },
+    { path: "/atHomes/broker/broker-salesReport", icon: faChartLine, label: "Sales Report" },
   ];
 
   const notificationLink = { path: "/admin/products", icon: faBell, label: "Notification" };
@@ -63,7 +63,7 @@ function AdminSidebar() {
           {/* Logo Section */}
           <div
             className="flex justify-center cursor-pointer mb-7"
-            onClick={() => handleNavigation("/athomes/admin/user-dashboard")}
+            onClick={() => handleNavigation("/atHomes/admin/user-dashboard")}
           >
             <img src="../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
           </div>

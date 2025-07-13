@@ -115,7 +115,7 @@ function ForgotPassword() {
                 className="w-full bg-red-500 hover:bg-red-400 text-white hover:text-white"
                 disabled={loading}
                 onClick={() => 
-                  navigate('/athomes/user-login')}
+                  navigate('/atHomes/user-login')}
               >
                 <FontAwesomeIcon icon={faArrowLeft} />
                 Back

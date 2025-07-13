@@ -45,7 +45,7 @@ function BrokerageProperty() {
         })
         localStorage.clear();
         console.clear();
-        navigate('/athomes');
+        navigate('/atHomes');
     }
   };
 

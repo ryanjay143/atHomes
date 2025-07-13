@@ -33,7 +33,7 @@ function Admin() {
       timer: 1500,
       timerProgressBar: true
     });
-    navigate("/athomes/agent-broker"); 
+    navigate("/atHomes/agent-broker"); 
      
   };
 

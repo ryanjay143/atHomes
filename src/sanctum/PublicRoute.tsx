@@ -13,11 +13,11 @@ function PublicRoute({ children }: PublicRouteProps) {
   useEffect(() => {
     if (token) {
       if (role === '0') {
-        navigate('/athomes/admin/user-dashboard');
+        navigate('/atHomes/admin/user-dashboard');
       } else if (role === '1') {
-        navigate('/athomes/agent-broker'); 
+        navigate('/atHomes/agent-broker'); 
       }  else if (role === '2') {
-        navigate('/athomes/broker'); 
+        navigate('/atHomes/broker'); 
       }
     }
   }, [token, role, navigate]);

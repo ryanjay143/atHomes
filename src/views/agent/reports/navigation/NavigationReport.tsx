@@ -8,7 +8,7 @@ function NavigationSalesEncoding() {
             <Breadcrumb >
                 <BreadcrumbList>
                     <BreadcrumbItem className="text-accent">
-                        <Link to="/athomes/agent-broker/agent-salesReport" >List of Sales Report</Link>
+                        <Link to="/atHomes/agent-broker/agent-salesReport" >List of Sales Report</Link>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                 </BreadcrumbList>

@@ -23,12 +23,12 @@ function AdminSidebar() {
 
   // Navigation links
   const links = [
-    { path: "/athomes/admin/user-dashboard", icon: faTachometerAlt, label: "Dashboard" },
-    { path: "/athomes/admin/developer", icon: faHomeUser, label: "Developer" },
-    { path: "/athomes/admin/affialiated", icon: faUsers, label: "Affialiated" },
-    { path: "/athomes/admin/sales-encoding", icon: faKeyboard, label: "Sales Encoding" },
-    { path: "/athomes/admin/brokerage-property", icon: faHome, label: "Brokerage/Property" },
-    { path: "/athomes/admin/sales-report", icon: faChartLine, label: "Sales Report" },
+    { path: "/atHomes/admin/user-dashboard", icon: faTachometerAlt, label: "Dashboard" },
+    { path: "/atHomes/admin/developer", icon: faHomeUser, label: "Developer" },
+    { path: "/atHomes/admin/affialiated", icon: faUsers, label: "Affialiated" },
+    { path: "/atHomes/admin/sales-encoding", icon: faKeyboard, label: "Sales Encoding" },
+    { path: "/atHomes/admin/brokerage-property", icon: faHome, label: "Brokerage/Property" },
+    { path: "/atHomes/admin/sales-report", icon: faChartLine, label: "Sales Report" },
   ];
 
   const notificationLink = { path: "/admin/products", icon: faBell, label: "Notification" };
@@ -67,7 +67,7 @@ function AdminSidebar() {
           {/* Logo Section */}
           <div
             className="flex justify-center cursor-pointer mb-7"
-            onClick={() => handleNavigation("/athomes/admin/user-dashboard")}
+            onClick={() => handleNavigation("/atHomes/admin/user-dashboard")}
           >
             <img src="../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
           </div>
@@ -148,7 +148,7 @@ function AdminSidebar() {
           </div>
 
           <div className="text-center text-sm text-[#eff6ff]">
-            © {new Date().getFullYear()} ATHomes Company
+            © {new Date().getFullYear()} atHomes Company
           </div>
         </div>
       </div>
