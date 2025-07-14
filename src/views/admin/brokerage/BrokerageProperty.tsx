@@ -37,7 +37,7 @@ function BrokerageProperty() {
       });
 
       setProperties(response.data.property);
-      console.log("Property:", response.data.property)
+      // console.log("Property:", response.data.property)
     } catch (error) {
       console.error('Error fetching data:', error);
        Swal.fire({
@@ -82,12 +82,12 @@ function BrokerageProperty() {
         <NavigationBrokerage />
         <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
           <CardHeader>
-            <div className='flex flex-row justify-between'>
-              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-14'>
+             <div className='flex flex-row md:flex-col gap-4 justify-between'>
+              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>
                 <div className="grid w-full gap-1.5">
                   <Label>Category</Label>
                   <Select onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="md:w-[340px]">
+                    <SelectTrigger className="md:w-full ">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -103,7 +103,7 @@ function BrokerageProperty() {
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Date Listed</Label>
-                  <Input type="date" className="md:w-[340px]" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
+                  <Input type="date" className="md:w-full" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Filter Status</Label>
@@ -119,7 +119,7 @@ function BrokerageProperty() {
                   </Select>
                 </div>
               </div>
-              <div>
+              <div className='md:flex md:justify-end md:items-center md:w-full'>
                 <AddProperty 
                   isOpen={isDialogOpen}
                   fetchPropertiesData={fetchPropertiesData} 
@@ -129,7 +129,7 @@ function BrokerageProperty() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className='py-2 flex flex-row justify-between'>
+            <div className='py-2 flex flex-row justify-between gap-4'>
               <Select onValueChange={value => setEntriesToShow(value === 'all' ? properties.length : parseInt(value, 10))}>
                 <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
@@ -148,7 +148,7 @@ function BrokerageProperty() {
               <Input
                 type='text'
                 placeholder='Search'
-                className='w-52'
+                className='w-52 md:w-full'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />

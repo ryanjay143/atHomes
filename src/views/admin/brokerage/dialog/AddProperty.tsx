@@ -128,7 +128,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   });
 
   try {
-    const response = await axios.post('property-listings', formData, {
+    await axios.post('property-listings', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -146,7 +146,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
       timerProgressBar: true,
     });
 
-    console.log('Property listing created successfully:', response.data);
+    // console.log('Property listing created successfully:', response.data);
 
     // Reset form fields after successful submission
     setCategory('');
@@ -182,7 +182,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
             Add Brokerage
         </Button>
         </DialogTrigger>
-        <DialogContent className="md:max-w-[400px] overflow-auto max-h-[95%]">
+        <DialogContent className="md:w-[90%] overflow-auto max-h-[95%]">
         <DialogHeader className="text-start">
             <DialogTitle>Add New Property Listing</DialogTitle>
             <DialogDescription>

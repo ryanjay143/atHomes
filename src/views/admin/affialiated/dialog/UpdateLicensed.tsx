@@ -82,7 +82,7 @@ function UpdateLicensed({ unlicensed, agentUnliscenced }: UpdateLicensedProps) {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      console.log('License updated successfully:', response.data.message);
+      // console.log('License updated successfully:', response.data.message);
       agentUnliscenced(); 
       Swal.fire({
         icon: "success",

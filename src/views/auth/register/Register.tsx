@@ -148,7 +148,7 @@ function Register() {
     }
 
     try {
-      const response = await axios.post('register', formData);
+      await axios.post('register', formData);
       Swal.fire({
         title: "Registration successful!",
         text: "Please wait for approval.",
@@ -161,7 +161,7 @@ function Register() {
         navigate('/atHomes')
       );
 
-      console.log(response.data);
+      // console.log(response.data);
 
       setFormData({
         acct_number: generateAccountNumber(),
@@ -361,7 +361,7 @@ function Register() {
                 <Label htmlFor="type">Type</Label> <span className="text-red-500">*</span>
                 <Select
                   onValueChange={(value) => {
-                    console.log("Selected Role:", value);
+                    // console.log("Selected Role:", value);
                     setFormData({ ...formData, role: value });
                   }}
                 >
@@ -389,7 +389,7 @@ function Register() {
                   placeholder="Enter DHSUD Registration No:"
                   onChange={(e) => {
                     handleChange(e);
-                    console.log("DHSUD Registration Number:", e.target.value);
+                    // console.log("DHSUD Registration Number:", e.target.value);
                   }}
                 />
                 {errors.dhsud_registration_number && <span className="text-red-500 text-sm">{errors.dhsud_registration_number}</span>}
@@ -404,7 +404,7 @@ function Register() {
                     const rawDate = e.target.value;
                     const formattedDate = rawDate.split("-").reverse().join("-");
                     handleChange({ target: { name: "validation_date", value: formattedDate } });
-                    console.log("Validation Date:", formattedDate);
+                    // console.log("Validation Date:", formattedDate);
                   }}
                 />
                 {errors.validation_date && <span className="text-red-500 text-sm">{errors.validation_date}</span>}

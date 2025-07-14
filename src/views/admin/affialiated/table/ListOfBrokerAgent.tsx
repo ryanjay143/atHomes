@@ -28,8 +28,8 @@ function ListOfBrokerAgent() {
         },
       });
 
-      console.log('API Response:', response);
-      console.log('List of Approved:', response.data.agentList);
+      // console.log('API Response:', response);
+      // console.log('List of Approved:', response.data.agentList);
       setAgentList(response.data.agentList);
     } catch (error) {
 
@@ -73,7 +73,7 @@ function ListOfBrokerAgent() {
 
   return (
     <div className='p-2'>
-      <div className='py-2 flex flex-row justify-between'>
+      <div className='py-2 flex flex-row justify-between gap-4'>
         <Select onValueChange={handleEntriesChange}>
           <SelectTrigger className="w-[120px] border border-primary md:w-28">
             <span className='text-[#172554]'>Show</span>
@@ -88,7 +88,7 @@ function ListOfBrokerAgent() {
             <SelectItem value="50">50</SelectItem>
           </SelectContent>
         </Select>
-        <Input type='text' placeholder='Search' className='w-52 md:w-48' value={searchQuery} onChange={handleSearchChange} />
+        <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery} onChange={handleSearchChange} />
       </div>
       <div className="fade-in-left">
         <Table>

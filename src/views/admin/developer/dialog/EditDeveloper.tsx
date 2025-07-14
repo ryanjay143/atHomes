@@ -113,7 +113,7 @@ function EditDeveloper({ developer, fetchDevelopers }: any) {
         }
       );
 
-      console.log("Developer updated successfully:", response.data);
+      // console.log("Developer updated successfully:", response.data);
 
       fetchDevelopers();
       setIsImageChanged(false);

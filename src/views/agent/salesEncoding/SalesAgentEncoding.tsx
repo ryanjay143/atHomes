@@ -57,10 +57,10 @@ function SalesAgentEncoding() {
       setIdentityDetails(response.data.identityDetails);
 
       setSalesEncodings(response.data.salesEncoding);
-      console.log("List of Sales:", response.data.salesEncoding)
-      console.log("Personal Info:", response.data.personalInfo);
+      // console.log("List of Sales:", response.data.salesEncoding)
+      // console.log("Personal Info:", response.data.personalInfo);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     }
   };
 
@@ -134,7 +134,7 @@ function SalesAgentEncoding() {
           <CardContent>
             <div className='py-2 flex flex-row justify-between gap-4'>
               <Select onValueChange={value => setEntriesToShow(value === 'all' ? filteredSalesEncodings.length : parseInt(value, 10))}>
-                <SelectTrigger className="w-[120px] md:w-full border border-primary">
+                <SelectTrigger className="w-[120px]  border border-primary">
                   <span className='text-[#172554]'>Show</span>
                   <SelectValue placeholder="All" />
                 </SelectTrigger>

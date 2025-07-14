@@ -32,12 +32,12 @@ function CardReport() {
 
      
      setSalesReport(response.data.salesEncodingReport);
-      console.log('Sales Report:', response.data.salesEncodingReport);
+      // console.log('Sales Report:', response.data.salesEncodingReport);
      
 
      
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     }
   };
 

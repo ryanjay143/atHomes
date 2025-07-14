@@ -37,7 +37,7 @@ function ListOfPendingRegistered() {
         },
       })
       .then((e: any) => {
-        console.log('API Response:', e.data.pendingAgents); 
+        // console.log('API Response:', e.data.pendingAgents); 
         setPendingRegistered(e.data.pendingAgents);
       })
       .catch((e: any) => {
@@ -110,7 +110,7 @@ function ListOfPendingRegistered() {
   return (
     <div className="p-2">
       {/* Search and Select */}
-      <div className='py-2 flex flex-row justify-between'>
+      <div className='py-2 flex flex-row justify-between gap-4'>
         <Select onValueChange={handleEntriesChange}>
           <SelectTrigger className="w-[120px] border border-primary md:w-28">
             <span className='text-[#172554]'>Show</span>
@@ -128,7 +128,7 @@ function ListOfPendingRegistered() {
         <Input type='text' 
           value={searchTerm} 
           placeholder='Search' 
-          className='w-52 md:w-48' 
+          className='w-52 md:w-full' 
           onChange={(e) => setSearchTerm(e.target.value)} 
         />
       </div>

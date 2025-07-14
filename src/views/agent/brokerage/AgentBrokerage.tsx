@@ -32,9 +32,9 @@ function BrokerageProperty() {
       });
 
       setProperties(response.data.property);
-      console.log("Property:", response.data.property)
+      // console.log("Property:", response.data.property)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
        Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -126,7 +126,7 @@ function BrokerageProperty() {
           <CardContent>
             <div className='py-2 flex flex-row justify-between gap-4'>
               <Select onValueChange={value => setEntriesToShow(value === 'all' ? properties.length : parseInt(value, 10))}>
-                <SelectTrigger className="w-[120px] md:w-full border border-primary">
+                <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
                   <SelectValue placeholder="All" />
                 </SelectTrigger>

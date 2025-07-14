@@ -197,7 +197,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[425px] h-full max-h-[700px] overflow-auto">
+      <DialogContent className="md:w-[90%] h-full max-h-[650px] overflow-auto">
         <DialogHeader className='text-start'>
           <DialogTitle>Edit Sales Encoding</DialogTitle>
           <DialogDescription>

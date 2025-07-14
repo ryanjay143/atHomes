@@ -312,7 +312,7 @@ const DeveloperContainer: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                     {/* Pagination and Table */}
-                    <div className='py-2 flex flex-row justify-between'>
+                    <div className='py-2 flex flex-row justify-between gap-4'>
                         <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
                             <SelectTrigger className="w-[120px] border border-primary">
                                 <span className='text-[#172554]'>Show</span>
@@ -330,7 +330,7 @@ const DeveloperContainer: React.FC = () => {
                         <Input 
                             type='text' 
                             placeholder='Search' 
-                            className='w-52' 
+                            className='w-52 md:w-full' 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />

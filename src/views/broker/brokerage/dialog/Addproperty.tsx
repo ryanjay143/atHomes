@@ -128,7 +128,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   });
 
   try {
-    const response = await axios.post('user/broker', formData, {
+    await axios.post('user/broker', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -146,7 +146,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
       timerProgressBar: true,
     });
 
-    console.log('Property listing created successfully:', response.data);
+    // console.log('Property listing created successfully:', response.data);
 
     // Reset form fields after successful submission
     setCategory('');

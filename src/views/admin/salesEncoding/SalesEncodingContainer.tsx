@@ -61,9 +61,9 @@ function SalesEncodingContainer() {
       setAgentBroker(response.data.agents);
       setEntriesToShow(response.data.salesEncoding.length);
       setSalesEncodings(response.data.salesEncoding);
-      console.log("List of Sales:", response.data.salesEncoding)
+      // console.log("List of Sales:", response.data.salesEncoding)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
        Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -146,14 +146,14 @@ const handleDelete = async (id: number) => {
     <div className='py-5 md:pt-20'>
       <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5'>
         <NavigationSalesEncoding />
-        <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
+        <Card className='bg-[#eff6ff] border-b-4 border-primary fade-in-left'>
           <CardHeader>
-            <div className='flex flex-row justify-between'>
-              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-14'>
+            <div className='flex flex-row md:flex-col gap-4 justify-between'>
+              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>
                 <div className="grid w-full gap-1.5">
                   <Label>Category</Label>
                   <Select onValueChange={setCategoryFilter} value={categoryFilter}>
-                    <SelectTrigger className="md:w-[340px]">
+                    <SelectTrigger className="md:w-full">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -169,16 +169,16 @@ const handleDelete = async (id: number) => {
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Reservation date</Label>
-                  <Input type="date" className="md:w-[340px]" onChange={e => setDateFilter(e.target.value)} />
+                  <Input type="date" className="md:w-full" onChange={e => setDateFilter(e.target.value)} />
                 </div>
               </div>
-              <div>
+              <div className='md:flex md:justify-end md:items-center md:w-full'>
                 <AddSales fetchAgent={fetchAgent} />
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className='py-2 flex flex-row justify-between'>
+            <div className='py-2 flex flex-row justify-between gap-4'>
               <Select onValueChange={value => setEntriesToShow(value === 'all' ? filteredSalesEncodings.length : parseInt(value, 10))}>
                 <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
@@ -197,7 +197,7 @@ const handleDelete = async (id: number) => {
               <Input
                 type='text'
                 placeholder='Search'
-                className='w-52'
+                className='w-52 md:w-full'
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />

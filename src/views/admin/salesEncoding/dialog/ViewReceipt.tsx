@@ -67,7 +67,7 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className='md:max-w-[425px] h-full max-h-[700px] overflow-auto'>
+        <DialogContent className='md:w-[90%] h-full max-h-[650px] overflow-auto'>
           <DialogHeader>
             <DialogTitle className='text-start'>View Receipt</DialogTitle>
             <DialogDescription>

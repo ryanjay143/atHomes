@@ -17,7 +17,7 @@ function Topperformaers() {
       });
 
       settopPerformers(response.data.topPerformers);
-      console.log("Top Performers:", response.data.topPerformers)
+      // console.log("Top Performers:", response.data.topPerformers)
     } catch (error) {
       console.error('Error fetching data:', error);
     }

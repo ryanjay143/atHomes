@@ -60,10 +60,10 @@ function SalesBrokerEncoding() {
       setIdentityDetails(response.data.identityDetails);
 
       setSalesEncodings(response.data.salesEncoding);
-      console.log("List of Sales:", response.data.salesEncoding)
-      console.log("Personal Info:", response.data.personalInfo);
+      // console.log("List of Sales:", response.data.salesEncoding)
+      // console.log("Personal Info:", response.data.personalInfo);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     }
   };
 

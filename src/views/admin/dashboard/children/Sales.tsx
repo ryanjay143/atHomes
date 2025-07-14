@@ -28,7 +28,7 @@ const Sales = () => {
       });
       setChartData(monthlySales);
 
-      console.log("List of Sales:", salesData);
+      // console.log("List of Sales:", salesData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }

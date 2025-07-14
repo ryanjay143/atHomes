@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faHouseCircleCheck, faHouseCircleXmark, faList, faPesoSign, faPrint, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faHouseCircleCheck, faHouseCircleXmark, faList, faPesoSign, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "../../../plugin/axios";
@@ -144,16 +144,16 @@ function Salesreport() {
               <div className="grid grid-cols-2 md:grid-cols-1 gap-4 md:gap-4 w-full">
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Date Range</Label>
-                  <div className="flex space-x-2">
-                    <Input type="date" className="w-full md:w-[160px]" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
-                    <span className="flex items-center">-</span>
-                    <Input type="date" className="w-full md:w-[160px]" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
+                  <div className="flex flex-row gap-2 md:flex-col">
+                    <Input type="date" className="w-full" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
+                    <span className="flex items-center md:hidden">-</span>
+                    <Input type="date" className="w-full" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
                   </div>
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Agent/Broker</Label>
                   <Select onValueChange={handleAgentChange} value={selectedAgent}>
-                    <SelectTrigger className="w-full md:w-[340px]">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select agent or broker" />
                     </SelectTrigger>
                     <SelectContent>
@@ -288,18 +288,14 @@ function Salesreport() {
               </Button>
               <Button className="bg-red-500 text-white hover:bg-red-400 hover:text-white">
                 <FontAwesomeIcon icon={faDownload} />
-                Export to PDF
+                Download as PDF
               </Button>
               <Button className="bg-green-500 text-white hover:bg-green-400 hover:text-white">
                 <FontAwesomeIcon icon={faDownload} />
-                Export to Excel
-              </Button>
-              <Button>
-                <FontAwesomeIcon icon={faPrint} />
-                Print Report
+                Download as Excel
               </Button>
             </div>
-            <div className='py-2 mt-5 flex flex-row justify-between'>
+            <div className='py-2 mt-5 flex flex-row justify-between gap-4'>
               <Select onValueChange={handleRowsToShowChange}>
                 <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
@@ -317,7 +313,7 @@ function Salesreport() {
               <Input
                 type='text'
                 placeholder='Search'
-                className='w-52'
+                className='w-52 md:w-full'
                 value={searchQuery}
                 onChange={handleSearch}
               />
@@ -334,7 +330,6 @@ function Salesreport() {
                     <TableHead>Reservation date</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Amount</TableHead>
-                    <TableHead>Remarks</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -356,7 +351,6 @@ function Salesreport() {
                       <TableCell className='border border-[#bfdbfe]'>{dateFormatter.format(new Date(report.date_on_sale))}</TableCell>
                       <TableCell className='border border-[#bfdbfe]'>{report.location}</TableCell>
                       <TableCell className='border border-[#bfdbfe]'>{currencyFormatter.format(report.amount)}</TableCell>
-                      <TableCell className='border border-[#bfdbfe]'>{report.remarks}</TableCell>
                       <TableCell className="text-right border border-[#bfdbfe]">
                         <div className='flex flex-row gap-1 justify-end'>
                           <ViewReceipt sales={report} dateFormatter={dateFormatter} currencyFormatter={currencyFormatter} />

@@ -31,12 +31,12 @@ function CardReport() {
 
      
      setSalesReport(response.data.salesEncodingReport);
-      console.log('Sales Report:', response.data.salesEncodingReport);
+      // console.log('Sales Report:', response.data.salesEncodingReport);
      
 
      
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
     }
   };
 
@@ -126,7 +126,7 @@ function CardReport() {
 
             <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
-              <div className="grid grid-cols-3 md:grid-cols-1 gap-4 md:gap-4 w-full">
+              <div className="grid grid-cols-2 md:grid-cols-1 gap-4 md:gap-4 w-full">
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Date Range</Label>
                   <div className="flex gap-2 md:gap-4 md:flex-col">
@@ -135,7 +135,7 @@ function CardReport() {
                     <Input type="date" className="w-full" placeholder="End Date" value={endDate} onChange={handleEndDateChange}/>
                   </div>
                 </div>
-                <div className="grid w-full items-center gap-1.5 2xl:w-[310px] 2xl:ml-10 md:ml-0 xs:ml-0 xs:w-full">
+                <div className="grid w-full items-center gap-1.5">
                   <Label>Category</Label>
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger className='xl:w-full md:w-full border border-primary'>
@@ -205,7 +205,7 @@ function CardReport() {
 
             <div className='py-2 mt-5 flex flex-row justify-between gap-4'>
               <Select value={salesReportShow} onValueChange={setsalesReportShow}>
-                <SelectTrigger className="w-[120px] md:w-full border border-primary">
+                <SelectTrigger className="w-[120px] border border-primary">
                   <span className='text-[#172554]'>Show</span>
                   <SelectValue placeholder="All" />
                 </SelectTrigger>

@@ -84,7 +84,7 @@ function AddSales({ fetchAgent }:any) {
     if (selectedAgent) {
       const fullName = `${selectedAgent.personal_info.first_name} ${selectedAgent.personal_info.middle_name} ${selectedAgent.personal_info.last_name} ${selectedAgent.personal_info.extension_name}`;
       setSelectedAgentName(fullName);
-      console.log('Selected Agent:', fullName);
+      // console.log('Selected Agent:', fullName);
     }
   };
 
@@ -161,13 +161,13 @@ function AddSales({ fetchAgent }:any) {
     });
 
     try {
-      const response = await axios.post('sales-encoding', formDataToSend, {
+      await axios.post('sales-encoding', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      console.log('Response:', response.data);
+      // console.log('Response:', response.data);
 
       fetchAgent();
 
@@ -196,7 +196,7 @@ function AddSales({ fetchAgent }:any) {
       });
 
     } catch (error) {
-      console.error('Error submitting form:', error);
+      // console.error('Error submitting form:', error);
 
       Swal.fire({
         icon: 'error',
@@ -218,7 +218,7 @@ function AddSales({ fetchAgent }:any) {
             Add Sales
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:max-w-[400px] overflow-auto max-h-[97%]">
+        <DialogContent className="md:w-[90%] overflow-auto max-h-[97%]">
           <DialogHeader>
             <DialogTitle className='text-start'>ADD SALES ENCODING</DialogTitle>
             <DialogDescription>

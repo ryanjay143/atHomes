@@ -41,9 +41,9 @@ function DashboardContainer() {
       setSales(response.data.salesEncodingTop5);
       setTotalSales(salesData.reduce((total: number, item: any) => total + item.amount, 0));
 
-      console.log("List of Sales:", salesData);
+      // console.log("List of Sales:", salesData);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
       Swal.fire({
         icon: 'error',
         title: 'Error',

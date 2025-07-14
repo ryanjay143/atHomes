@@ -81,7 +81,7 @@ const EditProfile: React.FC = () => {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      console.log('Profile updated successfully:', response.data);
+      // console.log('Profile updated successfully:', response.data);
       Swal.fire({
         title: "Success",
         text: response.data.message,
@@ -98,7 +98,7 @@ const EditProfile: React.FC = () => {
       });
       adminProfile();
     } catch (error) {
-      console.error('Error updating profile:', error);
+      // console.error('Error updating profile:', error);
     } finally {
       setLoading(false);
     }
@@ -115,10 +115,10 @@ const EditProfile: React.FC = () => {
 
       setUser(response.data.user);
       setPersonalInfo(response.data.personalInfo);
-      console.log('User data:', response.data.user);
-      console.log('Personal info:', response.data.personalInfo);
+      // console.log('User data:', response.data.user);
+      // console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
-      console.error('Error fetching members:', error);
+      // console.error('Error fetching members:', error);
     }
   };
 

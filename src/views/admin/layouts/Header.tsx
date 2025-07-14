@@ -34,9 +34,9 @@ function Header() {
       });
 
       setPersonalInfo(response.data.personalInfo);
-      console.log('Personal info:', response.data.personalInfo);
+      // console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
-      console.error('Error fetching members:', error);
+      // console.error('Error fetching members:', error);
     }
   };
 

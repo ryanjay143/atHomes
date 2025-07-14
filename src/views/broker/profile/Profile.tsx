@@ -52,9 +52,9 @@ function Profile() {
       });
 
       setPersonalInfo(response.data.personalInfo);
-      console.log('Personal info:', response.data.personalInfo);
+      // console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
-      console.error('Error fetching members:', error);
+      // console.error('Error fetching members:', error);
     }
   };
 
@@ -92,7 +92,7 @@ function Profile() {
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
           <div
             className="flex items-center gap-2 text-foreground cursor-pointer"
-            onClick={() => navigate('admin-profile')}
+            onClick={() => navigate('broker-profile')}
           >
             <FontAwesomeIcon icon={faUser} className="w-5 h-5 text-foreground" />
             View Profile

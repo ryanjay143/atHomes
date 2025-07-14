@@ -34,9 +34,9 @@ function BrokerageProperty() {
       });
 
       setProperties(response.data.property);
-      console.log("Property:", response.data.property)
+      // console.log("Property:", response.data.property)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      // console.error('Error fetching data:', error);
        Swal.fire({
           icon: 'error',
           title: 'Error',

@@ -23,7 +23,7 @@ function ListOfLiscenced() {
         },
       });
 
-      console.log('List of Licensed Agent:', response.data.agentsLicensed);
+      // console.log('List of Licensed Agent:', response.data.agentsLicensed);
       setAgentListLicensed(response.data.agentsLicensed);
     } catch (error) {
       console.error('Error fetching members:', error);
@@ -57,7 +57,7 @@ function ListOfLiscenced() {
 
   return (
     <div className='p-2'>
-      <div className='py-2 flex flex-row justify-between'>
+      <div className='py-2 flex flex-row justify-between gap-4'>
         <Select onValueChange={handleEntriesChange}>
           <SelectTrigger className="w-[120px] border border-primary md:w-28">
             <span className='text-[#172554]'>Show</span>
@@ -72,7 +72,7 @@ function ListOfLiscenced() {
             <SelectItem value="50">50</SelectItem>
           </SelectContent>
         </Select>
-        <Input type='text' placeholder='Search' className='w-52 md:w-48' value={searchQuery} onChange={handleSearchChange} />
+        <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery} onChange={handleSearchChange} />
       </div>
       <div className="fade-in-left">
         <Table>

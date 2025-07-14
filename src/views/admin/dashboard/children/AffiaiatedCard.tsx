@@ -27,10 +27,10 @@ function AffiaiatedCard() {
       setPendingRegistered(response.data.pendingAgentsCount || 0)
       setAgentLicensed(response.data.agentsLicensedCount || 0)
       setagentUnLicensed(response.data.agentsUnlicensedCount || 0)
-      console.log("Pending Registered Count:", response.data.pendingAgentsCount)
-      console.log("Agent Licensed Count:", response.data.agentsLicensedCount)
-      console.log("Broker and Agent Count:", response.data.agentsListCount);
-      console.log("Unlicensed Agents Count:", response.data.agentsUnlicensedCount);
+    //   console.log("Pending Registered Count:", response.data.pendingAgentsCount)
+    //   console.log("Agent Licensed Count:", response.data.agentsLicensedCount)
+    //   console.log("Broker and Agent Count:", response.data.agentsListCount);
+    //   console.log("Unlicensed Agents Count:", response.data.agentsUnlicensedCount);
       
     } catch (error) {
 
