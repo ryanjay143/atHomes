@@ -32,7 +32,7 @@ function Header() {
     const roleValue = localStorage.getItem("role");
     switch (roleValue) {
       case "0":
-        setRole("Admin");
+        setRole("Admininistrator");
         break;
       case "1":
         setRole("Agent");

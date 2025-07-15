@@ -33,7 +33,7 @@ function Admin() {
       timer: 1500,
       timerProgressBar: true
     });
-    navigate("/atHomes/agent-broker"); 
+    navigate("/atHomes/broker/broker-dashboard");
      
   };
 
@@ -62,17 +62,17 @@ function Admin() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      className="bg-[#172554] rounded-full p-2 text-[#eff6ff] h-10 w-10 md:h-7 md:w-7"
-                      type="button"
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                      onClick={handleSwitchAccount} // Add onClick handler
-                    >
-                      <FontAwesomeIcon
-                        icon={faArrowsRotate}
-                        className={`md:ml-[-2px] md:mb-[5px] ${isHovered ? "animate-spin" : ""}`}
-                      />
-                    </button>
+                    className="bg-[#172554] rounded-full p-2 text-[#eff6ff] h-10 w-10 md:h-7 md:w-7"
+                    type="button"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={handleSwitchAccount}
+                  >
+                    <FontAwesomeIcon
+                      icon={faArrowsRotate}
+                      className={`md:ml-[-2px] md:mb-[5px] ${isHovered ? "animate-spin" : ""}`}
+                    />
+                  </button>
                   </TooltipTrigger>
                   <TooltipContent className="bg-[#172554]">
                     <div className="text-base">Switch Account</div>
