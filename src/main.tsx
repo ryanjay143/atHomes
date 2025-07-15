@@ -19,6 +19,7 @@ import PublicRoute from './sanctum/PublicRoute';
 const Login = lazy(() => wait(3000).then(() => import("./views/auth/login/Login")));
 const Register = lazy(() => wait(3000).then(() => import("./views/auth/register/Register")));
 const ForgotPassword = lazy(() => wait(3000).then(() => import("./views/auth/forgotPassword")));
+const ResetPassword = lazy(() => wait(3000).then(() => import("./views/auth/resetPassword")));
 const DashboardContainer = lazy(() => wait(3000).then(() => import("./views/admin/dashboard/DashboardContainer")));
 const AdminProfile = lazy(() => wait(3000).then(() => import("./views/admin/profile/EditProfile")));
 const DeveloperContainer = lazy(() => wait(3000).then(() => import("./views/admin/developer/DeveloperContainer")));
@@ -73,6 +74,16 @@ const routes = [
       <Suspense fallback={<Loader />}>
         <PublicRoute>
           <ForgotPassword />
+        </PublicRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: "/atHomes/reset-password",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <PublicRoute>
+          <ResetPassword />
         </PublicRoute>
       </Suspense>
     ),
