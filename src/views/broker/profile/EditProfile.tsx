@@ -6,10 +6,15 @@ import Swal from 'sweetalert2';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
+const MAX_IMAGE_SIZE_MB = 5;
+const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+
 const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [user, setUser] = useState<any>({
     username: '',
     email: '',
@@ -39,7 +44,28 @@ const EditProfile: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setImageError(null);
     if (file) {
+      // Validate file type
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        setImageError('Only image files (jpeg, jpg, png, webp) are allowed.');
+        setProfilePicPreview(null);
+        setPersonalInfo({ ...personalinfo, profile_pic: '' });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+      // Validate file size
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        setImageError(`Image size must be less than ${MAX_IMAGE_SIZE_MB}MB.`);
+        setProfilePicPreview(null);
+        setPersonalInfo({ ...personalinfo, profile_pic: '' });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
       const imageUrl = URL.createObjectURL(file);
       setProfilePicPreview(imageUrl);
       setPersonalInfo({ ...personalinfo, profile_pic: file }); // store the file, not the URL
@@ -52,10 +78,22 @@ const EditProfile: React.FC = () => {
     if (loading) return;
     setLoading(true);
 
+    // Prevent submit if image error exists
+    if (imageError) {
+      setLoading(false);
+      Swal.fire({
+        title: "Error",
+        text: imageError,
+        icon: "error",
+        showConfirmButton: true,
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append('username', user.username);
     formData.append('email', user.email);
-   
+
     formData.append('first_name', personalinfo.first_name);
     formData.append('middle_name', personalinfo.middle_name);
     formData.append('last_name', personalinfo.last_name);
@@ -63,7 +101,7 @@ const EditProfile: React.FC = () => {
     formData.append('phone', personalinfo.phone);
     formData.append('complete_address', personalinfo.complete_address);
 
-     if (user.password) {
+    if (user.password) {
       formData.append('password', user.password);
       formData.append('password_confirmation', user.password_confirmation);
     }
@@ -81,7 +119,6 @@ const EditProfile: React.FC = () => {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      // console.log('Profile updated successfully:', response.data);
       Swal.fire({
         title: "Success",
         text: response.data.message,
@@ -98,7 +135,7 @@ const EditProfile: React.FC = () => {
       });
       adminProfile();
     } catch (error) {
-      // console.error('Error updating profile:', error);
+      // Handle error as needed
     } finally {
       setLoading(false);
     }
@@ -115,10 +152,8 @@ const EditProfile: React.FC = () => {
 
       setUser(response.data.user);
       setPersonalInfo(response.data.personalInfo);
-      // console.log('User data:', response.data.user);
-      // console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
-      // console.error('Error fetching members:', error);
+      // Handle error as needed
     }
   };
 
@@ -285,14 +320,20 @@ const EditProfile: React.FC = () => {
                       </AvatarFallback>
                     </Avatar>
                   </div>
-                  <label className="block text-gray-700">Profile Picture</label>
+                   <p className="text-sm text-red-600">
+                    Profile Picture (JPEG, PNG, WEBP, Max 5MB)
+                  </p>
                   <Input
                     type="file"
                     name="profile_pic"
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
                     className="w-full px-3 py-2 border rounded-lg"
                     onChange={handleFileChange}
                     ref={fileInputRef}
                   />
+                  {imageError && (
+                    <div className="text-red-600 text-sm mt-1">{imageError}</div>
+                  )}
                 </div>
               </div>
             </>
