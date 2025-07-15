@@ -33,7 +33,7 @@ function Admin() {
       timer: 1500,
       timerProgressBar: true
     });
-    navigate("/atHomes/broker/broker-dashboard");
+    navigate("/broker/broker-dashboard");
      
   };
 

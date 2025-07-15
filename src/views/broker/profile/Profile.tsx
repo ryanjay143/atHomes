@@ -21,11 +21,11 @@ const handleLogout = async (navigate: any) => {
     console.clear();
 
     // Navigate to the home page
-    navigate('/atHomes');
+    navigate('/');
   } catch (error) {
     console.error('Logout failed', error);
     localStorage.clear();
-    navigate('/atHomes', { replace: true });
+    navigate('/', { replace: true });
   }
 };
 

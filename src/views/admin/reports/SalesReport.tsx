@@ -47,7 +47,7 @@ function Salesreport() {
       })
       localStorage.clear();
       console.clear();
-      navigate('/atHomes');
+      navigate('/');
     }
   };
 

@@ -8,7 +8,7 @@ function NavigationAffialiated() {
     <Breadcrumb>
         <BreadcrumbList>
             <BreadcrumbItem className="text-accent">
-                <Link to="/atHomes/admin/developer" >List of Brokers/Agent</Link>
+                <Link to="/admin/developer" >List of Brokers/Agent</Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
         </BreadcrumbList>

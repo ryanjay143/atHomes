@@ -49,7 +49,7 @@ function BrokerLayout() {
             timer: 1500,
             timerProgressBar: true
           });
-      navigate("/atHomes/admin"); 
+      navigate("/admin"); 
     }
   };
 

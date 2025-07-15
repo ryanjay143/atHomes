@@ -43,7 +43,7 @@ function AffiaiatedCard() {
       })
       localStorage.clear();
       console.clear();
-      navigate('/atHomes');
+      navigate('/');
       
     }
   };
@@ -55,7 +55,7 @@ function AffiaiatedCard() {
 
   return (
     <div className="ml-72 md:ml-0 grid grid-cols-4 md:grid-cols-1 md:gap-2 md:p-5 md:mt-0 gap-2 items-start justify-center mt-5 md:px-5 mr-2">
-          <Link to="/atHomes/admin/affialiated" className="block">
+          <Link to="/admin/affialiated" className="block">
             <Card className="fade-in-left w-full md:w-full bg-[#eff6ff] border-b-4 border-primary">
                 <CardHeader>
                 <div className="flex items-center justify-between"> 
@@ -69,7 +69,7 @@ function AffiaiatedCard() {
             </Card>
             </Link>
 
-            <Link to="/atHomes/admin/affialiated/pendingRegister" className="block">
+            <Link to="/admin/affialiated/pendingRegister" className="block">
                 <Card className="fade-in-left w-full md:w-full bg-[#eff6ff] border-b-4 border-primary">
                     <CardHeader>
                         <div className="flex items-center justify-between">
@@ -83,7 +83,7 @@ function AffiaiatedCard() {
                 </Card>
             </Link>
 
-            <Link to="/atHomes/admin/affialiated/licensed" className="block">
+            <Link to="/admin/affialiated/licensed" className="block">
                 <Card className="fade-in-left w-full md:w-full bg-[#eff6ff] border-b-4 border-primary">
                     <CardHeader>
                         <div className="flex items-center justify-between">
@@ -97,7 +97,7 @@ function AffiaiatedCard() {
                 </Card>
             </Link>
           
-            <Link to="/atHomes/admin/affialiated/unlicensed" className="block">
+            <Link to="/admin/affialiated/unlicensed" className="block">
                 <Card className="fade-in-left w-full md:w-full bg-[#eff6ff] border-b-4 border-primary">
                     <CardHeader>
                     <div className="flex items-center justify-between">

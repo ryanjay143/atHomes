@@ -10,7 +10,7 @@ function Navigation() {
             <Breadcrumb >
                 <BreadcrumbList>
                     <BreadcrumbItem className="text-accent">
-                        <Link to="/athomes/admin/developer" >List of Accredited Developers</Link>
+                        <Link to="/admin/developer" >List of Accredited Developers</Link>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                 </BreadcrumbList>

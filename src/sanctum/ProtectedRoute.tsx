@@ -11,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, allowedRoles }
   const role = localStorage.getItem('role');
 
   if (!token || !allowedRoles.includes(role || '')) {
-    return <Navigate to="/atHomes/user-login" />; 
+    return <Navigate to="/user-login" />; 
   }
 
   return element;

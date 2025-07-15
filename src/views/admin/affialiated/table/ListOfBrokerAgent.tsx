@@ -42,7 +42,7 @@ function ListOfBrokerAgent() {
       })
       localStorage.clear();
       console.clear();
-      navigate('/atHomes');
+      navigate('/');
     }
   };
 

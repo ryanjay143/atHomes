@@ -72,7 +72,7 @@ const DeveloperContainer: React.FC = () => {
             })
             localStorage.clear();
             console.clear();
-            navigate('/atHomes');
+            navigate('/');
         }
     };
 
