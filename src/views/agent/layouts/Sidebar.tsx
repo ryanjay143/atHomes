@@ -12,6 +12,7 @@ import {
   faTachometerAlt,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
+import logo from "./../../../assets/logoathomes.jpg";
 
 function AdminSidebar() {
   // State management
@@ -65,7 +66,7 @@ function AdminSidebar() {
             className="flex justify-center cursor-pointer mb-7"
             onClick={() => handleNavigation("/atHomes/admin/user-dashboard")}
           >
-            <img src="../logoathomes.jpg" alt="Logo" className="w-36 h-28 rounded-2xl" />
+            <img src={logo} alt="Logo" className="w-36 h-28 rounded-2xl" />
           </div>
 
           {/* Navigation Menu */}
