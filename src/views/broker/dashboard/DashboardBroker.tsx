@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from "../../../plugin/axios";
-import { formatDateToMMDDYYYY } from '@/helper/dateUtils';
+import { formatDateToMMDDYYYYDateApproved } from '@/helper/dateUtils';
 
 
 import Swal from 'sweetalert2';
@@ -78,7 +78,7 @@ function DashboardContainer() {
       </div>
 
       <div className='ml-72 md:ml-0 grid grid-cols-1 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4'>
-       <RecentSales sales={sales} formatDateToMMDDYYYY={formatDateToMMDDYYYY} currencyFormatter={currencyFormatter}/>
+       <RecentSales sales={sales} formatDateToMMDDYYYYDateApproved={formatDateToMMDDYYYYDateApproved} currencyFormatter={currencyFormatter}/>
       </div>
     </div>
   );

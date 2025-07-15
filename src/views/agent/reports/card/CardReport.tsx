@@ -197,10 +197,6 @@ function CardReport() {
                     <FontAwesomeIcon icon={faDownload} />
                     Export to Excel
                 </Button>
-                <Button>
-                    <FontAwesomeIcon icon={faPrint} />
-                    Print Report
-                </Button>
             </div>
 
             <div className='py-2 mt-5 flex flex-row justify-between gap-4'>
