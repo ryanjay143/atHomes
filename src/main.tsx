@@ -45,11 +45,11 @@ const ReportBroker = lazy(() => wait(3000).then(() => import("./views/broker/rep
 // Route configuration
 const routes = [
   {
-    path: "/atHomes",
-    element: <Navigate to="/atHomes/user-login" />,
+    path: "/",
+    element: <Navigate to="/user-login" />,
   },
   {
-    path: "/atHomes/user-login",
+    path: "/user-login",
     element: (
       <Suspense fallback={<Loader />}>
         <PublicRoute>
@@ -59,7 +59,7 @@ const routes = [
     ),
   },
   {
-    path: "/atHomes/user-register",
+    path: "/user-register",
     element: (
       <Suspense fallback={<Loader />}>
         <PublicRoute>
@@ -69,7 +69,7 @@ const routes = [
     ),
   },
   {
-    path: "/atHomes/forgot-password",
+    path: "/forgot-password",
     element: (
       <Suspense fallback={<Loader />}>
         <PublicRoute>
@@ -79,7 +79,7 @@ const routes = [
     ),
   },
   {
-    path: "/atHomes/reset-password",
+    path: "/reset-password",
     element: (
       <Suspense fallback={<Loader />}>
         <PublicRoute>
@@ -89,10 +89,10 @@ const routes = [
     ),
   },
   {
-    path: "/atHomes/admin",
+    path: "/admin",
     element: <ProtectedRoute element={<Admin />} allowedRoles={['0']} />,
     children: [
-      { path: "", element: <Navigate to="/atHomes/admin/user-dashboard" /> },
+      { path: "", element: <Navigate to="/admin/user-dashboard" /> },
       { path: "user-dashboard", element: <Suspense fallback={<Loader />}><DashboardContainer /></Suspense> },
       { path: "admin-profile", element: <Suspense fallback={<Loader />}><AdminProfile /></Suspense> },
       { path: "developer", element: <Suspense fallback={<Loader />}><DeveloperContainer /></Suspense> },
@@ -112,10 +112,10 @@ const routes = [
     ],
   },
   {
-    path: "/atHomes/agent-broker",
+    path: "/agent-broker",
     element: <ProtectedRoute element={<AgentBrokerLayout />} allowedRoles={['1']} />,
     children: [
-      { path: "", element: <Navigate to="/atHomes/agent-broker/user-dashboard" /> },
+      { path: "", element: <Navigate to="/agent-broker/user-dashboard" /> },
       { path: "user-dashboard", element: <Suspense fallback={<Loader />}><DashboardAgentBroker /></Suspense> },
       { path: "agent-profile", element: <Suspense fallback={<Loader />}><AgentProfile /></Suspense> },
       { path: "agent-salesEncoding", element: <Suspense fallback={<Loader />}><SalesAgentEncoding /></Suspense> },
@@ -124,10 +124,10 @@ const routes = [
     ],
   },
   {
-    path: "/atHomes/broker",
+    path: "/broker",
     element: <ProtectedRoute element={<Brokerlayout />} allowedRoles={['2', '0']} />,
     children: [
-      { path: "", element: <Navigate to="/atHomes/broker/broker-dashboard" /> },
+      { path: "", element: <Navigate to="/broker/broker-dashboard" /> },
       { path: "broker-dashboard", element: <Suspense fallback={<Loader />}><DashboardBroker /></Suspense> },
       { path: "broker-profile", element: <Suspense fallback={<Loader />}><BrokerProfile /></Suspense> },
       { path: "broker-salesEncoding", element: <Suspense fallback={<Loader />}><SalesBrokerEncoding /></Suspense> },
