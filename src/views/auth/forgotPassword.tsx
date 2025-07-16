@@ -69,7 +69,7 @@ function ForgotPassword() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-80 max-w-md shadow-lg rounded-xl border border-b-4 border-primary">
+      <Card className="w-full max-w-md shadow-lg rounded-xl border border-b-4 border-primary">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-center text-gray-800">
             Forgot Password
