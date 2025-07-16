@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import { Navigate, RouterProvider, createHashRouter, } from "react-router-dom";
+import { Navigate, RouterProvider, createBrowserRouter, } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import NotFound from './notFound';
 import './index.css';
@@ -138,7 +138,7 @@ const routes = [
   { path: "*", element: <NotFound /> },
 ];
 
-const router = createHashRouter(routes);(routes);
+const router = createBrowserRouter(routes);
 
 function wait(time: number) {
   return new Promise((resolve) => {
