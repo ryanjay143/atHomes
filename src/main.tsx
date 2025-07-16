@@ -1,3 +1,11 @@
+const redirectPath = sessionStorage.getItem("redirectPath");
+if (redirectPath && window.location.search.includes("redirect=true")) {
+  sessionStorage.removeItem("redirectPath");
+  window.history.replaceState(null, "", redirectPath);
+}
+
+
+
 import ReactDOM from 'react-dom/client';
 import { Navigate, RouterProvider, createBrowserRouter, } from "react-router-dom";
 import React, { Suspense, lazy } from "react";

@@ -4,11 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <title>AtHomes</title>
-    <script>
-      // Keeps the path in address bar, but loads index.html
-      const path = window.location.pathname + window.location.search + window.location.hash;
-      sessionStorage.setItem("redirectPath", path);
-      window.location.href = "/";
+    <script type="text/javascript">
+      const redirectUrl = location.pathname + location.search + location.hash;
+      sessionStorage.setItem("redirectPath", redirectUrl);
+      location.replace("/?redirect=true");
     </script>
   </head>
   <body></body>
