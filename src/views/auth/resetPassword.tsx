@@ -110,6 +110,7 @@ function ResetPassword() {
         <CardContent>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-1.5 relative">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
