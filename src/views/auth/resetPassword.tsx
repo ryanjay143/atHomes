@@ -192,7 +192,7 @@ function ResetPassword() {
               <Button
                 type="button"
                 disabled={!resetSuccess}
-                onClick={() => navigate("/atHomes/user-login")}
+                onClick={() => navigate("/user-login")}
                 className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white hover:text-white"
               >
                 <span>Back to login</span>
