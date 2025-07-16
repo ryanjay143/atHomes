@@ -399,7 +399,7 @@ function Register() {
                 <Input
                   type="date"
                   name="validation_date"
-                  className="h-9 bg-white md:w-[183px]"
+                  className="h-9 bg-white w-full"
                   onChange={(e) => {
                     const rawDate = e.target.value;
                     const formattedDate = rawDate.split("-").reverse().join("-");
