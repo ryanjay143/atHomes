@@ -53,14 +53,14 @@ function SalesEncodingContainer() {
         },
       });
       setSalesEncodings(
-        response.data.salesEncoding.map((item: any) => ({
+        response.data.salesEncodingAdmin.map((item: any) => ({
           ...item,
           amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount),
         }))
       );
       setAgentBroker(response.data.agents);
-      setEntriesToShow(response.data.salesEncoding.length);
-      setSalesEncodings(response.data.salesEncoding);
+      setEntriesToShow(response.data.salesEncodingAdmin.length);
+      setSalesEncodings(response.data.salesEncodingAdmin);
       // console.log("List of Sales:", response.data.salesEncoding)
     } catch (error) {
       // console.error('Error fetching data:', error);
