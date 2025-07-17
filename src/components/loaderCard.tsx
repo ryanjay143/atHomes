@@ -1,5 +1,5 @@
 import '../components/loader.css'
-import logo from '/logo.png'
+import logo from '/favicon.png'
 
 const loaderCard = () => {
   return (
