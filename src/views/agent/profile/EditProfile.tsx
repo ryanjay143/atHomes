@@ -141,17 +141,27 @@ const EditProfile: React.FC = () => {
   };
 
   const adminProfile = async () => {
-    try {
-      const response = await axios.get('user/agent-broker', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+  try {
+    const response = await axios.get('user/agent-broker', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    });
 
-      setUser(response.data.user);
-      setPersonalInfo(response.data.personalInfo);
-    } catch (error) {
+    // Convert nulls to empty string for all personal info fields
+    const info = response.data.personalInfo;
+    setPersonalInfo({
+      first_name: info.first_name ?? '',
+      middle_name: info.middle_name ?? '',
+      last_name: info.last_name ?? '',
+      extension_name: info.extension_name ?? '',
+      complete_address: info.complete_address ?? '',
+      phone: info.phone ?? '',
+      profile_pic: info.profile_pic ?? '',
+    });
+    setUser(response.data.user);
+  } catch (error) {
       // Handle error as needed
     }
   };

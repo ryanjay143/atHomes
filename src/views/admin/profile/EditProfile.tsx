@@ -150,8 +150,19 @@ const EditProfile: React.FC = () => {
         },
       });
 
+      // Sanitize personalInfo: convert nulls to empty strings
+      const info = response.data.personalInfo;
+      setPersonalInfo({
+        first_name: info.first_name ?? '',
+        middle_name: info.middle_name ?? '',
+        last_name: info.last_name ?? '',
+        extension_name: info.extension_name ?? '',
+        complete_address: info.complete_address ?? '',
+        phone: info.phone ?? '',
+        profile_pic: info.profile_pic ?? '',
+      });
+
       setUser(response.data.user);
-      setPersonalInfo(response.data.personalInfo);
     } catch (error) {
       // Handle error as needed
     }
