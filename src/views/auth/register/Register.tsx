@@ -136,7 +136,7 @@ function Register() {
     // Conditional validation for Broker
     if (formData.role === "2") { // Assuming "2" is the value for Broker
       if (!formData.prc_liscence_number) newErrors.prc_liscence_number = "PRC License Number is required for Brokers.";
-      if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
+      // if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
       if (!formData.validation_date) newErrors.validation_date = "Validity Date is required for Brokers.";
     }
 
@@ -375,24 +375,78 @@ function Register() {
                 </Select>
                 {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
               </div>
-              <div>
+            {/* PRC License Number with N/A dropdown, single input only */}
+             <div>
                 <Label htmlFor="prc_liscence_number">PRC License Number</Label>
-                <Input type="text" name="prc_liscence_number" className="h-9 bg-white" placeholder="Enter PRC License No:" onChange={handleChange} />
-                {errors.prc_liscence_number && <span className="text-red-500 text-sm">{errors.prc_liscence_number}</span>}
+                <div className="relative flex items-center">
+                  <Input
+                    type="text"
+                    name="prc_liscence_number"
+                    className="h-9 bg-white pr-16"
+                    placeholder="Enter PRC License No: or type/select N/A"
+                    value={formData.prc_liscence_number}
+                    onChange={handleChange}
+                    autoComplete="off"
+                  />
+                  {/* Dropdown button inside the input */}
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <button
+                      type="button"
+                      className="bg-blue-500 rounded px-2 py-1 text-xs text-white hover:bg-blue-400 transition"
+                      onClick={() =>
+                        handleChange({
+                          target: { name: "prc_liscence_number", value: "N/A" },
+                        })
+                      }
+                      tabIndex={-1}
+                    >
+                      N/A
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-blue-500">
+                  If no PRC License Number, type or click <b>N/A</b> or leave blank.
+                </p>
+                {errors.prc_liscence_number && (
+                  <span className="text-red-500 text-sm">{errors.prc_liscence_number}</span>
+                )}
               </div>
               <div>
-                <Label htmlFor="dhsud_registration_number" className="md:text-[9px] md:font-bold text-xs">DHSUD Registration Number</Label>
-                <Input
-                  type="text"
-                  name="dhsud_registration_number"
-                  className="h-9 bg-white"
-                  placeholder="Enter DHSUD Registration No:"
-                  onChange={(e) => {
-                    handleChange(e);
-                    // console.log("DHSUD Registration Number:", e.target.value);
-                  }}
-                />
-                {errors.dhsud_registration_number && <span className="text-red-500 text-sm">{errors.dhsud_registration_number}</span>}
+                <Label htmlFor="dhsud_registration_number" className="md:text-[9px] md:font-bold text-xs">
+                  DHSUD Registration Number
+                </Label>
+                <div className="relative flex items-center">
+                  <Input
+                    type="text"
+                    name="dhsud_registration_number"
+                    className="h-9 bg-white pr-16"
+                    placeholder="Enter DHSUD Registration No:"
+                    value={formData.dhsud_registration_number}
+                    onChange={handleChange}
+                    autoComplete="off"
+                  />
+                  {/* Inline N/A button inside the input */}
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                    <button
+                      type="button"
+                      className="bg-blue-500 rounded px-2 py-1 text-xs text-white hover:bg-blue-400 transition"
+                      onClick={() =>
+                        handleChange({
+                          target: { name: "dhsud_registration_number", value: "N/A" },
+                        })
+                      }
+                      tabIndex={-1}
+                    >
+                      N/A
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[10px] text-blue-500">
+                  If no DHSUD Registration Number, type or click <b>N/A</b> or leave blank.
+                </p>
+                {errors.dhsud_registration_number && (
+                  <span className="text-red-500 text-sm">{errors.dhsud_registration_number}</span>
+                )}
               </div>
               <div>
                 <Label htmlFor="validation_date">Validity Date</Label>

@@ -129,17 +129,32 @@ function ListOfBrokerAgent() {
                   <TableCell className="border border-[#bfdbfe]">{agent?.personal_info.phone}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">{formatDateToMMDDYYYYDateApproved(agent?.user.updated_at)}</TableCell>
                   <TableCell className="border border-[#bfdbfe]">
-                    {agent?.prc_liscence_number !== "" ? (
-                      <Badge className='bg-green-500 hover:bg-green-500 gap-1'>
-                        <FontAwesomeIcon icon={faIdBadge}/> Licensed
-                      </Badge>
-                    ) : agent?.prc_liscence_number === "" ? (
-                      <Badge className='bg-red-500 hover:bg-red-500 gap-1'>
-                        <FontAwesomeIcon icon={faFileCircleXmark}/>
-                        Unlicensed</Badge>
-                    ) : (
-                      agent?.prc_liscence_number
-                    )}
+                    {(() => {
+                      const prc = agent?.prc_liscence_number?.trim();
+                      const isUnlicensed =
+                        !prc ||
+                        prc.toUpperCase() === "N/A" ||
+                        prc.toUpperCase() === "NA" ||
+                        prc.length < 4 || 
+                        prc.toLowerCase() === "n/a" ||
+                        prc.toLowerCase() === "na" ||
+                        prc.toLowerCase() === "";
+
+                      if (isUnlicensed) {
+                        return (
+                          <Badge className="bg-red-500 hover:bg-red-500 gap-1">
+                            <FontAwesomeIcon icon={faFileCircleXmark} />
+                            Unlicensed
+                          </Badge>
+                        );
+                      } else {
+                        return (
+                          <Badge className="bg-green-500 hover:bg-green-500 gap-1">
+                            <FontAwesomeIcon icon={faIdBadge} /> Licensed
+                          </Badge>
+                        );
+                      }
+                    })()}
                   </TableCell>
                   <TableCell className="text-right border border-[#bfdbfe]">
                     <div className="flex flex-row gap-1 justify-end">
