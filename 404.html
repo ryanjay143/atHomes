@@ -2,11 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AtHomes</title>
 
-    <!-- ✅ Structured Data (Logo Schema for Google) -->
+    <!-- ✅ Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+
+    <!-- ✅ Meta Description -->
+    <meta name="description" content="AtHomes is a dashboard platform for easy access to housing data. Developed by Ryan Reyes." />
+
+    <!-- ✅ Open Graph Tags for social/link previews -->
+    <meta property="og:title" content="AtHomes" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.athomesdashboard.com" />
+    <meta property="og:image" content="https://www.athomesdashboard.com/logo.png" />
+    <meta property="og:description" content="AtHomes is a dashboard platform for easy access to housing data. Developed by Ryan Reyes." />
+
+    <!-- ✅ Schema.org Structured Data for Logo -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -17,17 +29,13 @@
     }
     </script>
 
-    <!-- ✅ Open Graph (Optional but good for social previews) -->
-    <meta property="og:title" content="AtHomes" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.athomesdashboard.com" />
-    <meta property="og:image" content="https://www.athomesdashboard.com/logo.png" />
-
+    <!-- ✅ Optional: Animate.css -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
     />
 
+    <!-- ✅ Optional: Routing fallback script for Vite + React -->
     <script type="text/javascript">
       (function (l) {
         if (l.search[1] === "/") {
