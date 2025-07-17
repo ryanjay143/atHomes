@@ -108,13 +108,13 @@ function AddSales({ fetchAgent }:any) {
     const file = e.target.files?.[0] || null; // Allow null
     if (file) {
       const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-      const maxSize = 2048 * 1024; // 2MB
+      const maxSize = 5 * 1024 * 1024; // 5MB
 
       if (!validTypes.includes(file.type)) {
         setFileError('Invalid file type. Only JPEG, PNG, JPG, and GIF are allowed.');
         setFormData({ ...formData, image: null });
       } else if (file.size > maxSize) {
-        setFileError('File size exceeds the maximum limit of 2MB.');
+        setFileError('File size exceeds the maximum limit of 5MB.');
         setFormData({ ...formData, image: null });
       } else {
         setFileError(null);

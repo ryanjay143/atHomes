@@ -65,14 +65,14 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
   if (file) {
-    const validExtensions = ['image/jpeg', 'image/png', 'image/gif'];
+    const validExtensions = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
     const maxFileSize = 5 * 1024 * 1024; // 5MB
 
     if (!file.type.startsWith('image/') || !validExtensions.includes(file.type)) {
       Swal.fire({
         icon: 'error',
         title: 'Invalid File',
-        text: 'Please select a valid image file (JPEG, PNG, or GIF).',
+        text: 'Please select a valid image file (JPEG, PNG JPG, or GIF).',
       });
       return;
     }
