@@ -297,6 +297,7 @@ function Register() {
               <div>
                 <Label htmlFor="username">Username</Label> <span className="text-red-500">*</span>
                 <Input type="text" name="username" className="h-9 bg-white" placeholder="Enter username" onChange={handleChange} />
+                <p>Username must not be the same as your email.</p>
                 {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
               </div>
               <div className="mt-1">
