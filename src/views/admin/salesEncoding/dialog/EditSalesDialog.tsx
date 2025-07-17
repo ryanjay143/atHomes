@@ -241,6 +241,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                   <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                   <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                   <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                  <SelectItem value="Block and lot">Block and lot</SelectItem>
                 </SelectContent>
               </Select>
             </div>

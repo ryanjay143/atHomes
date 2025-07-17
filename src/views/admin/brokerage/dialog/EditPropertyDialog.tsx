@@ -8,6 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "../../../../plugin/axios";
 import Swal from 'sweetalert2';
 
+function formatNumberWithCommas(value: string) {
+  // Remove all non-digit characters
+  const numericValue = value.replace(/\D/g, '');
+  // Format with commas
+  return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   const [category, setCategory] = useState('');
   const [dateListed, setDateListed] = useState('');
@@ -24,6 +31,13 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/,/g, ''); // Remove commas
+    // Only allow numbers
+    if (!/^\d*$/.test(rawValue)) return;
+    setPriceAndRate(rawValue);
+  };
+
   useEffect(() => {
     if (property) {
       setCategory(property.category || '');
@@ -34,7 +48,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
       setLotArea(property.lot_area || '');
       setFloorArea(property.floor_area || '');
       setOtherDetails(property.details || '');
-      setPriceAndRate(property.price_and_rate || '');
+      setPriceAndRate(property.price_and_rate ? property.price_and_rate.toString() : '');
       setExistingImages(property.property_images || []);
     }
   }, [property]);
@@ -167,21 +181,25 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
                 <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                 <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                 <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                <SelectItem value="Block and lot">Block and lot</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Conditionally render the price or rate input */}
           {(category === "Commercial Properties" || category === "Rental Properties") && (
-            <div>
-              <Label>{category === "Commercial Properties" ? "Selling Price" : "Rental Rate"}</Label>
-              <Input
-                type="text"
-                value={priceAndRate}
-                onChange={e => setPriceAndRate(e.target.value)}
-              />
-            </div>
-          )}
+      <div>
+        <Label>
+          {category === "Commercial Properties" ? "Selling Price" : "Rental Rate"}
+        </Label>
+       <Input
+  type="text"
+  value={formatNumberWithCommas(priceAndRate?.toString() || "")}
+  onChange={handlePriceChange}
+  placeholder="0.00"
+/>
+      </div>
+    )}
 
           <div>
             <Label>Date Listed</Label>

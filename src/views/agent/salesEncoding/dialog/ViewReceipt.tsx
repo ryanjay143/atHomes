@@ -11,61 +11,61 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { faPrint, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
   const receiptRef = useRef<HTMLDivElement>(null);
-  const [imgLoaded, setImgLoaded] = useState(false);
+  // const [imgLoaded, setImgLoaded] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const handlePrint = () => {
-    if (!receiptRef.current) return;
-    const printContents = receiptRef.current.innerHTML;
+  // const handlePrint = () => {
+  //   if (!receiptRef.current) return;
+  //   const printContents = receiptRef.current.innerHTML;
 
-    const printStyles = `
-      <style>
-        body {
-          font-size: 20px !important;
-          font-family: Arial, sans-serif;
-        }
-        label, span, div {
-          font-size: 40px !important;
-        }
-        img {
-          max-width: 800px !important;
-          max-height: 800px !important;
-          display: block;
-          margin: 16px auto;
-          margin-top: 150px;
-        }
-      </style>
-    `;
+  //   const printStyles = `
+  //     <style>
+  //       body {
+  //         font-size: 20px !important;
+  //         font-family: Arial, sans-serif;
+  //       }
+  //       label, span, div {
+  //         font-size: 40px !important;
+  //       }
+  //       img {
+  //         max-width: 800px !important;
+  //         max-height: 800px !important;
+  //         display: block;
+  //         margin: 16px auto;
+  //         margin-top: 150px;
+  //       }
+  //     </style>
+  //   `;
 
-    const width = 800;
-    const height = 600;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2;
-    const printWindow = window.open(
-      '',
-      '',
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
+  //   const width = 800;
+  //   const height = 600;
+  //   const left = window.screenX + (window.outerWidth - width) / 2;
+  //   const top = window.screenY + (window.outerHeight - height) / 2;
+  //   const printWindow = window.open(
+  //     '',
+  //     '',
+  //     `width=${width},height=${height},left=${left},top=${top}`
+  //   );
 
-    if (printWindow) {
-      printWindow.document.write('<html><head><title>Print Receipt</title>');
-      printWindow.document.write(printStyles);
-      printWindow.document.write('</head><body >');
-      printWindow.document.write(printContents);
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 500);
-    }
-  };
+  //   if (printWindow) {
+  //     printWindow.document.write('<html><head><title>Print Receipt</title>');
+  //     printWindow.document.write(printStyles);
+  //     printWindow.document.write('</head><body >');
+  //     printWindow.document.write(printContents);
+  //     printWindow.document.write('</body></html>');
+  //     printWindow.document.close();
+  //     printWindow.focus();
+  //     setTimeout(() => {
+  //       printWindow.print();
+  //       printWindow.close();
+  //     }, 500);
+  //   }
+  // };
 
   return (
     <div>
@@ -130,7 +130,7 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
                     src={`${import.meta.env.VITE_URL}/${sales.image}`}
                     alt={sales.image}
                     className='h-full object-cover md:rounded-sm md:w-24 md:h-24  rounded-sm cursor-pointer transition-transform duration-200 hover:scale-105 hover:ring-2 hover:ring-primary'
-                    onLoad={() => setImgLoaded(true)}
+                    // onLoad={() => setImgLoaded(true)}
                     onClick={() => setPreviewOpen(true)}
                     title="Click to preview"
                   />
@@ -156,12 +156,12 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
           <DialogFooter>
             <div className='flex flex-row justify-end gap-2'>
               <DialogClose asChild>
-                <Button className='bg-red-500 hover:bg-red-400 h-8'>Cancel</Button>
+                <Button className='bg-red-500 hover:bg-red-400 h-8'>Close</Button>
               </DialogClose>
-              <Button className='h-8' onClick={handlePrint} disabled={!imgLoaded}>
+              {/* <Button className='h-8' onClick={handlePrint} disabled={!imgLoaded}>
                 <FontAwesomeIcon icon={faPrint} />
                 <span>Print</span>
-              </Button>
+              </Button> */}
             </div>
           </DialogFooter>
         </DialogContent>

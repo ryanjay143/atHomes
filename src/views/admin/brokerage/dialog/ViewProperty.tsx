@@ -9,8 +9,24 @@ interface ViewPropertyProps {
   dateFormatter: Intl.DateTimeFormat;
 }
 
+// Utility function to format numbers with commas
+function formatNumberWithCommas(value: string | number | undefined | null) {
+  if (value === undefined || value === null) return '';
+  // Ensure value is a string and remove non-digit except dot
+  const strValue = value.toString().replace(/[^0-9.]/g, '');
+  // Handle decimal part if present
+  const [integer, decimal] = strValue.split('.');
+  const formattedInt = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return decimal !== undefined ? `${formattedInt}.${decimal}` : formattedInt;
+}
+
 function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
+
+  // Helper to check if category is Commercial or Rental
+  const showPrice =
+    property.category === "Commercial Properties" ||
+    property.category === "Rental Properties";
 
   return (
     <>
@@ -32,6 +48,11 @@ function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
                   <p><strong>Location:</strong> {property.location}</p>
                   <p><strong>Type of Listing:</strong> {property.type_of_listing}</p>
                   <p><strong>Status:</strong> {property.status}</p>
+                  {showPrice && (
+                    <p>
+                      <strong>Price:</strong> {formatNumberWithCommas(property.price_and_rate)}
+                    </p>
+                  )}
                 </div>
                 <div className="border-b pb-4">
                   <h3 className="font-semibold text-lg mb-2">Description of Property</h3>

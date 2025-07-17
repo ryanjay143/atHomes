@@ -17,6 +17,11 @@ interface AddPropertyProps {
   fetchPropertiesData: () => void;
 }
 
+function formatNumberWithCommas(value: string) {
+  const numericValue = value.replace(/\D/g, '');
+  return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   const [category, setCategory] = useState('');
   const [dateListed, setDateListed] = useState(() => {
@@ -38,6 +43,18 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   const [rentalRate, setRentalRate] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref for file input
+
+  const handleRentalRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const rawValue = e.target.value.replace(/,/g, '');
+  if (!/^\d*$/.test(rawValue)) return; // Only allow numbers
+  setRentalRate(rawValue);
+};
+
+const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const rawValue = e.target.value.replace(/,/g, '');
+  if (!/^\d*$/.test(rawValue)) return; // Only allow numbers
+  setSellingPrice(rawValue);
+};
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -201,24 +218,35 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                         <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                         <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                         <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                        <SelectItem value="Block and lot">Block and lot</SelectItem>
                     </SelectContent>
                     </Select>
                     {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
                 </div>
                 {category === 'Rental Properties' && (
-                  <div>
-                    <Label>Rental Rate</Label>
-                    <Input type="number" value={rentalRate} onChange={e => setRentalRate(e.target.value)} placeholder='0.00'/>
-                    {errors.rentalRate && <p className="text-red-500 text-sm">{errors.rentalRate}</p>}
-                  </div>
-                )}
-                {category === 'Commercial Properties' && (
-                  <div>
-                    <Label>Selling Price</Label>
-                    <Input type="number" value={sellingPrice} onChange={e => setSellingPrice(e.target.value)} placeholder='0.00'/>
-                    {errors.sellingPrice && <p className="text-red-500 text-sm">{errors.sellingPrice}</p>}
-                  </div>
-                )}
+  <div>
+    <Label>Rental Rate</Label>
+    <Input
+      type="text"
+      value={formatNumberWithCommas(rentalRate)}
+      onChange={handleRentalRateChange}
+      placeholder="0.00"
+    />
+    {errors.rentalRate && <p className="text-red-500 text-sm">{errors.rentalRate}</p>}
+  </div>
+)}
+{category === 'Commercial Properties' && (
+  <div>
+    <Label>Selling Price</Label>
+    <Input
+      type="text"
+      value={formatNumberWithCommas(sellingPrice)}
+      onChange={handleSellingPriceChange}
+      placeholder="0.00"
+    />
+    {errors.sellingPrice && <p className="text-red-500 text-sm">{errors.sellingPrice}</p>}
+  </div>
+)}
                 <div>
                     <Label>Date Listed</Label>
                     <Input
