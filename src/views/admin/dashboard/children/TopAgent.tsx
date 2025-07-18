@@ -29,6 +29,11 @@ function TopAgent() {
     fetchTopAgents();
   }, []);
 
+    const currencyFormatter = new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+  });
+
   return (
     <Card className="fade-in-right w-full md:w-full bg-[#eff6ff] border-b-4 border-primary">
       <CardHeader className="text-center">
@@ -43,30 +48,31 @@ function TopAgent() {
                 {index + 1}
               </div>
               <Popover>
-                <PopoverTrigger asChild>
-                  <Avatar className="h-12 w-12 md:h-12 md:w-12 border-primary border-4">
-                    {topAgent.profile_pic ? (
-                      <AvatarImage
-                        src={`${import.meta.env.VITE_URL}/${topAgent.profile_pic}`}
-                        alt={`${topAgent.first_name} ${topAgent.last_name}`}
-                        className="rounded-full border border-border object-cover"
-                      />
-                    ) : null}
-                    <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff] '>
-                      {topAgent.first_name
-                        ? topAgent.first_name.charAt(0).toUpperCase()
-                        : 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </PopoverTrigger>
-                <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
-                  {/* You can add more agent details here if needed */}
-                  <div className="text-center">
-                    <p className="font-semibold">{topAgent.first_name} {topAgent.last_name}</p>
-                    <p className="text-sm text-muted-foreground">{topAgent.email || ''}</p>
-                  </div>
-                </PopoverContent>
-              </Popover>
+  <PopoverTrigger asChild>
+    <Avatar className="h-12 w-12 md:h-12 md:w-12 border-primary border-4">
+      {topAgent.profile_pic ? (
+        <AvatarImage
+          src={`${import.meta.env.VITE_URL}/${topAgent.profile_pic}`}
+          alt={`${topAgent.first_name} ${topAgent.last_name}`}
+          className="rounded-full border border-border object-cover"
+        />
+      ) : null}
+      <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff] '>
+        {topAgent.first_name
+          ? topAgent.first_name.charAt(0).toUpperCase()
+          : 'U'}
+      </AvatarFallback>
+    </Avatar>
+  </PopoverTrigger>
+  <PopoverContent className='p-4 bg-white shadow-lg rounded-lg'>
+    <div className="text-center">
+      <p className="font-semibold">{topAgent.first_name} {topAgent.last_name}</p>
+      <p className="text-sm text-muted-foreground">{topAgent.email || ''}</p>
+      <p>Total Sales: <span className="text-green-500 text-sm">{currencyFormatter.format(topAgent.totalSales)}</span></p>
+      <p>Total Reserved: <span className="text-green-500 text-sm">+ {topAgent.totalReserved}</span></p>
+    </div>
+  </PopoverContent>
+</Popover>
               <div className='text-center mt-2'>
                 <p className="text-sm font-bold">{topAgent.first_name} {topAgent.last_name}</p>
                 <p className="text-sm">{formatNumberShort(Number(topAgent.totalSales))}</p>
