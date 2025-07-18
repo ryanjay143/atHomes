@@ -24,7 +24,7 @@ function AdminSidebar() {
   const links = [
     { path: "/admin/user-dashboard", icon: faTachometerAlt, label: "Dashboard" },
     { path: "/admin/developer", icon: faHomeUser, label: "Developer" },
-    { path: "/admin/affialiated", icon: faUsers, label: "Affialiated" },
+    { path: "/admin/affialiated", icon: faUsers, label: "Affiliated" },
     { path: "/admin/sales-encoding", icon: faKeyboard, label: "Sales Encoding" },
     { path: "/admin/brokerage-property", icon: faHome, label: "Brokerage/Property" },
     { path: "/admin/sales-report", icon: faChartLine, label: "Sales Report" },
