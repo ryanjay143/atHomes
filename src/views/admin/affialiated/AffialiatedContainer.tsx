@@ -8,10 +8,10 @@ const FacilainersPage = () => {
   const location = useLocation();
 
   return (
-    <div className="py-4 md:pt-20">
-      <div className="ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5 ">
+    <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
+      <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2 ">
         <Navigation />
-        <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left">
+        <Card className="bg-[#eef2ff] border-b-4 border-primary min-w-[100px] fade-in-left md:w-[380px]">
           <CardContent>
             <nav className="flex flex-row md:grid-cols-2 md:grid gap-4 pt-5 md:overflow-auto">
               {navItems.map((item) => (

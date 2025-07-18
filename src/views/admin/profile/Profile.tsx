@@ -69,21 +69,31 @@ function Profile() {
             <div className='absolute top-7 left-10 md:left-5 md:w-5 md:h-5 bg-[#172554] rounded-full z-50 px-2 py-1 text-[#eff6ff]'>
               <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
             </div>
-            <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
-              {personalinfo.profile_pic ? (
-                <AvatarImage
-                  src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
-                  alt='profile'
-                  className='rounded-full border border-border object-cover'
-                />
-              ) : (
-                <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff]'>
-                  {personalinfo.first_name
-                    ? personalinfo.first_name.charAt(0).toUpperCase()
-                    : 'U'}
-                </AvatarFallback>
-              )}
-            </Avatar>
+            <div className="flex items-center cursor-pointer">
+              <div className='relative flex flex-col items-center'>
+                <div className='absolute top-7 left-10 md:left-5 md:w-5 md:h-5 bg-[#172554] rounded-full z-50 px-2 py-1 text-[#eff6ff]'>
+                  <FontAwesomeIcon icon={faAngleDown} className='md:w-4 md:h-4 md:mb-9 md:absolute md:ml-[-8px]' />
+                </div>
+                <Avatar className='cursor-pointer h-16 w-16 md:h-12 md:w-12 border-primary border-4'>
+                  {personalinfo.profile_pic ? (
+                    <AvatarImage
+                      src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
+                      alt='profile'
+                      className='rounded-full border border-border object-cover'
+                    />
+                  ) : (
+                    <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff]'>
+                      {personalinfo.first_name
+                        ? personalinfo.first_name.charAt(0).toUpperCase()
+                        : 'U'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </div>
+              <span className="ml-4 md:hidden font-semibold text-sm text-white">
+                {personalinfo.first_name}
+              </span>
+            </div>
           </div>
         </div>
       </DropdownMenuTrigger>

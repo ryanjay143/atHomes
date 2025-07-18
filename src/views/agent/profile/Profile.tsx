@@ -86,6 +86,9 @@ function Profile() {
               )}
             </Avatar>
           </div>
+          <span className="ml-4 md:hidden font-semibold text-sm text-white">
+            {personalinfo.first_name}
+          </span>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-10">

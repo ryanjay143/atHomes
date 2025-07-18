@@ -1,4 +1,4 @@
-import { faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { faUserCog, faSmile } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import axios from "../../../plugin/axios";
@@ -32,11 +32,9 @@ function Header() {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-
       setPersonalInfo(response.data.personalInfo);
-      // console.log('Personal info:', response.data.personalInfo);
     } catch (error) {
-      // console.error('Error fetching members:', error);
+      // Handle error
     }
   };
 
@@ -45,19 +43,44 @@ function Header() {
   }, []);
 
   const capitalizeFirstLetter = (string: string | undefined) => {
-    if (!string) return ""; // Return an empty string if the input is undefined or null
+    if (!string) return "";
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
+  // Helper for initials
+  const getInitials = () => {
+    const first = personalinfo.first_name ? personalinfo.first_name.charAt(0).toUpperCase() : "";
+    const last = personalinfo.last_name ? personalinfo.last_name.charAt(0).toUpperCase() : "";
+    return first + last;
+  };
+
   return (
-    <div className="flex flex-row items-center gap-4">
-      <div className="flex flex-col items-start md:items-center md:justify-center md:ml-20">
-        <span className="text-accent text-2xl md:text-sm font-bold ">
+    <div className="flex flex-row items-center gap-5">
+      {/* Avatar */}
+      <div className="flex-shrink-0">
+        {personalinfo.profile_pic ? (
+          <img
+            src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
+            alt="Profile"
+            className="w-14 h-14 rounded-full border-4 border-white shadow-md object-cover hover:scale-105 transition"
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-700 via-blue-400 to-blue-200 flex items-center justify-center text-white text-2xl font-bold border-4 border-white shadow-md">
+            {getInitials()}
+          </div>
+        )}
+      </div>
+      {/* Info */}
+      <div className="flex flex-col items-start justify-center">
+        <span className="flex items-center gap-2 text-accent text-xl md:text-lg font-bold">
+          <FontAwesomeIcon icon={faSmile} className="text-yellow-400" />
           Hey, {capitalizeFirstLetter(personalinfo.first_name)} {capitalizeFirstLetter(personalinfo.last_name)}
         </span>
-        <div className="flex flex-row items-center gap-2">
-          <FontAwesomeIcon icon={faUserCog} className="text-accent" />
-          <span className="text-accent text-base md:text-sm">Role: {role}</span>
+        <div className="flex flex-row items-center gap-2 mt-2">
+          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-200 via-blue-100 to-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 shadow border border-blue-200">
+            <FontAwesomeIcon icon={faUserCog} className="mr-1 text-blue-500" />
+            {role}
+          </span>
         </div>
       </div>
     </div>

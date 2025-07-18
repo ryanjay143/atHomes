@@ -30,8 +30,8 @@ const DeveloperContainer: React.FC = () => {
     });
     const [projects, setProjects] = useState<{ [key: number]: any[] }>({});
     const [getAllDeveloper, setGetAllDeveloper] = useState<any[]>([]);
-    const [entriesToShow, setEntriesToShow] = useState<number>(10); // State for number of entries to show
-    const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
+    const [entriesToShow, setEntriesToShow] = useState<number>(10);
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogOpenStates, setDialogOpenStates] = useState<{ [key: number]: boolean }>({});
@@ -46,7 +46,6 @@ const DeveloperContainer: React.FC = () => {
     });
     const navigate = useNavigate();
 
-
     const fetchDevelopers = async () => {
         try {
             const response = await axios.get('developers', {
@@ -56,7 +55,6 @@ const DeveloperContainer: React.FC = () => {
             });
             setGetAllDeveloper(response.data.developers);
 
-            // Initialize projects with a default project for each developer
             const initialProjects: { [key: number]: any[] } = {};
             response.data.developers.forEach((developer: any) => {
                 initialProjects[developer.id] = [{ id: Date.now(), name: '', location: '', category: '', units: 0, status: '', developer_id: developer.id }];
@@ -214,7 +212,6 @@ const DeveloperContainer: React.FC = () => {
     const handleSubmitProjects = async (developerId: number) => {
         if (loading) return;
     
-        // Validate all project fields before proceeding
         let isValid = true;
         isValid = !projects[developerId].some((_, index) => !validateProjectFields(developerId, index));
     
@@ -287,187 +284,185 @@ const DeveloperContainer: React.FC = () => {
     };
 
     return (
-        <div className="py-3 md:pt-20">
-        <div className="ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5 ">
-            <Navigation />
-            <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left">
-                <CardHeader>
-                    <div className='flex flex-row justify-end'>
-                        <CardTitle className='text-[#172554]'>
-                            <AddDeveloper
-                                developerData={developerData}
-                                setDeveloperData={setDeveloperData}
-                                isDialogOpen={isDialogOpen}
-                                setIsDialogOpen={setIsDialogOpen}
-                                isSubmitting={isSubmitting}
-                                handleSubmit={handleSubmit}
-                                handleImageChange={handleImageChange}
-                                handleImageError={handleImageError}
-                                handleRemoveImage={handleRemoveImage}
-                                errors={errors}
-                                fileInputRef={fileInputRef}
+        <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
+            <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2">
+                <Navigation />
+                <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
+                    <CardHeader>
+                        <div className='flex flex-row justify-end'>
+                            <CardTitle className='text-[#172554]'>
+                                <AddDeveloper
+                                    developerData={developerData}
+                                    setDeveloperData={setDeveloperData}
+                                    isDialogOpen={isDialogOpen}
+                                    setIsDialogOpen={setIsDialogOpen}
+                                    isSubmitting={isSubmitting}
+                                    handleSubmit={handleSubmit}
+                                    handleImageChange={handleImageChange}
+                                    handleImageError={handleImageError}
+                                    handleRemoveImage={handleRemoveImage}
+                                    errors={errors}
+                                    fileInputRef={fileInputRef}
+                                />
+                            </CardTitle>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {/* Pagination and Table */}
+                        <div className='py-2 flex flex-col md:flex-row md:justify-between gap-4'>
+                            <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
+                                <SelectTrigger className="w-[120px] border border-primary">
+                                    <span className='text-[#172554]'>Show</span>
+                                    <SelectValue placeholder="10" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All</SelectItem>
+                                    <SelectItem value="10">10</SelectItem>
+                                    <SelectItem value="20">20</SelectItem>
+                                    <SelectItem value="30">30</SelectItem>
+                                    <SelectItem value="40">40</SelectItem>
+                                    <SelectItem value="50">50</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Input 
+                                type='text' 
+                                placeholder='Search' 
+                                className='w-52 md:w-full' 
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                        </CardTitle>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {/* Pagination and Table */}
-                    <div className='py-2 flex flex-row justify-between gap-4'>
-                        <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
-                            <SelectTrigger className="w-[120px] border border-primary">
-                                <span className='text-[#172554]'>Show</span>
-                                <SelectValue placeholder="10" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All</SelectItem>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="30">30</SelectItem>
-                                <SelectItem value="40">40</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Input 
-                            type='text' 
-                            placeholder='Search' 
-                            className='w-52 md:w-full' 
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <div className='overflow-auto'>
-                        <Table className='w-full'>
-                            <TableHeader className="sticky top-0 bg-primary">
-                                <TableRow>
-                                    <TableHead>#</TableHead>
-                                    <TableHead>Photo</TableHead>
-                                    <TableHead>Developer name</TableHead>
-                                    <TableHead>Email address</TableHead>
-                                    <TableHead>Location</TableHead>
-                                    <TableHead>Phone number</TableHead>
-                                    <TableHead className="text-right">Action</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {
-                                    getAllDeveloper.length === 0 && (
-                                        <TableRow>
-                                            <TableCell colSpan={7} className="text-center">No developers found.</TableCell>
-                                        </TableRow>
-                                    )
-                                }
-                                {getAllDeveloper
-                                    .filter(developer => 
-                                        developer.dev_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                        developer.dev_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                        developer.dev_location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                        developer.dev_phone.toLowerCase().includes(searchQuery.toLowerCase())
-                                    )
-                                    .slice(0, entriesToShow)
-                                    .map((developer, index) => (
-                                        <TableRow key={developer.id}>
-                                            <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
-                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">
-                                                {developer.dev_name ? (
-                                                <img
-                                                    src={`${import.meta.env.VITE_URL}/${developer.image}`}
-                                                    alt={developer.dev_name}
-                                                    className="rounded-full h-10 w-10"
-                                                />
-                                                ) : (
-                                                <Avatar>
-                                                    <AvatarImage src="https://github.com/shadcn.png" />
-                                                    <AvatarFallback>CN</AvatarFallback>
-                                                </Avatar>
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">{developer.dev_name}</TableCell>
-                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
-                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_location}</TableCell>
-                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
-                                            <TableCell className="text-right border border-[#bfdbfe]">
-                                                <div className='flex flex-row gap-1 justify-end'>
-                                                    <AddProject
-                                                        developer={developer}
-                                                        projects={projects[developer.id] || []}
-                                                        dialogOpenState={dialogOpenStates[developer.id] || false}
-                                                        toggleDialogOpen={toggleDialogOpen}
-                                                        handleProjectChange={handleProjectChange}
-                                                        addProject={addProject}
-                                                        removeProject={removeProject}
-                                                        handleSubmitProjects={handleSubmitProjects}
-                                                        loading={loading}
-                                                        setLoading={setLoading}
+                        </div>
+                        {/* Responsive Table: horizontal scroll only on small screens */}
+                        <div className="w-full overflow-x-auto md:overflow-x-visible">
+                            <Table>
+                                <TableHeader className="sticky top-0 bg-primary">
+                                    <TableRow>
+                                        <TableHead>#</TableHead>
+                                        <TableHead>Photo</TableHead>
+                                        <TableHead>Developer name</TableHead>
+                                        <TableHead>Email address</TableHead>
+                                        <TableHead>Location</TableHead>
+                                        <TableHead>Phone number</TableHead>
+                                        <TableHead className="text-right">Action</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {
+                                        getAllDeveloper.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={7} className="text-center">No developers found.</TableCell>
+                                            </TableRow>
+                                        )
+                                    }
+                                    {getAllDeveloper
+                                        .filter(developer => 
+                                            developer.dev_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                            developer.dev_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                            developer.dev_location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                            developer.dev_phone.toLowerCase().includes(searchQuery.toLowerCase())
+                                        )
+                                        .slice(0, entriesToShow)
+                                        .map((developer, index) => (
+                                            <TableRow key={developer.id}>
+                                                <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
+                                                <TableCell className="font-medium border border-[#bfdbfe] uppercase">
+                                                    {developer.dev_name ? (
+                                                    <img
+                                                        src={`${import.meta.env.VITE_URL}/${developer.image}`}
+                                                        alt={developer.dev_name}
+                                                        className="rounded-full h-10 w-10"
                                                     />
+                                                    ) : (
+                                                    <Avatar>
+                                                        <AvatarImage src="https://github.com/shadcn.png" />
+                                                        <AvatarFallback>CN</AvatarFallback>
+                                                    </Avatar>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="font-medium border border-[#bfdbfe] uppercase">{developer.dev_name}</TableCell>
+                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
+                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_location}</TableCell>
+                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
+                                                <TableCell className="text-right border border-[#bfdbfe]">
+                                                    <div className='flex flex-row gap-1 justify-end'>
+                                                        <AddProject
+                                                            developer={developer}
+                                                            projects={projects[developer.id] || []}
+                                                            dialogOpenState={dialogOpenStates[developer.id] || false}
+                                                            toggleDialogOpen={toggleDialogOpen}
+                                                            handleProjectChange={handleProjectChange}
+                                                            addProject={addProject}
+                                                            removeProject={removeProject}
+                                                            handleSubmitProjects={handleSubmitProjects}
+                                                            loading={loading}
+                                                            setLoading={setLoading}
+                                                        />
 
-                                                    <Dialog>
-                                                    <DialogTrigger>
-                                                        <Button className='w-8 h-8 rounded-md' onClick={() => fetchDevelopers()}>
-                                                            <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                        <DialogContent className='w-full max-w-6xl md:w-[90%] overflow-auto'>
-                                                            <DialogHeader>
-                                                                <DialogTitle className='text-start mb-10'><span className='uppercase'>{developer.dev_name}</span> Projects</DialogTitle>
-                                                                <DialogDescription>
-                                                                    
-                                                                        <Table>
-                                                                            <TableHeader>
-                                                                                <TableRow>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">#</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Project name</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Location</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Category</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Total Units</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Total Available</TableHead>
-                                                                                    <TableHead className="text-accent font-bold bg-primary text-center">Status</TableHead>
-                                                                                </TableRow>
-                                                                            </TableHeader>
-                                                                            <TableBody>
-                                                                                {developer.projects && developer.projects.length > 0 ? (
-                                                                                developer.projects.map((project:any, index:any) => (
-                                                                                    <TableRow key={project.id}>
-                                                                                        <TableCell className='border border-[#bfdbfe]'>{index + 1}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_name}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_location}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.project_category}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe] text-green-500'>{project.total_units}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe] text-red-500'>{project.available_units}</TableCell>
-                                                                                        <TableCell className='border border-[#bfdbfe]'>{project.status}</TableCell>
-                                                                                    </TableRow>
-                                                                                ))
-                                                                                ) : (
+                                                        <Dialog>
+                                                        <DialogTrigger>
+                                                            <Button className='w-8 h-8 rounded-md' onClick={() => fetchDevelopers()}>
+                                                                <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
+                                                            </Button>
+                                                        </DialogTrigger>
+                                                            <DialogContent className='w-full max-w-6xl md:w-[90%]'>
+                                                                <DialogHeader>
+                                                                    <DialogTitle className='text-start mb-10'><span className='uppercase'>{developer.dev_name}</span> Projects</DialogTitle>
+                                                                    <DialogDescription>
+                                                                        
+                                                                            <Table>
+                                                                                <TableHeader>
                                                                                     <TableRow>
-                                                                                        <TableCell colSpan={7} className="text-center">No projects available.</TableCell>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">#</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Project name</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Location</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Category</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Total Units</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Total Available</TableHead>
+                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Status</TableHead>
                                                                                     </TableRow>
-                                                                                )}
-                                                                            </TableBody>
-                                                                        </Table>
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                        </DialogContent>
-                                                    </Dialog>
+                                                                                </TableHeader>
+                                                                                <TableBody>
+                                                                                    {developer.projects && developer.projects.length > 0 ? (
+                                                                                    developer.projects.map((project:any, index:any) => (
+                                                                                        <TableRow key={project.id}>
+                                                                                            <TableCell className='border border-[#bfdbfe]'>{index + 1}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_name}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_location}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_category}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe] text-green-500'>{project.total_units}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe] text-red-500'>{project.available_units}</TableCell>
+                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.status}</TableCell>
+                                                                                        </TableRow>
+                                                                                    ))
+                                                                                    ) : (
+                                                                                        <TableRow>
+                                                                                            <TableCell colSpan={7} className="text-center">No projects available.</TableCell>
+                                                                                        </TableRow>
+                                                                                    )}
+                                                                                </TableBody>
+                                                                            </Table>
+                                                                    </DialogDescription>
+                                                                </DialogHeader>
+                                                            </DialogContent>
+                                                        </Dialog>
 
-                                                    <EditDeveloper developer={developer} fetchDevelopers={fetchDevelopers} />
-
-
-                                                    
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </Table>
-                        <div className='flex flex-row justify-end mt-3'>
-                            <div>
-                                <p className='text-[#172554] text-sm w-full'>Showing 1 to {Math.min(entriesToShow, getAllDeveloper.length)} of {getAllDeveloper.length} entries</p>
+                                                        <EditDeveloper developer={developer} fetchDevelopers={fetchDevelopers} />
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
+                            <div className='flex flex-row justify-end mt-3'>
+                                <div>
+                                    <p className='text-[#172554] text-sm w-full'>Showing 1 to {Math.min(entriesToShow, getAllDeveloper.length)} of {getAllDeveloper.length} entries</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
-    </div>
     );
 };
 

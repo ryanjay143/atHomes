@@ -100,10 +100,10 @@ function SalesBrokerEncoding() {
   const salesEncodingData = filteredSalesEncodings.slice(0, entriesToShow);
 
   return (
-    <div className='py-5 md:pt-20'>
-      <div className='ml-72 md:ml-0 md:w-full gap-2 items-start justify-center mr-5 md:px-5'>
+     <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
+      <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2 ">
         <AgentSalesNavigation />
-        <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
+        <Card className="bg-[#eef2ff] border-b-4 border-primary min-w-[100px] fade-in-left md:w-[380px]">
           <CardHeader>
             <div className='flex flex-row md:flex-col gap-4 justify-between'>
               <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>

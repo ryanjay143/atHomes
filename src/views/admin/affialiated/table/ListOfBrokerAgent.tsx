@@ -72,7 +72,7 @@ function ListOfBrokerAgent() {
   const displayedAgents = entriesToShow === 'all' ? filteredAgents : filteredAgents.slice(0, entriesToShow);
 
   return (
-    <div className='p-2'>
+  <div className='p-2'>
       <div className='py-2 flex flex-row justify-between gap-4'>
         <Select onValueChange={handleEntriesChange}>
           <SelectTrigger className="w-[120px] border border-primary md:w-28">
@@ -95,7 +95,7 @@ function ListOfBrokerAgent() {
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
-              <TableHead>Account number</TableHead>
+              {/* <TableHead>Account number</TableHead> */}
               <TableHead>Fullname</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Email address</TableHead>
@@ -110,7 +110,7 @@ function ListOfBrokerAgent() {
               displayedAgents.map((agent: any, index: any) => (
                 <TableRow key={agent.id}>
                   <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
-                  <TableCell className="border border-[#bfdbfe]">{agent.user.acct_number}</TableCell>
+                  {/* <TableCell className="border border-[#bfdbfe]">{agent.user.acct_number}</TableCell> */}
                   <TableCell className="border border-[#bfdbfe] uppercase">{agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}</TableCell>
                   <TableCell className="font-medium border border-[#bfdbfe]">
                     {agent?.user?.role === 1 ? (
@@ -171,6 +171,7 @@ function ListOfBrokerAgent() {
                               <div className="flex flex-col gap-4 mt-5 mb-5">
                                 <div className="border-b pb-2 mb-4 text-start">
                                   <h2 className="text-lg font-bold">Personal Details</h2>
+                                  <p>Account number: {agent?.user.acct_number}</p>
                                   <p>Name: {agent?.personal_info?.first_name} {agent?.personal_info?.middle_name} {agent?.personal_info?.last_name}</p>
                                   <p>Email: {agent?.user?.email}</p>
                                   <p>Username: {agent?.user?.username}</p>

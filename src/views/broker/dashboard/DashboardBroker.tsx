@@ -8,10 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import TotalSales from './cards/TotalSales';
 import TopAffiliated from './cards/TopAffiliated';
 import RecentSales from './cards/RecentSales';
+import PropoertyAdded from './cards/PropoertyAdded';
 
 
 function DashboardContainer() {
   const [topPerformers, setTopPerformers] = useState<any[]>([]);
+  const [topPropoerty, setTopProperty] = useState<any[]>([]);
   const [sales, setSales] = useState<any[]>([]);
   const [chartData, setChartData] = useState<number[]>(Array(12).fill(0));
   const [totalSales, setTotalSales] = useState<number>(0);
@@ -25,7 +27,7 @@ function DashboardContainer() {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      const salesData = response.data.salesEncoding.map((item: any) => ({
+      const salesData = response.data.salesEncodingDashboardYearly.map((item: any) => ({
         ...item,
         amount: typeof item.amount === 'number' ? item.amount : parseFloat(item.amount),
       }));
@@ -38,6 +40,7 @@ function DashboardContainer() {
       setChartData(monthlySales);
 
       setTopPerformers(response.data.topPerformers);
+      setTopProperty(response.data.property);
       setSales(response.data.salesEncodingTop5);
       setTotalSales(salesData.reduce((total: number, item: any) => total + item.amount, 0));
 
@@ -68,17 +71,19 @@ function DashboardContainer() {
   return (
     <div className="py-5 md:pt-20">
       <div className="flex justify-between md:flex-row">
-        <h1 className="text-4xl font-bold ml-72 md:ml-0 md:grid-cols-1 md:text-2xl md:gap-2 md:p-5 md:mt-0">Dashboard</h1>
+        <h1 className="text-4xl font-bold ml-72 md:ml-0 md:grid-cols-1 md:text-2xl md:gap-2 md:px-5 md:mt-0">Dashboard</h1>
       </div>
 
       <div className="ml-72 md:ml-0 grid grid-cols-2 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4">
         <TotalSales chartData={chartData} totalSales={totalSales} currencyFormatter={currencyFormatter}/>
 
-       <TopAffiliated topPerformers={topPerformers} currencyFormatter={currencyFormatter}/>
+       <PropoertyAdded topPropoerty={topPropoerty}/>
       </div>
 
-      <div className='ml-72 md:ml-0 grid grid-cols-1 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4'>
+      <div className='ml-72 md:ml-0 grid grid-cols-2 md:grid-cols-1 md:gap-4 md:p-6 md:mt-0 gap-4 items-start justify-center mt-6 md:px-6 mr-4'>
        <RecentSales sales={sales} formatDateToMMDDYYYYDateApproved={formatDateToMMDDYYYYDateApproved} currencyFormatter={currencyFormatter}/>
+
+       <TopAffiliated topPerformers={topPerformers} currencyFormatter={currencyFormatter}/>
       </div>
     </div>
   );

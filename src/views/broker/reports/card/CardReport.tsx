@@ -123,8 +123,7 @@ function CardReport() {
 
   return (
     <div>
-        <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
-
+        <Card className="bg-[#eef2ff] border-b-4 border-primary min-w-[100px] fade-in-left md:w-[380px]">
             <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
               <div className="grid grid-cols-3 md:grid-cols-1 gap-4 md:gap-4 w-full">

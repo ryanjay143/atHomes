@@ -122,7 +122,7 @@ function CardReport() {
 
   return (
     <div>
-        <Card className='bg-[#eef2ff] border-b-4 border-primary fade-in-left'>
+        <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
 
             <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">

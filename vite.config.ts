@@ -10,7 +10,7 @@ export default defineConfig({
       targets: [
         {
           src: 'dist/index.html',
-          dest: '.', // this means "copy to the root"
+          dest: '.', 
           rename: '404.html'
         }
       ]

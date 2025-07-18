@@ -12,15 +12,13 @@ import {
   faTachometerAlt,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import logo from "./../../../assets/logoathomes.jpg";
+import logo from "./../../../assets/logoathomes.png";
 
-function AdminSidebar() {
-  // State management
+function BrokerSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Navigation links
   const links = [
     { path: "/broker/broker-dashboard", icon: faTachometerAlt, label: "Dashboard" },
     { path: "/broker/broker-salesEncoding", icon: faKeyboard, label: "Sales Encoding" },
@@ -32,20 +30,20 @@ function AdminSidebar() {
   const messageLink = { path: "/admin/products", icon: faEnvelope, label: "Message" };
   const settingsLink = { path: "/admin/products", icon: faCog, label: "Settings" };
 
-  // Event handlers
   const handleNavigation = (path: string) => {
     navigate(path);
     setIsOpen(false);
   };
 
-  // JSX structure
   return (
     <>
-     <button
-        className={`fixed top-4 left-4 z-50 bg-white text-accent p-2 rounded-md shadow-md transition-all duration-300 ease-in-out transform ${
+      {/* Hamburger Button */}
+      <button
+        className={`fixed top-4 left-4 z-50 bg-white/80 backdrop-blur-md text-primary p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out transform ${
           isOpen ? "opacity-100 scale-100 md:block" : "opacity-100 scale-100 hidden md:block"
         }`}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle Sidebar"
       >
         <FontAwesomeIcon
           icon={isOpen ? faTimes : faBars}
@@ -56,9 +54,13 @@ function AdminSidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-primary text-accent z-40 transition-all duration-300 ease-in-out transform ${
+        className={`fixed top-0 left-0 h-full w-72 bg-white/70 backdrop-blur-xl shadow-2xl text-primary z-40 transition-all duration-300 ease-in-out transform ${
           isOpen ? "translate-x-0" : "md:-translate-x-full"
-        } overflow-hidden rounded-r-[5px]`}
+        } overflow-hidden rounded-r-3xl flex flex-col`}
+        style={{
+          boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.25)",
+          borderRight: "1.5px solid rgba(23, 37, 84, 0.08)",
+        }}
       >
         <div className="w-full h-full flex flex-col items-center justify-between py-4">
           {/* Logo Section */}
@@ -66,23 +68,28 @@ function AdminSidebar() {
             className="flex justify-center cursor-pointer mb-7"
             onClick={() => handleNavigation("/admin/user-dashboard")}
           >
-            <img src={logo} alt="Logo" className="w-36 h-28 rounded-2xl" />
+            <img
+              src={logo}
+              alt="Logo"
+              className="w-36 h-28 rounded-2xl"
+              
+            />
           </div>
 
           {/* Navigation Menu */}
           <nav className="w-full">
-            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2 ">
+            <ul className="relative mb-12 w-full flex flex-col items-center gap-y-2">
               {links.map((link) => (
                 <li
                   key={link.path}
                   onClick={() => handleNavigation(link.path)}
-                  className={`w-full text-[#eff6ff] rounded-md flex justify-center items-center transition duration-200 ${
+                  className={`w-11/12 rounded-xl flex justify-center items-center transition duration-200 cursor-pointer group ${
                     location.pathname.startsWith(link.path)
-                      ? "bg-[#172554] text-[#172554] border border-primary"
-                      : "hover:bg-[#172554] hover:text-[#eff6ff] border border-primary"
+                      ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg"
+                      : "hover:bg-blue-100 hover:text-blue-700"
                   }`}
                 >
-                  <div className="flex items-center gap-3 text-xl w-full px-4 py-2 cursor-pointer">
+                  <div className="flex items-center gap-3 text-lg w-full px-5 py-3 font-semibold group-hover:scale-105 transition-transform">
                     <FontAwesomeIcon icon={link.icon} className="w-5 h-5" />
                     <span>{link.label}</span>
                   </div>
@@ -91,21 +98,22 @@ function AdminSidebar() {
             </ul>
           </nav>
 
-          <div className="w-full flex flex-col items-center mb-4">
+          {/* Bottom Quick Links */}
+          <div className="w-full flex flex-col items-center mb-4 gap-2">
             {/* Notification */}
             <li
               onClick={() => handleNavigation(notificationLink.path)}
-              className={`w-full text-[#eff6ff] rounded-md flex justify-center items-center transition duration-200 ${
+              className={`w-11/12 rounded-xl flex justify-center items-center transition duration-200 cursor-pointer group ${
                 location.pathname === notificationLink.path
-                  ? "bg-[#172554] text-[#172554] border border-primary"
-                  : "hover:bg-[#172554] hover:text-[#eff6ff] border border-primary"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg"
+                  : "hover:bg-blue-100 hover:text-blue-700"
               }`}
             >
-              <div className="flex items-center gap-3 text-xl w-full px-4 py-2 cursor-pointer">
+              <div className="flex items-center gap-3 text-lg w-full px-5 py-3 font-semibold group-hover:scale-105 transition-transform">
                 <FontAwesomeIcon icon={notificationLink.icon} className="w-5 h-5" />
                 <span>{notificationLink.label}</span>
-                <span className="bg-red-500 rounded-full w-5 h-5">
-                  <p className="text-center text-sm">0</p>
+                <span className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow border-2 border-white">
+                  0
                 </span>
               </div>
             </li>
@@ -113,17 +121,17 @@ function AdminSidebar() {
             {/* Message Link */}
             <li
               onClick={() => handleNavigation(messageLink.path)}
-              className={`w-full text-[#eff6ff] rounded-md flex justify-center items-center transition duration-200 ${
+              className={`w-11/12 rounded-xl flex justify-center items-center transition duration-200 cursor-pointer group ${
                 location.pathname === messageLink.path
-                  ? "bg-[#172554] text-[#172554] border border-primary"
-                  : "hover:bg-[#172554] hover:text-[#eff6ff] border border-primary"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg"
+                  : "hover:bg-blue-100 hover:text-blue-700"
               }`}
             >
-              <div className="flex items-center gap-3 text-xl w-full px-4 py-2 cursor-pointer">
+              <div className="flex items-center gap-3 text-lg w-full px-5 py-3 font-semibold group-hover:scale-105 transition-transform">
                 <FontAwesomeIcon icon={messageLink.icon} className="w-5 h-5" />
                 <span>{messageLink.label}</span>
-                <span className="bg-red-500 rounded-full w-5 h-5">
-                  <p className="text-center text-sm">0</p>
+                <span className="bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow border-2 border-white">
+                  0
                 </span>
               </div>
             </li>
@@ -131,28 +139,30 @@ function AdminSidebar() {
             {/* Settings Link */}
             <li
               onClick={() => handleNavigation(settingsLink.path)}
-              className={`w-full text-[#eff6ff] rounded-md flex justify-center items-center transition duration-200 ${
+              className={`w-11/12 rounded-xl flex justify-center items-center transition duration-200 cursor-pointer group ${
                 location.pathname === settingsLink.path
-                  ? "bg-[#172554] text-[#172554] border border-primary"
-                  : "hover:bg-[#172554] hover:text-[#eff6ff] border border-primary"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg"
+                  : "hover:bg-blue-100 hover:text-blue-700"
               }`}
             >
-              <div className="flex items-center gap-3 text-xl w-full px-4 py-2 cursor-pointer">
+              <div className="flex items-center gap-3 text-lg w-full px-5 py-3 font-semibold group-hover:scale-105 transition-transform">
                 <FontAwesomeIcon icon={settingsLink.icon} className="w-5 h-5" />
                 <span>{settingsLink.label}</span>
               </div>
             </li>
           </div>
 
-          <div className="text-center text-sm text-[#eff6ff]">
-            © {new Date().getFullYear()} ATHomes Company
+          {/* Footer */}
+          <div className="text-center text-xs text-blue-900 font-semibold opacity-80 mt-4">
+            © {new Date().getFullYear()} <span className="font-bold text-primary">ATHomes Company</span>
           </div>
         </div>
       </div>
 
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ease-in-out"
+          className="fixed inset-0 bg-black bg-opacity-40 z-30 transition-opacity duration-300 ease-in-out"
           onClick={() => setIsOpen(false)}
         ></div>
       )}
@@ -160,4 +170,4 @@ function AdminSidebar() {
   );
 }
 
-export default AdminSidebar;
+export default BrokerSidebar;
