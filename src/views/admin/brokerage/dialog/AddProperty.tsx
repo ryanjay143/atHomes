@@ -24,6 +24,7 @@ function formatNumberWithCommas(value: string) {
 
 function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   const [category, setCategory] = useState('');
+  const [imageTypeError, setImageTypeError] = useState<string | null>(null);
   const [dateListed, setDateListed] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
@@ -57,23 +58,36 @@ const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
-      setImages(fileArray);
-      const previews: string[] = [];
-      fileArray.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (reader.result) {
-            previews.push(reader.result as string);
-            setImagePreviews([...previews]);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+  setImageTypeError(null);
+  const files = e.target.files;
+  if (files) {
+    const fileArray = Array.from(files);
+    // Validate all files for allowed types
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const invalidFile = fileArray.find(
+      (file) => !allowedTypes.includes(file.type)
+    );
+    if (invalidFile) {
+      setImageTypeError('Only JPG, JPEG, and PNG files are allowed.');
+      setImages([]);
+      setImagePreviews([]);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
     }
-  };
+    setImages(fileArray);
+    const previews: string[] = [];
+    fileArray.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          previews.push(reader.result as string);
+          setImagePreviews([...previews]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+};
 
   const handleRemoveImage = (index: number, e: React.MouseEvent) => {
     e.preventDefault(); // Prevent form submission
@@ -324,44 +338,58 @@ const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 </div>
                 
                 <div>
-                    <Label>Upload Property Images</Label>
-                    <Input type="file" multiple onChange={handleImageChange} ref={fileInputRef} />
-                    {errors.images && <p className="text-red-500 text-sm">{errors.images}</p>}
-                    <div className="flex space-x-2 mt-2">
-                      {imagePreviews.map((preview, index) => (
-                        <div
-                          key={index}
-                          className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+                  <Label className="font-semibold flex items-center gap-1">
+                    Upload Property Images <span className="text-red-600">*</span>
+                    <span className="text-xs font-normal text-red-600 ml-2">(JPG, JPEG, PNG only)</span>
+                  </Label>
+                  <Input
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                    onChange={handleImageChange}
+                    ref={fileInputRef}
+                    className={imageTypeError || errors.images ? "border-red-500" : ""}
+                  />
+                  {(imageTypeError || errors.images) && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {imageTypeError || errors.images}
+                    </p>
+                  )}
+                  <div className="flex space-x-2 mt-2">
+                    {imagePreviews.map((preview, index) => (
+                      <div
+                        key={index}
+                        className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+                      >
+                        <img
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
+                          onClick={() => setSelectedImage(preview)}
+                        />
+                        <button
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                          onClick={(e) => handleRemoveImage(index, e)}
                         >
-                          <img
-                            src={preview}
-                            alt={`Preview ${index + 1}`}
-                            className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
-                            onClick={() => setSelectedImage(preview)}
-                          />
-                          <button
-                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                            onClick={(e) => handleRemoveImage(index, e)}
-                          >
-                            <FontAwesomeIcon icon={faTimes} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
 
-                    {/* Modal for Image Preview */}
-                    {selectedImage && (
-                      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-                        <DialogContent className="max-w-[425px] p-4 bg-white rounded-lg shadow-lg">
-                          <DialogHeader className='text-start'>
-                            <DialogTitle className="text-xl font-bold mb-4">Image Preview</DialogTitle>
-                            <DialogDescription>
-                              <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md" />
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    )}
+                  {/* Modal for Image Preview */}
+                  {selectedImage && (
+                    <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+                      <DialogContent className="max-w-[425px] p-4 bg-white rounded-lg shadow-lg">
+                        <DialogHeader className='text-start'>
+                          <DialogTitle className="text-xl font-bold mb-4">Image Preview</DialogTitle>
+                          <DialogDescription>
+                            <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md" />
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
                 </div>
                 <DialogFooter className="flex justify-end space-x-2">

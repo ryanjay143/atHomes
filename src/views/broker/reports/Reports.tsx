@@ -5,7 +5,7 @@ import CardReport from './card/CardReport'
 
 function Reports() {
   return (
-    <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
+    <div className="flex flex-col md:flex-row gap-4">
       <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2 ">
         <NavigationReport />
 

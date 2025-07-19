@@ -1,14 +1,15 @@
-import '../components/loader.css'
+import '../components/loaderCard.css'
 import logo from '/favicon.png'
 
-const loaderCard = () => {
+const LoaderCard = () => {
   return (
-    <div className='flex items-center justify-center h-96 top-64 left-1/2 absolute translate-x-[-50%] translate-y-[-50%]'>
-      <div className="loader">
-        <img src={logo} alt="Logo" className="loader-image" />
+    <div className="flex items-center justify-center h-40 w-full relative">
+      <div className="loader-card">
+        <img src={logo} alt="Logo" className="loader-card-image" />
+        <div className="loader-card-glow"></div>
       </div>
     </div>
   )
 }
 
-export default loaderCard
+export default LoaderCard

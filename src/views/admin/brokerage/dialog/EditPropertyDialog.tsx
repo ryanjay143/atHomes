@@ -31,6 +31,8 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [imageTypeError, setImageTypeError] = useState<string | null>(null);
+
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, ''); // Remove commas
     // Only allow numbers
@@ -54,23 +56,36 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
   }, [property]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
-      setImages(fileArray);
-      const previews: string[] = [];
-      fileArray.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (reader.result) {
-            previews.push(reader.result as string);
-            setImagePreviews([...previews]);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+  setImageTypeError(null);
+  const files = e.target.files;
+  if (files) {
+    const fileArray = Array.from(files);
+    // Validate all files for allowed types
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const invalidFile = fileArray.find(
+      (file) => !allowedTypes.includes(file.type)
+    );
+    if (invalidFile) {
+      setImagePreviews([]);
+      setImages([]);
+      setImageTypeError('Only JPG, JPEG, and PNG files are allowed.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
     }
-  };
+    setImages(fileArray);
+    const previews: string[] = [];
+    fileArray.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          previews.push(reader.result as string);
+          setImagePreviews([...previews]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+};
 
   const handleRemoveImagePreview = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -265,12 +280,26 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
               rows={3}
             />
           </div>
-          <div>
-            <Label>Upload / Update Images / Add Images</Label>
-            <Input type="file" multiple onChange={handleImageChange} ref={fileInputRef} />
-
+         <div>
+            <Label className="font-semibold flex items-center gap-1">
+              Upload Property Images <span className="text-red-600">*</span>
+              <span className="text-xs font-normal text-red-600  ml-2">(JPG, JPEG, PNG only)</span>
+            </Label>
+            <Input
+              type="file"
+              multiple
+              accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+              onChange={handleImageChange}
+              ref={fileInputRef}
+              className={imageTypeError ? "border-red-500" : ""}
+              required
+            />
+            {imageTypeError && (
+              <p className="text-red-500 text-sm mt-1">
+                {imageTypeError}
+              </p>
+            )}
             <div className="grid grid-cols-5 gap-2 mt-2">
-
               {/* Existing Images */}
               {existingImages.length > 0 && (
                 existingImages.map((image: any, index: number) => (
@@ -297,27 +326,27 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
                 ))
               )}
 
-              {/* New Photo */}
-              {imagePreviews.length > 0 && imagePreviews.map((preview, index: number) => (
-                <div
-                  key={index}
-                  className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+            {/* New Photo */}
+            {imagePreviews.length > 0 && imagePreviews.map((preview, index: number) => (
+              <div
+                key={index}
+                className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+              >
+                <img
+                  src={preview}
+                  className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
+                  alt={`Selected Image ${index + 1}`}
+                />
+                <button
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  onClick={(e) => handleRemoveImagePreview(index, e)}
                 >
-                  <img
-                    src={preview}
-                    className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
-                    alt={`Selected Image ${index + 1}`}
-                  />
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                    onClick={(e) => handleRemoveImagePreview(index, e)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
+                  &times;
+                </button>
+              </div>
+            ))}
           </div>
+        </div>
         </div>
         <DialogFooter className="flex justify-end space-x-2">
           <Button type="submit" className="bg-blue-500 hover:bg-blue-400 text-white" disabled={loading}>

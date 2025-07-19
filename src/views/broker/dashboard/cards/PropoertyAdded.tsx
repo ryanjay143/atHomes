@@ -120,15 +120,19 @@ const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
     <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-b-4 border-primary w-full md:w-full shadow-xl rounded-2xl h-full">
       <CardContent className="flex flex-col h-[500px]">
         {/* Header: Not scrollable */}
-        <div className="py-5 flex flex-row justify-between items-center flex-shrink-0">
+        <div className="py-5 flex flex-col md:flex-row md:justify-between md:items-center gap-4 flex-shrink-0">
           <div className="flex flex-row gap-4 items-center">
-            <CardTitle className="text-base font-bold text-primary">Property Listing</CardTitle>
-            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 ring-2 ring-green-400/30 shadow">
+            <CardTitle className="text-base font-bold text-primary tracking-wide">
+              Property Listing
+            </CardTitle>
+            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs md:text-[10px] font-semibold text-green-700 ring-2 ring-green-400/30 shadow">
               <FontAwesomeIcon icon={faTag} className="mr-1" />
               Newly added
             </span>
           </div>
-          <div className="flex items-center space-x-4 mt-2">
+
+          {/* Toggle Radio Group */}
+          <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
             <label className="flex items-center cursor-pointer">
               <input
                 type="radio"
@@ -136,9 +140,13 @@ const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
                 value="recent"
                 checked={viewMode === "recent"}
                 onChange={() => setViewMode("recent")}
-                className="form-radio text-blue-600 accent-primary"
+                className="form-radio text-blue-600 accent-primary focus:ring-2 focus:ring-blue-400"
               />
-              <span className="ml-2 text-sm text-gray-700 font-medium">Recently Listed</span>
+              <span className={`ml-2 text-sm md:text-[10px] font-medium transition-colors duration-200 ${
+                viewMode === "recent" ? "text-blue-700 font-bold" : "text-gray-700"
+              }`}>
+                Recently Listed
+              </span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -147,12 +155,17 @@ const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
                 value="all"
                 checked={viewMode === "all"}
                 onChange={() => setViewMode("all")}
-                className="form-radio text-blue-600 accent-primary"
+                className="form-radio text-blue-600 accent-primary focus:ring-2 focus:ring-blue-400"
               />
-              <span className="ml-2 text-sm text-gray-700 font-medium">View All</span>
+              <span className={`ml-2 text-sm md:text-[10px] font-medium transition-colors duration-200 ${
+                viewMode === "all" ? "text-blue-700 font-bold" : "text-gray-700"
+              }`}>
+                View All
+              </span>
             </label>
           </div>
         </div>
+       
         {/* Scrollable grid area with fixed height, 3 columns on desktop */}
         <div className="flex-1 overflow-auto">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">

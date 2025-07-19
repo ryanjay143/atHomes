@@ -21,7 +21,6 @@ const generateAccountNumber = () => {
   return accountNumber;
 };
 
-// Define a type for the errors object
 type FormErrors = {
   first_name?: string;
   middle_name?: string;
@@ -113,6 +112,30 @@ function Register() {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
+  // Role-based logic
+  const isAgent = formData.role === "1";
+  const isBroker = formData.role === "2";
+
+  // Real-time PRC License validation
+  const prcValue = formData.prc_liscence_number.trim();
+  const isPRCNA = prcValue.toUpperCase() === "N/A";
+  const isPRCValid =
+    (isBroker && prcValue !== "" && !isPRCNA) ||
+    (isAgent && prcValue.length > 4);
+
+  // Real-time warning for Broker typing N/A
+  const showPRCWarning = isBroker && isPRCNA;
+
+  // Effect: If role changes, reset PRC License and Validity Date
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      prc_liscence_number: '',
+      validation_date: '',
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.role]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
@@ -134,10 +157,23 @@ function Register() {
     if (!formData.last_school_att) newErrors.last_school_att = "Last school or course attended is required.";
 
     // Conditional validation for Broker
-    if (formData.role === "2") { // Assuming "2" is the value for Broker
-      if (!formData.prc_liscence_number) newErrors.prc_liscence_number = "PRC License Number is required for Brokers.";
-      // if (!formData.dhsud_registration_number) newErrors.dhsud_registration_number = "DHSUD Registration Number is required for Brokers.";
-      if (!formData.validation_date) newErrors.validation_date = "Validity Date is required for Brokers.";
+    if (isBroker) {
+      if (!prcValue || isPRCNA) {
+        newErrors.prc_liscence_number = "PRC License Number is required for Brokers and cannot be N/A.";
+      }
+      if (
+        prcValue &&
+        !isPRCNA &&
+        !formData.validation_date
+      ) {
+        newErrors.validation_date = "Validity Date is required for Brokers with a valid PRC License Number.";
+      }
+    }
+    // Conditional validation for Agent
+    if (isAgent) {
+      if (prcValue.length > 4 && !formData.validation_date) {
+        newErrors.validation_date = "Validity Date is required for Agents with a valid PRC License Number.";
+      }
     }
 
     setErrors(newErrors);
@@ -219,7 +255,6 @@ function Register() {
     setIsPasswordGenerated(true);
   };
 
-  // JSX structure
   return (
     <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-900 via-blue-400 to-blue-200 overflow-hidden">
       {/* Decorative Blobs */}
@@ -236,21 +271,21 @@ function Register() {
             <div className="grid grid-cols-4 gap-4 md:grid-cols-2 text-white">
               <div>
                 <Label htmlFor="first_name">First name</Label> <span className="text-red-500">*</span>
-                <Input type="text" name="first_name" className="h-9 bg-white" placeholder="Enter your first name" onChange={handleChange} />
-                {errors.first_name && <span className="text-red-500 text-sm">{errors.first_name}</span>}
+                <Input type="text" name="first_name" className="h-9 bg-white text-black" placeholder="Enter your first name" onChange={handleChange} />
+                {errors.first_name && <span className="text-red-400 text-sm">{errors.first_name}</span>}
               </div>
               <div>
                 <Label htmlFor="middle_name">Middle name</Label>
-                <Input type="text" name="middle_name" className="h-9 bg-white" placeholder="Enter your middle name" onChange={handleChange} />
+                <Input type="text" name="middle_name" className="h-9 bg-white text-black" placeholder="Enter your middle name" onChange={handleChange} />
               </div>
               <div>
                 <Label htmlFor="last_name">Last name</Label> <span className="text-red-500">*</span>
-                <Input type="text" name="last_name" className="h-9 bg-white" placeholder="Enter your last name" onChange={handleChange} />
-                {errors.last_name && <span className="text-red-500 text-sm">{errors.last_name}</span>}
+                <Input type="text" name="last_name" className="h-9 bg-white text-black" placeholder="Enter your last name" onChange={handleChange} />
+                {errors.last_name && <span className="text-red-400 text-sm">{errors.last_name}</span>}
               </div>
               <div>
                 <Label htmlFor="extension_name">Extension name</Label> <span className="md:text-[7px] md:font-bold">(Jr, Sr. III)</span>
-                <Input type="text" name="extension_name" className="h-9 bg-white" placeholder="Enter your extension name" onChange={handleChange} />
+                <Input type="text" name="extension_name" className="h-9 bg-white text-black" placeholder="Enter your extension name" onChange={handleChange} />
               </div>
             </div>
           </div>
@@ -260,18 +295,18 @@ function Register() {
             <div className="grid grid-cols-4 gap-4 md:grid-cols-2 text-white">
               <div>
                 <Label htmlFor="email">Email</Label> <span className="text-red-500">*</span>
-                <Input type="email" name="email" className="h-9 bg-white" placeholder="Enter your email" onChange={handleChange} />
-                {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+                <Input type="email" name="email" className="h-9 bg-white text-black" placeholder="Enter your email" onChange={handleChange} />
+                {errors.email && <span className="text-red-400 text-sm">{errors.email}</span>}
               </div>
               <div>
                 <Label htmlFor="phone">Mobile number</Label> <span className="text-red-500">*</span>
-                <Input type="text" name="phone" className="h-9 bg-white" placeholder="Enter mobile number" onChange={handleChange} />
-                {errors.phone && <span className="text-red-500 text-sm">{errors.phone}</span>}
+                <Input type="text" name="phone" className="h-9 bg-white text-black" placeholder="Enter mobile number" onChange={handleChange} />
+                {errors.phone && <span className="text-red-400 text-sm">{errors.phone}</span>}
               </div>
               <div>
                 <Label htmlFor="gender">Gender</Label> <span className="text-red-500">*</span>
                 <Select onValueChange={(value) => setFormData({ ...formData, gender: value })}>
-                  <SelectTrigger className="h-9 bg-white/60">
+                  <SelectTrigger className="h-9 bg-white/60 text-black">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -279,12 +314,12 @@ function Register() {
                     <SelectItem value="female">Female</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.gender && <span className="text-red-500 text-sm">{errors.gender}</span>}
+                {errors.gender && <span className="text-red-400 text-sm">{errors.gender}</span>}
               </div>
               <div>
                 <Label htmlFor="complete_address">Complete address</Label> <span className="text-red-500">*</span>
-                <Input type="text" name="complete_address" className="h-9 bg-white" placeholder="Enter complete address" onChange={handleChange} />
-                {errors.complete_address && <span className="text-red-500 text-sm">{errors.complete_address}</span>}
+                <Input type="text" name="complete_address" className="h-9 bg-white text-black" placeholder="Enter complete address" onChange={handleChange} />
+                {errors.complete_address && <span className="text-red-400 text-sm">{errors.complete_address}</span>}
               </div>
             </div>
           </div>
@@ -294,13 +329,13 @@ function Register() {
             <div className="grid grid-cols-3 gap-4 md:grid-cols-2 text-white">
               <div className="hidden">
                 <Label htmlFor="acct_number">Account number</Label>
-                <Input type="text" name="acct_number" className="h-9 bg-white" value={accountNumber} readOnly />
+                <Input type="text" name="acct_number" className="h-9 bg-white text-black" value={accountNumber} readOnly />
               </div>
               <div>
                 <Label htmlFor="username">Username</Label> <span className="text-red-500">*</span>
-                <Input type="text" name="username" className="h-9 bg-white" placeholder="Enter username" onChange={handleChange} />
+                <Input type="text" name="username" className="h-9 bg-white text-black" placeholder="Enter username" onChange={handleChange} />
                 <p className="text-xs text-white">Username must not be the same as your email.</p>
-                {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
+                {errors.username && <span className="text-red-400 text-sm">{errors.username}</span>}
               </div>
               <div className="mt-1">
                 <div className="flex justify-between">
@@ -317,7 +352,7 @@ function Register() {
                   <Input
                     type={passwordVisible ? "text" : "password"}
                     name="password"
-                    className="h-9 bg-white pr-10"
+                    className="h-9 bg-white pr-10 text-black"
                     placeholder="Password"
                     value={formData.password}
                     onChange={handlePasswordChange}
@@ -330,7 +365,7 @@ function Register() {
                     <FontAwesomeIcon icon={passwordVisible ? faEye : faEyeSlash} className="text-gray-500" />
                   </button>
                 </div>
-                {errors.password && <span className="text-red-500 text-xs">{errors.password}</span>}
+                {errors.password && <span className="text-red-600 text-xs font-bold">{errors.password}</span>}
               </div>
               <div>
                 <Label htmlFor="confirm_password">Confirm Password</Label> <span className="text-red-500">*</span>
@@ -338,11 +373,11 @@ function Register() {
                   <Input
                     type={confirmPasswordVisible ? "text" : "password"}
                     name="confirm_password"
-                    className="h-9 bg-white pr-10"
+                    className="h-9 bg-white pr-10 text-black"
                     placeholder="Confirm Password"
                     value={formData.confirm_password}
                     onChange={handleChange}
-                    readOnly={isPasswordGenerated} // Set readOnly based on isPasswordGenerated state
+                    readOnly={isPasswordGenerated}
                   />
                   <button
                     type="button"
@@ -352,7 +387,7 @@ function Register() {
                     <FontAwesomeIcon icon={confirmPasswordVisible ? faEye : faEyeSlash} className="text-gray-500" />
                   </button>
                 </div>
-                {errors.confirm_password && <span className="text-red-500 text-sm">{errors.confirm_password}</span>}
+                {errors.confirm_password && <span className="text-red-600 text-xs font-bold">{errors.confirm_password}</span>}
               </div>
             </div>
           </div>
@@ -364,10 +399,11 @@ function Register() {
                 <Label htmlFor="type">Type</Label> <span className="text-red-500">*</span>
                 <Select
                   onValueChange={(value) => {
-                    setFormData({ ...formData, role: value });
+                    setFormData({ ...formData, role: value, validation_date: "" });
                   }}
+                  value={formData.role}
                 >
-                  <SelectTrigger className="h-9 bg-white/60">
+                  <SelectTrigger className="h-9 bg-white/60 text-black">
                     <SelectValue placeholder="Select Agent or Broker" />
                   </SelectTrigger>
                   <SelectContent>
@@ -375,7 +411,7 @@ function Register() {
                     <SelectItem value="2">Broker</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
+                {errors.role && <span className="text-red-400 text-sm">{errors.role}</span>}
               </div>
               {/* PRC License Number with N/A dropdown, single input only */}
               <div>
@@ -384,7 +420,7 @@ function Register() {
                   <Input
                     type="text"
                     name="prc_liscence_number"
-                    className="h-9 bg-white pr-16"
+                    className="h-9 bg-white pr-16 text-black/50"
                     placeholder="Enter PRC License No: or type/select N/A"
                     value={formData.prc_liscence_number}
                     onChange={handleChange}
@@ -394,21 +430,32 @@ function Register() {
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
                     <button
                       type="button"
-                      className="bg-blue-500 rounded px-2 py-1 text-xs text-white hover:bg-blue-400 transition"
+                      className={`bg-blue-500 rounded px-2 py-1 text-xs text-white hover:bg-blue-400 transition ${isBroker ? "opacity-50 cursor-not-allowed" : ""}`}
                       onClick={() =>
+                        !isBroker &&
                         handleChange({
                           target: { name: "prc_liscence_number", value: "N/A" },
                         })
                       }
                       tabIndex={-1}
+                      disabled={isBroker}
                     >
                       N/A
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] 9">
-                  If no PRC License Number, type or click <b>N/A</b> or leave blank.
-                </p>
+                {/* Show helper text only if there's no error or warning */}
+                {!(showPRCWarning || errors.prc_liscence_number) && (
+                  <p className="text-[10px] 9">
+                    If no PRC License Number, type or click <b>N/A</b> or leave blank.
+                  </p>
+                )}
+                {/* Real-time warning if Broker and N/A */}
+                {showPRCWarning && (
+                  <span className="text-red-500 text-xs font-bold">
+                    Please input a valid PRC License Number.
+                  </span>
+                )}
                 {errors.prc_liscence_number && (
                   <span className="text-red-500 text-sm">{errors.prc_liscence_number}</span>
                 )}
@@ -421,7 +468,7 @@ function Register() {
                   <Input
                     type="text"
                     name="dhsud_registration_number"
-                    className="h-9 bg-white pr-16"
+                    className="h-9 bg-white pr-16 text-black/50"
                     placeholder="Enter DHSUD Registration No:"
                     value={formData.dhsud_registration_number}
                     onChange={handleChange}
@@ -455,18 +502,22 @@ function Register() {
                 <Input
                   type="date"
                   name="validation_date"
-                  className="h-9 bg-white w-full"
+                  className="h-9 bg-white w-full text-black"
                   onChange={(e) => {
                     const rawDate = e.target.value;
                     const formattedDate = rawDate.split("-").reverse().join("-");
                     handleChange({ target: { name: "validation_date", value: formattedDate } });
                   }}
+                  value={formData.validation_date}
+                  disabled={!isPRCValid}
+                  required={isPRCValid}
+                  style={!isPRCValid ? { backgroundColor: "#e5e7eb", cursor: "not-allowed" } : {}}
                 />
                 {errors.validation_date && <span className="text-red-500 text-sm">{errors.validation_date}</span>}
               </div>
               <div>
-                <Label htmlFor="last_school_att" className="text-[11px] font-bold">Last School or Course attended</Label> <span className="text-red-500 ">*</span>
-                <Input type="text" name="last_school_att" className="h-9 bg-white" placeholder="Enter Last School or Course attended" onChange={handleChange} />
+                <Label htmlFor="last_school_att" className="text-[11px] font-bold">School or Course attended</Label> <span className="text-red-500 ">*</span>
+                <Input type="text" name="last_school_att" className="h-9 bg-white text-black" placeholder="Enter Last School or Course attended" onChange={handleChange} />
                 {errors.last_school_att && <span className="text-red-500 text-sm">{errors.last_school_att}</span>}
               </div>
             </div>

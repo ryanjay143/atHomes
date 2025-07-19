@@ -39,7 +39,7 @@ function Salesreport() {
       setAgentBroker(response.data.agents);
     } catch (error) {
       console.error('Error fetching data:', error);
-       Swal.fire({
+      Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Failed to fetching data. Please login again.',
@@ -118,9 +118,9 @@ function Salesreport() {
       isCategoryMatch &&
       isRemarksMatch &&
       (report.agent.user.acct_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      fullName.includes(searchQuery.toLowerCase()) ||
-      report.category.toLowerCase().includes(searchQuery.toLowerCase()))
+        report.client_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fullName.includes(searchQuery.toLowerCase()) ||
+        report.category.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   });
 
@@ -135,65 +135,67 @@ function Salesreport() {
   const notSoldPropertiesCount = displayedSalesReport.filter(report => report.remarks.toLowerCase() === "not sold").length;
 
   return (
-    <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
-      <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2 ">
+    <div className="relative min-h-screen w-full flex flex-col md:flex-row gap-4 bg-gradient-to-br overflow-x-hidden">
+      {/* Decorative Blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
+
+      <div className="ml-72 md:ml-0 gap-2 items-start justify-center mr-5 md:px-2 relative">
         <NavigationSalesReport />
-        <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
+        <Card className="bg-white/60 border-b-4 border-primary fade-in-left md:w-[380px] rounded-2xl shadow-2xl backdrop-blur-lg transition-all duration-300 hover:shadow-blue-200">
           <CardHeader>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
               <div className="grid grid-cols-2 md:grid-cols-1 gap-4 md:gap-4 w-full">
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Date Range</Label>
                   <div className="flex flex-row gap-2 md:flex-col">
-                    <Input type="date" className="w-full" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
+                    <Input type="date" className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
                     <span className="flex items-center md:hidden">-</span>
-                    <Input type="date" className="w-full" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
+                    <Input type="date" className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
                   </div>
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Agent/Broker</Label>
                   <Select onValueChange={handleAgentChange} value={selectedAgent}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
                       <SelectValue placeholder="Select agent or broker" />
                     </SelectTrigger>
                     <SelectContent>
                       {getAgentBroker.map((agent) => (
                         <SelectItem key={agent.id} value={agent.id}>
-                           {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
+                          {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
                         </SelectItem>
                       ))}
-                     
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Category</Label>
-                    <Select onValueChange={handleCategoryChange} value={selectedCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Lot only">Lot only</SelectItem>
-                        <SelectItem value="House and lot">House and lot</SelectItem>
-                        <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                        <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                        <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                        <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <Select onValueChange={handleCategoryChange} value={selectedCategory}>
+                    <SelectTrigger className="bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Lot only">Lot only</SelectItem>
+                      <SelectItem value="House and lot">House and lot</SelectItem>
+                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
+                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
+                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
+                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-
                 <div className="grid w-full items-center gap-1.5">
                   <Label>Remarks</Label>
                   <Select onValueChange={handleRemarksChange} value={selectedRemarks}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
                       <SelectValue placeholder="Select remarks" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="Sold">Sold</SelectItem>
-                        <SelectItem value="Not Sold">Not Sold</SelectItem>
-                        <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
-                        <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
+                      <SelectItem value="Sold">Sold</SelectItem>
+                      <SelectItem value="Not Sold">Not Sold</SelectItem>
+                      <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                      <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -201,9 +203,10 @@ function Salesreport() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-4">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-4 mb-6">
               <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md'>
+                <Card className='max-h-32 border border-b-4 border-primary shadow-md bg-gradient-to-br from-blue-100 via-blue-50 to-white rounded-xl'>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className='text-xl font-bold text-primary'>
@@ -217,9 +220,8 @@ function Salesreport() {
                   </CardHeader>
                 </Card>
               </div>
-
               <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md'>
+                <Card className='max-h-32 border border-b-4 border-primary shadow-md bg-gradient-to-br from-blue-100 via-blue-50 to-white rounded-xl'>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className='text-xl font-bold text-primary'>
@@ -233,9 +235,8 @@ function Salesreport() {
                   </CardHeader>
                 </Card>
               </div>
-
               <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md'>
+                <Card className='max-h-32 border border-b-4 border-green-500 shadow-md bg-gradient-to-br from-green-100 via-green-50 to-white rounded-xl'>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className='text-xl font-bold text-green-500'>
@@ -249,9 +250,8 @@ function Salesreport() {
                   </CardHeader>
                 </Card>
               </div>
-
               <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md'>
+                <Card className='max-h-32 border border-b-4 border-red-500 shadow-md bg-gradient-to-br from-red-100 via-red-50 to-white rounded-xl'>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className='text-xl font-bold text-red-500'>
@@ -266,7 +266,8 @@ function Salesreport() {
                 </Card>
               </div>
             </div>
-            <div className="flex flex-row md:grid md:grid-cols-2 justify-end items-start md:items-center gap-2 md:gap-4 pt-5">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap md:grid md:grid-cols-2 justify-end items-start md:items-center gap-2 md:gap-4 pt-5 mb-4">
               <Button
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -279,6 +280,7 @@ function Salesreport() {
                   setSelectedCategory("");
                   setSelectedRemarks("");
                 }}
+                className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-400 transition"
               >
                 <FontAwesomeIcon
                   icon={faRefresh}
@@ -286,38 +288,36 @@ function Salesreport() {
                 />
                 Refresh list
               </Button>
-              <Button className="bg-red-500 text-white hover:bg-red-400 hover:text-white">
+              <Button className="bg-red-500 text-white hover:bg-red-400 hover:text-white flex items-center gap-2 transition">
                 <FontAwesomeIcon icon={faDownload} />
-                Download as PDF
+                <span className="md:text-xsm">Download as PDF</span>
               </Button>
-              <Button className="bg-green-500 text-white hover:bg-green-400 hover:text-white">
+              <Button className="bg-green-500 text-white hover:bg-green-400 hover:text-white flex items-center gap-2 transition">
                 <FontAwesomeIcon icon={faDownload} />
-                Download as Excel
+                <span className="md:text-xs">Download as Excel</span>
               </Button>
             </div>
-            <div className='py-2 mt-5 flex flex-row justify-between gap-4'>
-              <Select onValueChange={handleRowsToShowChange}>
-                <SelectTrigger className="w-[120px] border border-primary">
-                  <span className='text-[#172554]'>Show</span>
-                  <SelectValue placeholder="All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="30">30</SelectItem>
-                  <SelectItem value="40">40</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                type='text'
-                placeholder='Search'
-                className='w-52 md:w-full'
-                value={searchQuery}
-                onChange={handleSearch}
-              />
+            <div className='py-2 flex flex-col md:flex-row md:justify-between justify-between gap-4'>
+                <div className='py-2 flex flex-row justify-between gap-4'>
+                      <Select onValueChange={handleRowsToShowChange}>
+                      <SelectTrigger className="w-[120px] border border-primary md:w-28">
+                          <span className='text-[#172554]'>Show</span>
+                          <SelectValue placeholder="All" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="20">20</SelectItem>
+                          <SelectItem value="30">30</SelectItem>
+                          <SelectItem value="40">40</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery}
+                  onChange={handleSearch} />
+                </div>
             </div>
+            {/* Table (unchanged) */}
             <div className="fade-in-left ">
               <Table>
                 <TableHeader className="bg-primary text-base">
@@ -371,6 +371,18 @@ function Salesreport() {
           </CardContent>
         </Card>
       </div>
+      {/* Custom Animations */}
+      <style>
+        {`
+          .fade-in-left {
+            animation: fadeInLeft 0.7s cubic-bezier(.39,.575,.565,1) both;
+          }
+          @keyframes fadeInLeft {
+            0% { opacity: 0; transform: translateX(-40px);}
+            100% { opacity: 1; transform: translateX(0);}
+          }
+        `}
+      </style>
     </div>
   );
 }

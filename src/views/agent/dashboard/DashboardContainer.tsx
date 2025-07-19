@@ -66,8 +66,8 @@ function DashboardContainer() {
   });
 
   return (
-    <div className="py-5 md:pt-20">
-      <div className="flex justify-between md:flex-row">
+    <>
+<div className="flex justify-between md:flex-row">
         <h1 className="text-4xl font-bold ml-72 md:ml-0 md:grid-cols-1 md:text-2xl md:gap-2 md:px-5 md:mt-0">Dashboard</h1>
       </div>
 
@@ -81,7 +81,9 @@ function DashboardContainer() {
        <RecentSales sales={sales} formatDateToMMDDYYYYDateApproved={formatDateToMMDDYYYYDateApproved} currencyFormatter={currencyFormatter}/>
       <TopAffiliated topPerformers={topPerformers} currencyFormatter={currencyFormatter}/>
       </div>
-    </div>
+    </>
+      
+
   );
 }
 

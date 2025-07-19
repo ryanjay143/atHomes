@@ -284,7 +284,7 @@ const DeveloperContainer: React.FC = () => {
     };
 
     return (
-        <div className="py-3 md:pt-20 flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
             <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2">
                 <Navigation />
                 <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
@@ -309,11 +309,12 @@ const DeveloperContainer: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         {/* Pagination and Table */}
-                        <div className='py-2 flex flex-col md:flex-row md:justify-between gap-4'>
-                            <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
-                                <SelectTrigger className="w-[120px] border border-primary">
+                        <div className='py-2 flex flex-col md:flex-row md:justify-between justify-between gap-4'>
+                            <div className='py-2 flex flex-row justify-between gap-4'>
+                                 <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
+                                <SelectTrigger className="w-[120px] border border-primary md:w-28">
                                     <span className='text-[#172554]'>Show</span>
-                                    <SelectValue placeholder="10" />
+                                    <SelectValue placeholder="All" /> {/* Default placeholder to "All" */}
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All</SelectItem>
@@ -323,14 +324,9 @@ const DeveloperContainer: React.FC = () => {
                                     <SelectItem value="40">40</SelectItem>
                                     <SelectItem value="50">50</SelectItem>
                                 </SelectContent>
-                            </Select>
-                            <Input 
-                                type='text' 
-                                placeholder='Search' 
-                                className='w-52 md:w-full' 
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                                </Select>
+                                <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                            </div>
                         </div>
                         {/* Responsive Table: horizontal scroll only on small screens */}
                         <div className="w-full overflow-x-auto md:overflow-x-visible">

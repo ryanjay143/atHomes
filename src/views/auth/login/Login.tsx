@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faEnvelope,
   faEye,
   faEyeSlash,
   faSignIn
@@ -154,7 +155,7 @@ const Login = () => {
                 className={`pr-10 bg-blue-50/80 h-12 rounded-lg border-2 focus:border-blue-400 transition-all duration-200 ${errors.credential ? 'border-red-500' : 'border-transparent'}`}
               />
               <FontAwesomeIcon
-                icon={faSignIn}
+                icon={faEnvelope}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-300"
               />
             </div>

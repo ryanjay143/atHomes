@@ -5,6 +5,8 @@ import axios from '../../../plugin/axios';
 import Swal from 'sweetalert2';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { faCamera, faEye, faEyeSlash, faUserEdit } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const MAX_IMAGE_SIZE_MB = 5;
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024;
@@ -15,6 +17,10 @@ const EditProfile: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [user, setUser] = useState<any>({
     username: '',
     email: '',
@@ -141,27 +147,27 @@ const EditProfile: React.FC = () => {
   };
 
   const adminProfile = async () => {
-  try {
-    const response = await axios.get('user/agent-broker', {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      },
-    });
+    try {
+      const response = await axios.get('user/agent-broker', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
 
-    // Convert nulls to empty string for all personal info fields
-    const info = response.data.personalInfo;
-    setPersonalInfo({
-      first_name: info.first_name ?? '',
-      middle_name: info.middle_name ?? '',
-      last_name: info.last_name ?? '',
-      extension_name: info.extension_name ?? '',
-      complete_address: info.complete_address ?? '',
-      phone: info.phone ?? '',
-      profile_pic: info.profile_pic ?? '',
-    });
-    setUser(response.data.user);
-  } catch (error) {
+      // Convert nulls to empty string for all personal info fields
+      const info = response.data.personalInfo;
+      setPersonalInfo({
+        first_name: info.first_name ?? '',
+        middle_name: info.middle_name ?? '',
+        last_name: info.last_name ?? '',
+        extension_name: info.extension_name ?? '',
+        complete_address: info.complete_address ?? '',
+        phone: info.phone ?? '',
+        profile_pic: info.profile_pic ?? '',
+      });
+      setUser(response.data.user);
+    } catch (error) {
       // Handle error as needed
     }
   };
@@ -171,200 +177,257 @@ const EditProfile: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-start mt-10 md:min-h-screen md:items-center md:mt-0">
-      <Card className="max-w-xl w-full bg-white shadow-md rounded-lg p-6 md:w-[90%]">
-        <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-        <div className="flex mb-4">
-          <button
-            className={`flex-1 py-2 ${activeTab === 'account' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            onClick={() => setActiveTab('account')}
-          >
-            User Account
-          </button>
-          <button
-            className={`flex-1 py-2 ${activeTab === 'personal' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            onClick={() => setActiveTab('personal')}
-          >
-            Personal Info
-          </button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          {activeTab === 'account' && (
-            <>
-              <div className="mb-4">
-                <label className="block text-gray-700">Username</label>
-                <Input
-                  type="text"
-                  name="username"
-                  value={user.username}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Email</label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Change password</label>
-                <Input
-                  type="password"
-                  name="password"
-                  value={user.password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Password confirmation</label>
-                <Input
-                  type="password"
-                  name="password_confirmation"
-                  value={user.password_confirmation}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg"
-                />
-              </div>
-            </>
-          )}
-          {activeTab === 'personal' && (
-            <>
-              <div className='grid grid-cols-4 md:grid-cols-2 md:gap-2 gap-4 mt-10'>
-                <div className="mb-4">
-                  <label className="block text-gray-700">Firstname</label>
-                  <Input
-                    type="text"
-                    name="first_name"
-                    value={personalinfo.first_name}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br relative overflow-hidden ">
+      {/* Decorative Blobs */}
+      <div className="absolute top-0 left-0 w-80 h-80 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
 
-                <div className="mb-4">
-                  <label className="block text-gray-700">Middlename</label>
-                  <Input
-                    type="text"
-                    name="middle_name"
-                    value={personalinfo.middle_name}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
+      <Card className="w-full max-w-2xl bg-white/60 border-b-4 border-primary rounded-2xl shadow-2xl backdrop-blur-lg transition-all duration-300 hover:shadow-blue-200 z-10">
+        <div className="flex flex-col items-center py-8 px-6">
+          <div className="flex flex-col items-center gap-2 mb-6">
+            <div className="relative group">
+              <Avatar className="h-32 w-32 border-4 border-primary shadow-lg">
+                {(profilePicPreview || personalinfo.profile_pic) ? (
+                  <AvatarImage
+                    src={
+                      profilePicPreview
+                        ? profilePicPreview
+                        : typeof personalinfo.profile_pic === 'string'
+                          ? `${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`
+                          : undefined
+                    }
+                    alt="Profile"
+                    className="rounded-full border border-border object-cover"
                   />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700">Lastname</label>
-                  <Input
-                    type="text"
-                    name="last_name"
-                    value={personalinfo.last_name}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700">Extension</label>
-                  <Input
-                    type="text"
-                    name="extension_name"
-                    value={personalinfo.extension_name}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-              </div>
-              <div className='grid grid-cols-2 gap-4'>
-                <div className="mb-4">
-                  <label className="block text-gray-700">Address</label>
-                  <Input
-                    type="text"
-                    name="complete_address"
-                    value={personalinfo.complete_address}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700">Phone</label>
-                  <Input
-                    type="text"
-                    name="phone"
-                    value={personalinfo.phone}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="mb-4">
-                  <div className="flex justify-center items-center w-full">
-                    <Avatar className="h-32 w-32 md:h-12 md:w-12 border-primary border-4">
-                      {(profilePicPreview || personalinfo.profile_pic) ? (
-                        <AvatarImage
-                          src={
-                            profilePicPreview
-                              ? profilePicPreview
-                              : typeof personalinfo.profile_pic === 'string'
-                                ? `${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`
-                                : undefined
-                          }
-                          alt="Profile"
-                          className="rounded-full border border-border object-cover"
-                        />
-                      ) : null}
-                      <AvatarFallback className='font-bold text-2xl bg-[#172554] text-[#eff6ff] '>
-                        {personalinfo.first_name
-                          ? personalinfo.first_name.charAt(0).toUpperCase()
-                          : 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <p className="text-sm text-red-600">
-                    Profile Picture (JPEG, PNG, WEBP, Max 5MB)
-                  </p>
-                  <Input
-                    type="file"
-                    name="profile_pic"
-                    accept="image/jpeg,image/png,image/jpg,image/webp"
-                    className="w-full px-3 py-2 border rounded-lg"
-                    onChange={handleFileChange}
-                    ref={fileInputRef}
-                  />
-                  {imageError && (
-                    <div className="text-red-600 text-sm mt-1">{imageError}</div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-          <Button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <span>Saving...</span>
-                <span className="animate-spin cursor-not-allowed border-2 border-white border-t-transparent rounded-full w-4 h-4" />
-              </>
-            ) : (
-              <>
-                <span>Save changes</span>
-              </>
+                ) : null}
+                <AvatarFallback className='font-bold text-3xl bg-[#172554] text-[#eff6ff]'>
+                  {personalinfo.first_name
+                    ? personalinfo.first_name.charAt(0).toUpperCase()
+                    : 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <label
+                htmlFor="profile_pic"
+                className="absolute bottom-2 right-2 bg-blue-600 text-white rounded-full p-2 shadow-lg cursor-pointer group-hover:scale-110 transition-transform"
+                title="Change Profile Picture"
+              >
+                <FontAwesomeIcon icon={faCamera} />
+                <input
+                  id="profile_pic"
+                  type="file"
+                  name="profile_pic"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                />
+              </label>
+            </div>
+            <span className="text-xs text-gray-500 mt-1">
+              Profile Picture (JPEG, PNG, WEBP, Max 5MB)
+            </span>
+            {imageError && (
+              <div className="text-red-600 text-sm mt-1">{imageError}</div>
             )}
-          </Button>
-        </form>
+          </div>
+
+          <h1 className="text-3xl font-extrabold text-blue-900 mb-2 flex items-center gap-2">
+            <FontAwesomeIcon icon={faUserEdit} className="text-blue-500" />
+            Edit Profile
+          </h1>
+
+          {/* Modern Tabs */}
+          <div className="flex w-full mb-6 rounded-xl overflow-hidden shadow">
+            <button
+              className={`flex-1 py-3 text-lg font-semibold transition-all duration-200 ${
+                activeTab === 'account'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'bg-white/70 text-blue-700 hover:bg-blue-100'
+              }`}
+              onClick={() => setActiveTab('account')}
+              type="button"
+            >
+              User Account
+            </button>
+            <button
+              className={`flex-1 py-3 text-lg font-semibold transition-all duration-200 ${
+                activeTab === 'personal'
+                  ? 'bg-blue-600 text-white shadow'
+                  : 'bg-white/70 text-blue-700 hover:bg-blue-100'
+              }`}
+              onClick={() => setActiveTab('personal')}
+              type="button"
+            >
+              Personal Info
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="w-full">
+            {activeTab === 'account' && (
+  <div className="space-y-5">
+    <div>
+      <label className="block text-blue-900 font-semibold mb-1">Username</label>
+      <Input
+        type="text"
+        name="username"
+        value={user.username}
+        onChange={handleChange}
+        className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+        required
+      />
+    </div>
+    <div>
+      <label className="block text-blue-900 font-semibold mb-1">Email</label>
+      <Input
+        type="email"
+        name="email"
+        value={user.email}
+        onChange={handleChange}
+        className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+        required
+      />
+    </div>
+    {/* Change password with eye icon */}
+    <div className="relative">
+      <label className="block text-blue-900 font-semibold mb-1">Change password</label>
+      <Input
+        type={showPassword ? "text" : "password"}
+        name="password"
+        value={user.password}
+        onChange={handleChange}
+        className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition pr-12"
+      />
+      <button
+        type="button"
+        className="absolute right-3 top-12 transform -translate-y-1/2 text-blue-400 hover:text-blue-700"
+        tabIndex={-1}
+        onClick={() => setShowPassword((prev) => !prev)}
+        style={{ background: "none", border: "none", padding: 0, margin: 0 }}
+      >
+        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+      </button>
+    </div>
+    {/* Password confirmation with eye icon */}
+    <div className="relative">
+      <label className="block text-blue-900 font-semibold mb-1">Password confirmation</label>
+      <Input
+        type={showConfirmPassword ? "text" : "password"}
+        name="password_confirmation"
+        value={user.password_confirmation}
+        onChange={handleChange}
+        className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition pr-12"
+      />
+      <button
+        type="button"
+        className="absolute right-3 top-12 transform -translate-y-1/2 text-blue-400 hover:text-blue-700"
+        tabIndex={-1}
+        onClick={() => setShowConfirmPassword((prev) => !prev)}
+        style={{ background: "none", border: "none", padding: 0, margin: 0 }}
+      >
+        <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+      </button>
+    </div>
+  </div>
+)}
+            {activeTab === 'personal' && (
+              <div className="space-y-5">
+                <div className="grid grid-cols-2 md:grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Firstname</label>
+                    <Input
+                      type="text"
+                      name="first_name"
+                      value={personalinfo.first_name}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Middlename</label>
+                    <Input
+                      type="text"
+                      name="middle_name"
+                      value={personalinfo.middle_name}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Lastname</label>
+                    <Input
+                      type="text"
+                      name="last_name"
+                      value={personalinfo.last_name}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Extension</label>
+                    <Input
+                      type="text"
+                      name="extension_name"
+                      value={personalinfo.extension_name}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Address</label>
+                    <Input
+                      type="text"
+                      name="complete_address"
+                      value={personalinfo.complete_address}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-blue-900 font-semibold mb-1">Phone</label>
+                    <Input
+                      type="text"
+                      name="phone"
+                      value={personalinfo.phone}
+                      onChange={handleChange}
+                      className="w-full h-12 px-3 py-2 rounded-lg border-2 border-blue-200 focus:border-blue-400 bg-white/80 transition"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            <Button
+              type="submit"
+              className="w-full mt-8 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all duration-200"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span>Saving...</span>
+                  <span className="animate-spin cursor-not-allowed border-2 border-white border-t-transparent rounded-full w-4 h-4 ml-2" />
+                </>
+              ) : (
+                <>
+                  <span>Save changes</span>
+                </>
+              )}
+            </Button>
+          </form>
+        </div>
       </Card>
+      {/* Custom Animations */}
+      <style>
+        {`
+          .fade-in-left {
+            animation: fadeInLeft 0.7s cubic-bezier(.39,.575,.565,1) both;
+          }
+          @keyframes fadeInLeft {
+            0% { opacity: 0; transform: translateX(-40px);}
+            100% { opacity: 1; transform: translateX(0);}
+          }
+        `}
+      </style>
     </div>
   );
 };
