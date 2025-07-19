@@ -1,14 +1,14 @@
-import '../components/loader.css'
+import './loader.css'
 import logo from '/favicon.png'
 
 const loader = () => {
   return (
-    <div className='flex items-center justify-center h-96 top-1/2 left-1/2 absolute translate-x-[-50%] translate-y-[-50%]'>
-      <div className="loader">
-        <img src={logo} alt="Logo" className="loader-image" />
+    <div className="modern-loader-container">
+      <div className="modern-loader">
+        <img src={logo} alt="Logo" className="modern-loader-image" />
+        <div className="modern-loader-glow"></div>
       </div>
     </div>
-    
   )
 }
 

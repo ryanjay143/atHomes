@@ -161,8 +161,6 @@ function Register() {
         navigate('/')
       );
 
-      // console.log(response.data);
-
       setFormData({
         acct_number: generateAccountNumber(),
         first_name: '',
@@ -223,15 +221,19 @@ function Register() {
 
   // JSX structure
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <form onSubmit={handleSubmit} className="w-full max-w-6xl">
-        <CardHeader className="flex justify-center items-start mb-4">
+    <div className="relative flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-900 via-blue-400 to-blue-200 overflow-hidden">
+      {/* Decorative Blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-300 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-300 opacity-20 rounded-full blur-3xl -z-10 animate-pulse" />
+
+      <form onSubmit={handleSubmit} className="w-full max-w-6xl z-10">
+        <CardHeader className="flex justify-center items-start mb-4 text-white">
           <CardTitle className="text-3xl font-bold">Registration</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <span className="block text-gray-700 text-lg font-bold mb-2">Personal Details</span>
-            <div className="grid grid-cols-4 gap-4 md:grid-cols-2">
+            <span className="block text-lg font-bold mb-2 text-white">Personal Details</span>
+            <div className="grid grid-cols-4 gap-4 md:grid-cols-2 text-white">
               <div>
                 <Label htmlFor="first_name">First name</Label> <span className="text-red-500">*</span>
                 <Input type="text" name="first_name" className="h-9 bg-white" placeholder="Enter your first name" onChange={handleChange} />
@@ -254,8 +256,8 @@ function Register() {
           </div>
 
           <div className="mb-4">
-            <span className="block text-gray-700 text-lg font-bold mb-2">Contact Details</span>
-            <div className="grid grid-cols-4 gap-4 md:grid-cols-2">
+            <span className="block text-white text-lg font-bold mb-2">Contact Details</span>
+            <div className="grid grid-cols-4 gap-4 md:grid-cols-2 text-white">
               <div>
                 <Label htmlFor="email">Email</Label> <span className="text-red-500">*</span>
                 <Input type="email" name="email" className="h-9 bg-white" placeholder="Enter your email" onChange={handleChange} />
@@ -269,7 +271,7 @@ function Register() {
               <div>
                 <Label htmlFor="gender">Gender</Label> <span className="text-red-500">*</span>
                 <Select onValueChange={(value) => setFormData({ ...formData, gender: value })}>
-                  <SelectTrigger className="h-9 bg-white">
+                  <SelectTrigger className="h-9 bg-white/60">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -288,8 +290,8 @@ function Register() {
           </div>
 
           <div className="mb-4">
-            <span className="block text-gray-700 text-lg font-bold mb-2">Account Details</span>
-            <div className="grid grid-cols-3 gap-4 md:grid-cols-2">
+            <span className="block text-lg font-bold mb-2 text-white">Account Details</span>
+            <div className="grid grid-cols-3 gap-4 md:grid-cols-2 text-white">
               <div className="hidden">
                 <Label htmlFor="acct_number">Account number</Label>
                 <Input type="text" name="acct_number" className="h-9 bg-white" value={accountNumber} readOnly />
@@ -297,7 +299,7 @@ function Register() {
               <div>
                 <Label htmlFor="username">Username</Label> <span className="text-red-500">*</span>
                 <Input type="text" name="username" className="h-9 bg-white" placeholder="Enter username" onChange={handleChange} />
-                <p className="text-xs text-blue-500">Username must not be the same as your email.</p>
+                <p className="text-xs text-white">Username must not be the same as your email.</p>
                 {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
               </div>
               <div className="mt-1">
@@ -305,10 +307,10 @@ function Register() {
                   <Label htmlFor="password">Password <span className="text-red-500">*</span> </Label> 
                   <button
                     type="button"
-                    className="text-blue-500 text-sm hover:underline md:text-[10px]"
+                    className="text-blue-900 text-sm hover:underline md:text-[10px]"
                     onClick={generateRandomPassword}
                   >
-                    Generate Password
+                    Generate Password?
                   </button>
                 </div>
                 <div className="relative">
@@ -356,17 +358,16 @@ function Register() {
           </div>
 
           <div className="mb-4">
-            <span className="block text-gray-700 text-lg font-bold mb-2">Identity Details</span>
-            <div className="grid grid-cols-5 gap-4 w-full md:grid-cols-2">
+            <span className="block text-lg font-bold mb-2 text-white">Identity Details</span>
+            <div className="grid grid-cols-5 gap-4 w-full md:grid-cols-2 text-white">
               <div>
                 <Label htmlFor="type">Type</Label> <span className="text-red-500">*</span>
                 <Select
                   onValueChange={(value) => {
-                    // console.log("Selected Role:", value);
                     setFormData({ ...formData, role: value });
                   }}
                 >
-                  <SelectTrigger className="h-9 bg-white">
+                  <SelectTrigger className="h-9 bg-white/60">
                     <SelectValue placeholder="Select Agent or Broker" />
                   </SelectTrigger>
                   <SelectContent>
@@ -376,8 +377,8 @@ function Register() {
                 </Select>
                 {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
               </div>
-            {/* PRC License Number with N/A dropdown, single input only */}
-             <div>
+              {/* PRC License Number with N/A dropdown, single input only */}
+              <div>
                 <Label htmlFor="prc_liscence_number">PRC License Number</Label>
                 <div className="relative flex items-center">
                   <Input
@@ -405,7 +406,7 @@ function Register() {
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-blue-500">
+                <p className="text-[10px] 9">
                   If no PRC License Number, type or click <b>N/A</b> or leave blank.
                 </p>
                 {errors.prc_liscence_number && (
@@ -442,7 +443,7 @@ function Register() {
                     </button>
                   </div>
                 </div>
-                <p className="text-[10px] text-blue-500">
+                <p className="text-[10px] 9">
                   If no DHSUD Registration Number, type or click <b>N/A</b> or leave blank.
                 </p>
                 {errors.dhsud_registration_number && (
@@ -459,7 +460,6 @@ function Register() {
                     const rawDate = e.target.value;
                     const formattedDate = rawDate.split("-").reverse().join("-");
                     handleChange({ target: { name: "validation_date", value: formattedDate } });
-                    // console.log("Validation Date:", formattedDate);
                   }}
                 />
                 {errors.validation_date && <span className="text-red-500 text-sm">{errors.validation_date}</span>}
@@ -499,7 +499,7 @@ function Register() {
           </div>
 
           <div className="flex justify-center space-x-2 mt-4">
-            <span>Already have an account?</span>
+            <span className="text-white">Already have an account?</span>
             <Link to="/user-login" className="text-primary">
               Login here
             </Link>

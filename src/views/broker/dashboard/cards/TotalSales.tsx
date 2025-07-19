@@ -111,7 +111,6 @@ function TotalSales({ chartData, totalSales, currencyFormatter }: any) {
           <CardTitle className="text-xl font-bold text-primary">Total Sales</CardTitle>
         </div>
         <span className="inline-flex items-center rounded-full bg-blue-200 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
-          <FontAwesomeIcon icon={faPesoSign} className="mr-1" />
           {currencyFormatter.format(totalSales)}
         </span>
       </CardHeader>
