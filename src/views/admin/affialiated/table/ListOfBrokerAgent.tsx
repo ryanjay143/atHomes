@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faFileCircleXmark, faIdBadge } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFileCircleXmark, faIdBadge, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -160,37 +160,85 @@ function ListOfBrokerAgent() {
                     <div className="flex flex-row gap-1 justify-end">
                       <Dialog>
                         <DialogTrigger>
-                          <Button className="w-8 h-8 rounded-md">
-                            <FontAwesomeIcon icon={faEye} className="text-[#eff6ff]" />
+                          <Button className="w-8 h-8 rounded-md bg-gradient-to-br from-blue-500 to-blue-700 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200">
+                            <FontAwesomeIcon icon={faEye} className="text-white" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="md:max-w-[400px]">
+                        <DialogContent className="md:max-w-[420px] rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
                           <DialogHeader>
-                            <DialogTitle className="text-start">Agent and Broker Details</DialogTitle>
+                            <DialogTitle className="text-start text-2xl font-bold text-blue-900 flex items-center gap-2">
+                              <FontAwesomeIcon icon={faIdBadge} className="text-blue-500" />
+                              Agent & Broker Details
+                            </DialogTitle>
                             <DialogDescription>
-                              <div className="flex flex-col gap-4 mt-5 mb-5">
-                                <div className="border-b pb-2 mb-4 text-start">
-                                  <h2 className="text-lg font-bold">Personal Details</h2>
-                                  <p>Account number: {agent?.user.acct_number}</p>
-                                  <p>Name: {agent?.personal_info?.first_name} {agent?.personal_info?.middle_name} {agent?.personal_info?.last_name}</p>
-                                  <p>Email: {agent?.user?.email}</p>
-                                  <p>Username: {agent?.user?.username}</p>
-                                  <p>Phone: {agent?.personal_info?.phone}</p>
-                                  <p>Gender: {agent.personal_info.gender.charAt(0).toUpperCase() + agent.personal_info.gender.slice(1)}</p>
-                                  <p>Complete Address: {agent.personal_info.complete_address}</p>
-                                  <p>Status: {agent.user.status === 0 ? "Approved" : agent.user.status === 1 ? "Pending" : "Decline"}</p>
+                              <div className="flex flex-col gap-6 mt-6 mb-4">
+                                {/* Personal Details */}
+                                <div className="border-b pb-4 mb-2 text-start">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <FontAwesomeIcon icon={faUser} className="text-blue-400" />
+                                    <h2 className="text-lg font-bold text-blue-800">Personal Details</h2>
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-1 text-sm text-gray-700">
+                                    <div>
+                                      <span className="font-semibold">Account #:</span> {agent?.user.acct_number}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Name:</span> {agent?.personal_info?.first_name} {agent?.personal_info?.middle_name} {agent?.personal_info?.last_name}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Email:</span> {agent?.user?.email}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Username:</span> {agent?.user?.username}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Phone:</span> {agent?.personal_info?.phone}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Gender:</span> {agent.personal_info.gender.charAt(0).toUpperCase() + agent.personal_info.gender.slice(1)}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Complete Address:</span> {agent.personal_info.complete_address}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-semibold">Status:</span>
+                                      {agent.user.status === 0 && (
+                                        <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Approved</span>
+                                      )}
+                                      {agent.user.status === 1 && (
+                                        <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">Pending</span>
+                                      )}
+                                      {agent.user.status !== 0 && agent.user.status !== 1 && (
+                                        <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Declined</span>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
+                                {/* Identity Information */}
                                 <div className="text-start">
-                                  <h2 className="text-lg font-bold ">Identity Information</h2>
-                                  <p>PRC License Number: {agent?.prc_liscence_number || "N/A"}</p>
-                                  <p>DHSUD Registration Number: {agent?.dhsud_registration_number || "N/A"}</p>
-                                  <p>Type: {agent?.user.role === 1 ? "Agent" : agent?.user.role === 2 ? "Broker" : "N/A"}</p>
-                                  <p>Validity Date: {formatDateToMMDDYYYY(agent?.validation_date || "N/A")}</p>
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <FontAwesomeIcon icon={faIdBadge} className="text-blue-400" />
+                                    <h2 className="text-lg font-bold text-blue-800">Identity Information</h2>
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-1 text-sm text-gray-700">
+                                    <div>
+                                      <span className="font-semibold">PRC License #:</span> {agent?.prc_liscence_number || "N/A"}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">DHSUD Reg. #:</span> {agent?.dhsud_registration_number || "N/A"}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Type:</span> {agent?.user.role === 1 ? "Agent" : agent?.user.role === 2 ? "Broker" : "N/A"}
+                                    </div>
+                                    <div>
+                                      <span className="font-semibold">Validity Date:</span> {formatDateToMMDDYYYY(agent?.validation_date || "N/A")}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </DialogDescription>
                             <DialogClose asChild>
-                              <Button className='bg-red-500 hover:bg-red-400'>
+                              <Button className='bg-red-500 hover:bg-red-400 text-white rounded-lg mt-2 shadow'>
                                 Close
                               </Button>
                             </DialogClose>

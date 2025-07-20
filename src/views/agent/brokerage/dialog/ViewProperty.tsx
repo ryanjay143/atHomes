@@ -1,7 +1,23 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter
+} from '@/components/ui/dialog';
+import {
+  faEye,
+  faTag,
+  faList,
+  faBuilding,
+  faImages,
+  faTimes
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface ViewPropertyProps {
@@ -18,7 +34,7 @@ function formatNumberWithCommas(value: string | number | undefined | null) {
 }
 
 function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Show price only for Commercial or Rental Properties
   const showPrice =
@@ -29,53 +45,73 @@ function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
     <>
       <Dialog>
         <DialogTrigger>
-          <Button className='h-8 w-8 font-medium bg-blue-500 hover:bg-blue-400 text-sm rounded-md'>
+          <Button className="h-8 w-8 font-medium bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white text-sm rounded-md shadow transition-all duration-200">
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:max-w-[400px] md:w-[90%] p-6 overflow-auto max-h-[95%] bg-white rounded-lg shadow-lg">
-          <DialogHeader className='text-start'>
-            <DialogTitle className="text-xl font-bold mb-4">View Property Listing</DialogTitle>
+        <DialogContent className="md:w-[90%] p-6 overflow-auto max-h-[95%] bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-2xl border border-blue-200">
+          <DialogHeader className="text-start">
+            <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2 mb-2">
+              <FontAwesomeIcon icon={faBuilding} className="text-blue-500" />
+              View Property Listing
+            </DialogTitle>
             <DialogDescription>
-              <div className="space-y-6">
+              <div className="space-y-8">
+                {/* General Information */}
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-lg mb-2">General Information</h3>
-                  <p><strong>Category:</strong> {property.category}</p>
-                  <p><strong>Date Listed:</strong> {dateFormatter.format(new Date(property.date_listed))}</p>
-                  <p><strong>Location:</strong> {property.location}</p>
-                  <p><strong>Type of Listing:</strong> {property.type_of_listing}</p>
-                  <p><strong>Status:</strong> {property.status}</p>
-                  {showPrice && (
-                    <p>
-                      <strong>Price:</strong> {formatNumberWithCommas(property.price_and_rate)}
-                    </p>
-                  )}
+                  <div className="flex items-center gap-2 mb-2">
+                    <FontAwesomeIcon icon={faTag} className="text-blue-400" />
+                    <h3 className="font-semibold text-lg text-blue-800">General Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1 text-gray-700 text-sm">
+                    <div><span className="font-semibold">Category:</span> {property.category}</div>
+                    <div><span className="font-semibold">Date Listed:</span> {dateFormatter.format(new Date(property.date_listed))}</div>
+                    <div><span className="font-semibold">Location:</span> {property.location}</div>
+                    <div><span className="font-semibold">Type of Listing:</span> {property.type_of_listing}</div>
+                    <div><span className="font-semibold">Status:</span> {property.status}</div>
+                    {showPrice && (
+                      <div>
+                        <span className="font-semibold">Price:</span> ₱{formatNumberWithCommas(property.price_and_rate)}
+                      </div>
+                    )}
+                  </div>
                 </div>
+                {/* Description */}
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-lg mb-2">Description of Property</h3>
-                  <p><strong>Lot Area:</strong> {property.lot_area} sqm</p>
-                  <p><strong>Floor Area:</strong> {property.floor_area} sqm</p>
-                  <p><strong>Other Details:</strong> {property.details || "N/A"}</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <FontAwesomeIcon icon={faList} className="text-blue-400" />
+                    <h3 className="font-semibold text-lg text-blue-800">Description of Property</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1 text-gray-700 text-sm">
+                    <div><span className="font-semibold">Lot Area:</span> {property.lot_area} sqm</div>
+                    <div><span className="font-semibold">Floor Area:</span> {property.floor_area} sqm</div>
+                    <div><span className="font-semibold">Other Details:</span> {property.details || "N/A"}</div>
+                  </div>
                 </div>
+                {/* Images */}
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Property Images</h3>
-                  <div className="grid grid-cols-5 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 flex-wrap mt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FontAwesomeIcon icon={faImages} className="text-indigo-400" />
+                    <h3 className="font-semibold text-lg text-blue-800">Property Images</h3>
+                  </div>
+                  <div className="grid grid-cols-5 md:grid-cols-4 gap-2 mt-2">
                     {property.property_images && property.property_images.length > 0 ? (
                       property.property_images.map((image: any, index: any) => (
                         <div
                           key={index}
-                          className="w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+                          className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer group"
                           onClick={() => setSelectedImage(`${import.meta.env.VITE_URL}/${image.images}`)}
+                          title="Click to preview"
                         >
                           <img
                             src={`${import.meta.env.VITE_URL}/${image.images}`}
-                            className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
+                            className="object-cover w-full h-full transform transition-transform duration-300 group-hover:scale-110"
                             alt={`Property Image ${index + 1}`}
                           />
                         </div>
                       ))
                     ) : (
-                      <p>No images available</p>
+                      <span className="text-gray-500 text-xs">No images available</span>
                     )}
                   </div>
                 </div>
@@ -88,13 +124,24 @@ function ViewProperty({ property, dateFormatter }: ViewPropertyProps) {
       {/* Modal for Image Preview */}
       {selectedImage && (
         <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-          <DialogContent className="max-w-[425px] md:w-[90%] p-4 bg-white rounded-lg shadow-lg">
-            <DialogHeader className='text-start'>
-              <DialogTitle className="text-xl font-bold mb-4">Image Preview</DialogTitle>
+          <DialogContent className="max-w-[425px] p-4 bg-white rounded-lg shadow-lg flex flex-col items-center">
+            <DialogHeader className="text-start w-full">
+              <DialogTitle className="text-xl font-bold mb-4 flex items-center gap-2">
+                <FontAwesomeIcon icon={faImages} className="text-indigo-400" />
+                Image Preview
+              </DialogTitle>
               <DialogDescription>
-                <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md" />
+                <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md shadow" />
               </DialogDescription>
             </DialogHeader>
+            <DialogFooter className="w-full flex justify-end mt-2">
+              <DialogClose asChild>
+                <Button className="bg-red-500 hover:bg-red-400 text-white rounded shadow">
+                  <FontAwesomeIcon icon={faTimes} className="mr-1" />
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       )}

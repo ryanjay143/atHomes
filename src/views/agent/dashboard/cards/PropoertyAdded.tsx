@@ -25,10 +25,23 @@ interface PropertyAddedProps {
 }
 
 const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
-  const [viewMode, setViewMode] = useState<"recent" | "all">("recent");
+  const [viewMode, setViewMode] = useState<"recent" | "all">("all");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [galleryImages, setGalleryImages] = useState<string[] | null>(null);
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
+
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date();
+  const todayString = today.toISOString().split('T')[0];
+
+  // Filter properties based on viewMode
+  const filteredProperties = viewMode === "all"
+    ? topPropoerty
+    : topPropoerty.filter(property => {
+        if (!property.created_at) return false;
+        const propertyDate = new Date(property.created_at).toISOString().split('T')[0];
+        return propertyDate === todayString;
+      });
 
   // Modal for single image preview
   const ImagePreviewModal = ({
@@ -132,22 +145,7 @@ const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
           </div>
         
           {/* Toggle Radio Group */}
-          <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="radio"
-                name="property-view"
-                value="recent"
-                checked={viewMode === "recent"}
-                onChange={() => setViewMode("recent")}
-                className="form-radio text-blue-600 accent-primary focus:ring-2 focus:ring-blue-400"
-              />
-              <span className={`ml-2 text-sm md:text-[10px] font-medium transition-colors duration-200 ${
-                viewMode === "recent" ? "text-blue-700 font-bold" : "text-gray-700"
-              }`}>
-                Recently Listed
-              </span>
-            </label>
+          <div className="flex items-center gap-4 md:gap-4 mt-2 md:mt-0">
             <label className="flex items-center cursor-pointer">
               <input
                 type="radio"
@@ -163,12 +161,28 @@ const PropertyAdded: React.FC<PropertyAddedProps> = ({ topPropoerty }) => {
                 View All
               </span>
             </label>
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="radio"
+                name="property-view"
+                value="recent"
+                checked={viewMode === "recent"}
+                onChange={() => setViewMode("recent")}
+                className="form-radio text-blue-600 accent-primary focus:ring-2 focus:ring-blue-400"
+              />
+              <span className={`ml-2 text-sm md:text-[10px] font-medium transition-colors duration-200 ${
+                viewMode === "recent" ? "text-blue-700 font-bold" : "text-gray-700"
+              }`}>
+                Recently Listed
+              </span>
+            </label>
+            
           </div>
         </div>
         {/* Scrollable grid area with fixed height, 3 columns on desktop */}
         <div className="flex-1 overflow-auto">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-            {topPropoerty.map((property, index) => {
+            {filteredProperties.map((property, index) => {
               const images = property.property_images || [];
               const displayImages = images.slice(0, 3);
               const extraCount = images.length - 3;

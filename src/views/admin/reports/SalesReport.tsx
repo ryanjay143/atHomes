@@ -1,11 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import NavigationSalesReport from "./navigation/NavigationSalesReport";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faHouseCircleCheck, faHouseCircleXmark, faList, faPesoSign, faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faList, faPesoSign, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "../../../plugin/axios";
@@ -17,7 +17,7 @@ function Salesreport() {
   const [salesReport, setSalesReport] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rowsToShow, setRowsToShow] = useState<number>(10);
-  const [getAgentBroker, setAgentBroker] = useState<any[]>([]);
+  // const [setAgentBroker] = useState<any[]>([]);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [selectedAgent, setSelectedAgent] = useState<string>("");
@@ -36,7 +36,7 @@ function Salesreport() {
       });
 
       setSalesReport(response.data.salesEncodingReports);
-      setAgentBroker(response.data.agents);
+      // setAgentBroker(response.data.agents);
     } catch (error) {
       console.error('Error fetching data:', error);
       Swal.fire({
@@ -92,17 +92,17 @@ function Salesreport() {
     setEndDate(event.target.value);
   };
 
-  const handleAgentChange = (value: string) => {
-    setSelectedAgent(value);
-  };
+  // const handleAgentChange = (value: string) => {
+  //   setSelectedAgent(value);
+  // };
 
-  const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-  };
+  // const handleCategoryChange = (value: string) => {
+  //   setSelectedCategory(value);
+  // };
 
-  const handleRemarksChange = (value: string) => {
-    setSelectedRemarks(value);
-  };
+  // const handleRemarksChange = (value: string) => {
+  //   setSelectedRemarks(value);
+  // };
 
   const filteredSalesReport = salesReport.filter((report) => {
     const fullName = `${report.agent.personal_info.first_name} ${report.agent.personal_info.middle_name} ${report.agent.personal_info.last_name}`.toLowerCase();
@@ -131,8 +131,8 @@ function Salesreport() {
     return acc + (isNaN(amount) ? 0 : amount);
   }, 0);
 
-  const soldPropertiesCount = displayedSalesReport.filter(report => report.remarks.toLowerCase() === "sold").length;
-  const notSoldPropertiesCount = displayedSalesReport.filter(report => report.remarks.toLowerCase() === "not sold").length;
+  // const soldPropertiesCount = displayedSalesReport.filter(report => report.remarks.toLowerCase() === "sold").length;
+  // const notSoldPropertiesCount = displayedSalesReport.filter(report => report.remarks.toLowerCase() === "not sold").length;
 
   return (
     <div className="relative min-h-screen w-full flex flex-col md:flex-row gap-4 bg-gradient-to-br overflow-x-hidden">
@@ -142,182 +142,89 @@ function Salesreport() {
 
       <div className="ml-72 md:ml-0 gap-2 items-start justify-center mr-5 md:px-2 relative">
         <NavigationSalesReport />
-        <Card className="bg-white/60 border-b-4 border-primary fade-in-left md:w-[380px] rounded-2xl shadow-2xl backdrop-blur-lg transition-all duration-300 hover:shadow-blue-200">
+        <Card className="bg-white/60 border-b-4 border-primary md:w-[380px] fade-in-left rounded-2xl shadow-2xl backdrop-blur-lg transition-all duration-300 hover:shadow-blue-200">
           <CardHeader>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-8">
-              <div className="grid grid-cols-2 md:grid-cols-1 gap-4 md:gap-4 w-full">
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Date Range</Label>
-                  <div className="flex flex-row gap-2 md:flex-col">
-                    <Input type="date" className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition" placeholder="Start Date" value={startDate} onChange={handleStartDateChange} />
-                    <span className="flex items-center md:hidden">-</span>
-                    <Input type="date" className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition" placeholder="End Date" value={endDate} onChange={handleEndDateChange} />
-                  </div>
+            {/* Horizontal Filter Bar with Actions */}
+            <div className="w-full flex flex-row md:flex-col md:items-start gap-4">
+              {/* Date Range Filter */}
+              <div className="flex flex-col w-[700px] md:w-[152px]">
+                <Label className="text-xs font-semibold text-blue-900 mb-1">Date Range</Label>
+                <div className="flex flex-row gap-2">
+                  <Input
+                    type="date"
+                    className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition text-xs"
+                    placeholder="Start Date"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                  />
+                  <span className="flex items-center text-gray-400">-</span>
+                  <Input
+                    type="date"
+                    className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition text-xs"
+                    placeholder="End Date"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                  />
                 </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Agent/Broker</Label>
-                  <Select onValueChange={handleAgentChange} value={selectedAgent}>
-                    <SelectTrigger className="w-full bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
-                      <SelectValue placeholder="Select agent or broker" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getAgentBroker.map((agent) => (
-                        <SelectItem key={agent.id} value={agent.id}>
-                          {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} {agent.personal_info.extension_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Category</Label>
-                  <Select onValueChange={handleCategoryChange} value={selectedCategory}>
-                    <SelectTrigger className="bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Lot only">Lot only</SelectItem>
-                      <SelectItem value="House and lot">House and lot</SelectItem>
-                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Remarks</Label>
-                  <Select onValueChange={handleRemarksChange} value={selectedRemarks}>
-                    <SelectTrigger className="bg-white/80 border border-primary focus:ring-2 focus:ring-blue-300 transition">
-                      <SelectValue placeholder="Select remarks" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Sold">Sold</SelectItem>
-                      <SelectItem value="Not Sold">Not Sold</SelectItem>
-                      <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
-                      <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              </div>
+              {/* Action Buttons */}
+              <div className="flex flex-row w-full gap-2 md:grid md:grid-cols-3 md:w-full mt-5">
+                <Button
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                  onClick={() => {
+                    setRowsToShow(salesReport.length);
+                    setSearchQuery("");
+                    setStartDate("");
+                    setEndDate("");
+                    setSelectedAgent("");
+                    setSelectedCategory("");
+                    setSelectedRemarks("");
+                  }}
+                  className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-400 transition text-xs px-3 py-2 rounded-lg"
+                >
+                  <FontAwesomeIcon
+                    icon={faRefresh}
+                    className={`${isHovered ? "animate-spin" : ""}`}
+                  />
+                  Refresh
+                </Button>
+                <Button className="bg-red-500 text-white hover:bg-red-400 flex items-center gap-2 transition text-xs px-3 py-2 rounded-lg">
+                  <FontAwesomeIcon icon={faDownload} />
+                  PDF
+                </Button>
+                <Button className="bg-green-500 text-white hover:bg-green-400 flex items-center gap-2 transition text-xs px-3 py-2 rounded-lg">
+                  <FontAwesomeIcon icon={faDownload} />
+                  Excel
+                </Button>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            {/* Summary Cards */}
-            <div className="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-4 mb-6">
-              <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md bg-gradient-to-br from-blue-100 via-blue-50 to-white rounded-xl'>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className='text-xl font-bold text-primary'>
-                        {formatSalesAmount(totalDisplayedSales)}
-                      </CardTitle>
-                      <div className="bg-primary bg-opacity-10 p-2 rounded-md flex items-center gap-2">
-                        <FontAwesomeIcon icon={faPesoSign} className="ml-2 h-10 text-white" />
-                      </div>
-                    </div>
-                    <CardDescription className='font-bold text-primary md:text-xs'>Total Sales</CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-              <div>
-                <Card className='max-h-32 border border-b-4 border-primary shadow-md bg-gradient-to-br from-blue-100 via-blue-50 to-white rounded-xl'>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className='text-xl font-bold text-primary'>
-                        {displayedSalesReport.length}
-                      </CardTitle>
-                      <div className="bg-primary bg-opacity-10 p-2 rounded-md flex items-center gap-2">
-                        <FontAwesomeIcon icon={faList} className="ml-2 h-10 text-white" />
-                      </div>
-                    </div>
-                    <CardDescription className='font-bold text-primary md:text-xs'>Total Reservation</CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-              <div>
-                <Card className='max-h-32 border border-b-4 border-green-500 shadow-md bg-gradient-to-br from-green-100 via-green-50 to-white rounded-xl'>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className='text-xl font-bold text-green-500'>
-                        {soldPropertiesCount}
-                      </CardTitle>
-                      <div className="bg-green-500 p-2 rounded-md flex items-center gap-2">
-                        <FontAwesomeIcon icon={faHouseCircleCheck} className="ml-2 h-10 text-white" />
-                      </div>
-                    </div>
-                    <CardDescription className='font-bold text-green-500 md:text-xs'>Sold Properties</CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-              <div>
-                <Card className='max-h-32 border border-b-4 border-red-500 shadow-md bg-gradient-to-br from-red-100 via-red-50 to-white rounded-xl'>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className='text-xl font-bold text-red-500'>
-                        {notSoldPropertiesCount}
-                      </CardTitle>
-                      <div className="bg-red-500 p-2 rounded-md flex items-center gap-2">
-                        <FontAwesomeIcon icon={faHouseCircleXmark} className="ml-2 h-10 text-white" />
-                      </div>
-                    </div>
-                    <CardDescription className='font-bold text-red-500 md:text-xs'>Not Sold Properties</CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-            </div>
-            {/* Action Buttons */}
-            <div className="flex flex-wrap md:grid md:grid-cols-2 justify-end items-start md:items-center gap-2 md:gap-4 pt-5 mb-4">
-              <Button
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onClick={() => {
-                  setRowsToShow(salesReport.length);
-                  setSearchQuery("");
-                  setStartDate("");
-                  setEndDate("");
-                  setSelectedAgent("");
-                  setSelectedCategory("");
-                  setSelectedRemarks("");
-                }}
-                className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-400 transition"
-              >
-                <FontAwesomeIcon
-                  icon={faRefresh}
-                  className={`${isHovered ? "animate-spin" : ""}`}
-                />
-                Refresh list
-              </Button>
-              <Button className="bg-red-500 text-white hover:bg-red-400 hover:text-white flex items-center gap-2 transition">
-                <FontAwesomeIcon icon={faDownload} />
-                <span className="md:text-xsm">Download as PDF</span>
-              </Button>
-              <Button className="bg-green-500 text-white hover:bg-green-400 hover:text-white flex items-center gap-2 transition">
-                <FontAwesomeIcon icon={faDownload} />
-                <span className="md:text-xs">Download as Excel</span>
-              </Button>
-            </div>
-            <div className='py-2 flex flex-col md:flex-row md:justify-between justify-between gap-4'>
-                <div className='py-2 flex flex-row justify-between gap-4'>
-                      <Select onValueChange={handleRowsToShowChange}>
-                      <SelectTrigger className="w-[120px] border border-primary md:w-28">
-                          <span className='text-[#172554]'>Show</span>
-                          <SelectValue placeholder="All" />
-                      </SelectTrigger>
-                      <SelectContent>
-                          <SelectItem value="all">All</SelectItem>
-                          <SelectItem value="10">10</SelectItem>
-                          <SelectItem value="20">20</SelectItem>
-                          <SelectItem value="30">30</SelectItem>
-                          <SelectItem value="40">40</SelectItem>
-                          <SelectItem value="50">50</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery}
+          
+           
+            {/* Pagination/Search */}
+            <div className='flex flex-col md:flex-row md:justify-between justify-between gap-4'>
+              <div className='py-2 flex flex-row justify-between gap-4'>
+                <Select onValueChange={handleRowsToShowChange}>
+                  <SelectTrigger className="w-[120px] border border-primary md:w-28">
+                    <span className='text-[#172554]'>Show</span>
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="40">40</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery}
                   onChange={handleSearch} />
-                </div>
+              </div>
             </div>
-            {/* Table (unchanged) */}
+            {/* Table */}
             <div className="fade-in-left ">
               <Table>
                 <TableHeader className="bg-primary text-base">
@@ -367,6 +274,33 @@ function Salesreport() {
                   Showing 1 to {Math.min(rowsToShow, displayedSalesReport.length)} of {filteredSalesReport.length} entries
                 </p>
               </div>
+            </div>
+
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-3 mt-6 ">
+              {/* Total Sales */}
+              <div className="flex items-center gap-2 bg-blue-100 border border-blue-300 rounded-full px-4 py-2 shadow-sm">
+                <FontAwesomeIcon icon={faPesoSign} className="text-blue-700 h-5" />
+                <span className="font-bold text-blue-900 text-base">{formatSalesAmount(totalDisplayedSales)}</span>
+                <span className="text-xs text-blue-700 font-semibold ml-1">Total Sales</span>
+              </div>
+              {/* Total Reservation */}
+              <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2 shadow-sm">
+                <FontAwesomeIcon icon={faList} className="text-blue-700 h-5" />
+                <span className="font-bold text-blue-900 text-base">{displayedSalesReport.length}</span>
+                <span className="text-xs text-blue-700 font-semibold ml-1">Total Reservation</span>
+              </div>
+             
+              {/* <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-2 shadow-sm">
+                <FontAwesomeIcon icon={faHouseCircleCheck} className="text-green-700 h-5" />
+                <span className="font-bold text-green-700 text-base">{soldPropertiesCount}</span>
+                <span className="text-xs text-green-700 font-semibold ml-1">Sold Properties</span>
+              </div>
+             
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-4 py-2 shadow-sm">
+                <FontAwesomeIcon icon={faHouseCircleXmark} className="text-red-700 h-5" />
+                <span className="font-bold text-red-700 text-base">{notSoldPropertiesCount}</span>
+                <span className="text-xs text-red-700 font-semibold ml-1">Not Sold</span>
+              </div> */}
             </div>
           </CardContent>
         </Card>

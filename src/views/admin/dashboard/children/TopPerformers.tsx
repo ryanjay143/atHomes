@@ -56,7 +56,7 @@ function TopPerformers() {
     <Card className="fade-in-left w-full md:w-full bg-gradient-to-br from-blue-50 via-white to-blue-100 border-0 shadow-xl rounded-2xl relative overflow-hidden">
       <CardContent className="flex flex-col h-[500px]">
         {/* Header: Not scrollable */}
-        <div className="flex flex-row justify-between items-center py-5 flex-shrink-0">
+        <div className="flex flex-row justify-between items-center py-5 flex-shrink-0 gap-2">
           <div>
             <CardTitle>Top Performers</CardTitle>
             <CardDescription className="text-xs text-blue-700 font-medium">of this month</CardDescription>
@@ -64,7 +64,7 @@ function TopPerformers() {
           <Input
             type="text"
             placeholder="Search"
-            className="w-52"
+            className="w-full"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -86,8 +86,15 @@ function TopPerformers() {
                   <span className="inline-block bg-blue-100 text-blue-700 text-[11px] font-semibold px-3 py-1 rounded-full mb-1">
                     Rank #{index + 1}
                   </span>
-                  <div className="font-semibold text-lg text-[#172554] truncate">
-                    {top.first_name} {top.middle_name} {top.last_name} {top.extension_name}
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={top.profile_pic ? `${import.meta.env.VITE_URL}/${top.profile_pic}` : '/default-avatar.png'}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover border border-blue-200 shadow"
+                    />
+                    <span className="font-semibold text-lg text-[#172554] truncate">
+                      {top.first_name} {top.middle_name} {top.last_name} {top.extension_name}
+                    </span>
                   </div>
                   <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full mb-1">
                     {top.role}

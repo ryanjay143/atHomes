@@ -119,10 +119,7 @@ function Register() {
   // Real-time PRC License validation
   const prcValue = formData.prc_liscence_number.trim();
   const isPRCNA = prcValue.toUpperCase() === "N/A";
-  const isPRCValid =
-    (isBroker && prcValue !== "" && !isPRCNA) ||
-    (isAgent && prcValue.length > 4);
-
+  
   // Real-time warning for Broker typing N/A
   const showPRCWarning = isBroker && isPRCNA;
 
@@ -504,14 +501,23 @@ function Register() {
                   name="validation_date"
                   className="h-9 bg-white w-full text-black"
                   onChange={(e) => {
-                    const rawDate = e.target.value;
-                    const formattedDate = rawDate.split("-").reverse().join("-");
-                    handleChange({ target: { name: "validation_date", value: formattedDate } });
+                    handleChange({ target: { name: "validation_date", value: e.target.value } });
                   }}
                   value={formData.validation_date}
-                  disabled={!isPRCValid}
-                  required={isPRCValid}
-                  style={!isPRCValid ? { backgroundColor: "#e5e7eb", cursor: "not-allowed" } : {}}
+                  // Disabled by default, enabled only when a type is selected and PRC License Number is valid
+                  disabled={
+                    !formData.role || // Disabled if no type selected
+                    // For Agent: less than 4 chars disables or N/A disables
+                    (isAgent && (formData.prc_liscence_number.trim().length < 4 || formData.prc_liscence_number.trim().toUpperCase() === "N/A")) ||
+                    // For Broker: empty disables or N/A disables
+                    (isBroker && (formData.prc_liscence_number.trim() === "" || formData.prc_liscence_number.trim().toUpperCase() === "N/A"))
+                  }
+                  required={
+                    // For Agent: enabled means required
+                    (isAgent && formData.prc_liscence_number.trim().length >= 4 && formData.prc_liscence_number.trim().toUpperCase() !== "N/A") ||
+                    // For Broker: enabled means required
+                    (isBroker && formData.prc_liscence_number.trim() !== "" && formData.prc_liscence_number.trim().toUpperCase() !== "N/A")
+                  }
                 />
                 {errors.validation_date && <span className="text-red-500 text-sm">{errors.validation_date}</span>}
               </div>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle 
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faTimes, faUserTie, faFileInvoiceDollar, faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faFileImage, faCommentDots, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -33,7 +33,7 @@ interface SalesEncoding {
   location: string;
   remarks: string;
   image: string;
-  client_name: string; // Make client_name optional
+  client_name: string;
 }
 
 interface EditSalesDialogProps {
@@ -47,7 +47,7 @@ interface EditSalesDialogProps {
 const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   sales, open, onOpenChange, getAgentBroker, fetchAgent
 }) => {
-  const defaultImageUrl = `${import.meta.env.VITE_URL}/${sales.image}`; // Default image URL
+  const defaultImageUrl = `${import.meta.env.VITE_URL}/${sales.image}`;
   const [agentId, setAgentId] = useState(sales.agent?.id ? String(sales.agent.id) : '');
   const [category, setCategory] = useState(sales.category || '');
   const [dateOnSale, setDateOnSale] = useState(sales.date_on_sale?.split('T')[0] || '');
@@ -58,57 +58,46 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const [clientName, setClientName] = useState(sales.client_name || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null); // Track the selected image file
-
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    const validExtensions = ['image/jpeg', 'image/png', 'image/gif'];
-    const maxFileSize = 5 * 1024 * 1024; // 5MB
+    const file = e.target.files?.[0];
+    if (file) {
+      const validExtensions = ['image/jpeg', 'image/png', 'image/jpg'];
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
 
-    if (!file.type.startsWith('image/') || !validExtensions.includes(file.type)) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Invalid File',
-        text: 'Please select a valid image file (JPEG, PNG, or GIF).',
-      });
-      return;
-    }
-
-    if (file.size > maxFileSize) {
-      Swal.fire({
-        icon: 'error',
-        title: 'File Too Large',
-        text: 'The selected file exceeds the maximum size of 5MB.',
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        setPreview(reader.result);
-        setImageFile(file); // Set the selected image file
+      if (!file.type.startsWith('image/') || !validExtensions.includes(file.type)) {
+        setImageError('Please select a valid image file (JPEG, PNG, or JPG).');
+        return;
       }
-    };
-    reader.readAsDataURL(file);
-  } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Invalid File',
-      text: 'Please select a valid image file.',
-    });
-  }
-};
+
+      if (file.size > maxFileSize) {
+        setImageError('The selected file exceeds the maximum size of 5MB.');
+        return;
+      }
+
+      setImageError(null);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setPreview(reader.result);
+          setImageFile(file);
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImageError('Please select a valid image file.');
+    }
+  };
 
   const handleRemoveImage = () => {
-    setPreview(defaultImageUrl); // Reset to default image
+    setPreview(defaultImageUrl);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Clear the file input
+      fileInputRef.current.value = '';
     }
-    setImageFile(null); // Clear the image file
+    setImageFile(null);
   };
 
   useEffect(() => {
@@ -120,21 +109,20 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       setLocation(sales.location || '');
       setRemarks(sales.remarks || '');
       setClientName(sales.client_name || '');
-      setPreview(defaultImageUrl); // Initialize preview with default image
+      setPreview(defaultImageUrl);
       setError(null);
-      setImageFile(null); // Reset image file
+      setImageFile(null);
     }
     // eslint-disable-next-line
   }, [open, sales]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     setError(null);
-  
+
     try {
-      // Create a FormData object to handle the payload
       const formData = new FormData();
       formData.append('agent_id', agentId);
       formData.append('category', category);
@@ -143,17 +131,11 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       formData.append('location', location);
       formData.append('remarks', remarks);
       formData.append('client_name', clientName);
-  
-      // Append the image file only if a new one is selected
+
       if (imageFile) {
-        formData.append('image', imageFile); // Append the new image file
+        formData.append('image', imageFile);
       }
-  
-      // Debugging: Log FormData entries
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-  
+
       const response = await axios.post(
         `updateSalesEncoding/${sales.id}`,
         formData,
@@ -164,7 +146,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
           },
         }
       );
-  
+
       if (response.status === 200) {
         onOpenChange(false);
         setAmount('');
@@ -197,25 +179,29 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:w-[90%] h-full max-h-[650px] overflow-auto">
+      <DialogContent className="md:w-[95%] max-w-xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader className='text-start'>
-          <DialogTitle>Edit Sales Encoding</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2">
+            <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-500" />
+            Edit Sales Encoding
+          </DialogTitle>
           <DialogDescription>
-            Make changes to your sales here. Click save when you're done.
+            <span className="text-blue-800 md:text-sm mt-1">Make changes to your sales here. Click save when you're done.</span>
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-6 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="agent" className="text-start">
+              <Label htmlFor="agent" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faUserTie} className="text-blue-400" />
                 Agent/Broker
               </Label>
               <Select
                 value={agentId}
                 onValueChange={setAgentId}
               >
-                <SelectTrigger className="col-span-3 uppercase ">
-                  <SelectValue className='' placeholder="Choose agent or broker" />
+                <SelectTrigger className="col-span-3 uppercase rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+                  <SelectValue placeholder="Choose agent or broker" />
                 </SelectTrigger>
                 <SelectContent>
                   {getAgentBroker.map((agent) => (
@@ -227,11 +213,11 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-start">
+              <Label htmlFor="category" className="text-blue-900 font-semibold">
                 Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="col-span-3">
+                <SelectTrigger className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -246,87 +232,100 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="client_name" className="text-start">
-                Client Name:
+              <Label htmlFor="client_name" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faUser} className="text-blue-400" />
+                Client Name
               </Label>
               <Input
                 value={clientName}
                 onChange={e => setClientName(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date_on_sale" className="text-start">
+              <Label htmlFor="date_on_sale" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400" />
                 Date
               </Label>
               <Input
                 type="date"
                 value={dateOnSale}
                 onChange={e => setDateOnSale(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="amount" className="text-start">
+              <Label htmlFor="amount" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faMoneyBillWave} className="text-green-500" />
                 Amount
               </Label>
-               <NumericFormat
-                  value={amount}
-                  thousandSeparator={true}
-                  decimalScale={2}
-                  fixedDecimalScale={true}
-                  allowNegative={false}
-                  placeholder="0.00"
-                  onValueChange={handleChangeAmount}
-                  className="flex h-9 col-span-3 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" // Add your input class here
-                />
+              <NumericFormat
+                value={amount}
+                thousandSeparator={true}
+                decimalScale={2}
+                fixedDecimalScale={true}
+                allowNegative={false}
+                placeholder="0.00"
+                onValueChange={handleChangeAmount}
+                className="flex h-9 col-span-3 w-full rounded-lg border border-blue-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="location" className="text-start">
-                Location:
+              <Label htmlFor="location" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="text-red-400" />
+                Location
               </Label>
               <Input
                 value={location}
                 onChange={e => setLocation(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="remarks" className="text-start">
-                Remarks:
+              <Label htmlFor="remarks" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faCommentDots} className="text-indigo-400" />
+                Remarks
               </Label>
               <Select value={remarks} onValueChange={setRemarks}>
-                <SelectTrigger className='col-span-3'>
-                  <SelectValue  placeholder="Select remarks" />
+                <SelectTrigger className='col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'>
+                  <SelectValue placeholder="Select remarks" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="Sold">Sold</SelectItem>
-                    <SelectItem value="Not Sold">Not Sold</SelectItem>
-                    <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
-                    <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
+                  <SelectItem value="Sold">Sold</SelectItem>
+                  <SelectItem value="Not Sold">Not Sold</SelectItem>
+                  <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                  <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="Image" className="text-start">
-                Proof of Transaction:
+              <Label htmlFor="Image" className="text-blue-900 font-semibold flex items-center gap-2">
+                <FontAwesomeIcon icon={faFileImage} className="text-pink-400" />
+                Proof of Transaction
+               
               </Label>
-              <Input
-                type='file'
-                onChange={handleImageChange}
-                ref={fileInputRef}
-                className="col-span-3"
-              />
+              <div className="col-span-3">
+                <span className="text-xs text-red-500 ml-2">(JPEG, PNG, JPG only, max 5MB)</span>
+                <Input
+                  type='file'
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  onChange={handleImageChange}
+                  ref={fileInputRef}
+                  className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                />
+                {imageError && (
+                  <p className="text-red-500 text-xs mt-1">{imageError}</p>
+                )}
+              </div>
             </div>
             {preview && (
-              <div className="relative mt-4 flex justify-end">
-                <img src={preview} alt="Selected Preview" className="h-full object-cover rounded-sm" />
+              <div className="relative mt-4 flex justify-center">
+                <img src={preview} alt="Selected Preview" className="max-h-48 object-cover rounded-lg border border-blue-200 shadow" />
                 {preview !== defaultImageUrl && (
                   <Button
                     type="button"
                     onClick={handleRemoveImage}
-                    className="absolute top-0 right-0 h-8 w-8 bg-red-500 hover:bg-red-400 rounded-full p-1 shadow-md"
+                    className="absolute top-2 right-2 h-8 w-8 bg-red-500 hover:bg-red-400 rounded-full p-1 shadow-md"
                   >
                     <FontAwesomeIcon icon={faTimes} className="text-white" />
                   </Button>
@@ -334,9 +333,9 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               </div>
             )}
           </div>
-          {error && <div className="text-red-500">{error}</div>}
+          {error && <div className="text-red-500 text-center">{error}</div>}
           <DialogFooter>
-            <Button type="submit" disabled={loading} className='bg-green-500 hover:bg-green-400'>
+            <Button type="submit" disabled={loading} className='w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white rounded-lg shadow flex items-center justify-center gap-2'>
               {loading ? (
                 <>
                   <span>Saving...</span>

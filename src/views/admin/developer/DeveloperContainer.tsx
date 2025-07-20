@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faMapMarkerAlt, faTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Navigation from './navigation/NavigationDeveloper';
 import axios from "../../../plugin/axios";
@@ -285,36 +285,43 @@ const DeveloperContainer: React.FC = () => {
 
     return (
         <div className="flex flex-col md:flex-row gap-4">
-            <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2">
+            <div className="ml-72 md:ml-0 gap-2 items-start justify-center mr-5 md:px-2">
                 <Navigation />
                 <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
-                    <CardHeader>
-                        <div className='flex flex-row justify-end'>
-                            <CardTitle className='text-[#172554]'>
-                                <AddDeveloper
-                                    developerData={developerData}
-                                    setDeveloperData={setDeveloperData}
-                                    isDialogOpen={isDialogOpen}
-                                    setIsDialogOpen={setIsDialogOpen}
-                                    isSubmitting={isSubmitting}
-                                    handleSubmit={handleSubmit}
-                                    handleImageChange={handleImageChange}
-                                    handleImageError={handleImageError}
-                                    handleRemoveImage={handleRemoveImage}
-                                    errors={errors}
-                                    fileInputRef={fileInputRef}
-                                />
-                            </CardTitle>
+
+ <CardHeader>
+                    <div className="flex flex-wrap items-center gap-4 justify-between">
+                        {/* Statistic Card (Left) */}
+                        <div className="flex flex-col items-start bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 rounded-lg shadow-sm">
+                            <span className="text-xs text-blue-700 font-semibold">Total Developers</span>
+                            <span className="text-2xl font-bold text-blue-900">{getAllDeveloper.length}</span>
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        {/* Pagination and Table */}
-                        <div className='py-2 flex flex-col md:flex-row md:justify-between justify-between gap-4'>
-                            <div className='py-2 flex flex-row justify-between gap-4'>
-                                 <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
+                        {/* Add Developer Button (Right) */}
+                        <div className="flex items-center">
+                            <AddDeveloper
+                                developerData={developerData}
+                                setDeveloperData={setDeveloperData}
+                                isDialogOpen={isDialogOpen}
+                                setIsDialogOpen={setIsDialogOpen}
+                                isSubmitting={isSubmitting}
+                                handleSubmit={handleSubmit}
+                                handleImageChange={handleImageChange}
+                                handleImageError={handleImageError}
+                                handleRemoveImage={handleRemoveImage}
+                                errors={errors}
+                                fileInputRef={fileInputRef}
+                            />
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {/* Pagination and Table */}
+                    <div className='flex flex-col md:flex-row md:justify-between justify-between gap-4'>
+                        <div className='py-2 flex flex-row justify-between gap-4'>
+                            <Select onValueChange={(value) => setEntriesToShow(value === 'all' ? getAllDeveloper.length : Number(value))}>
                                 <SelectTrigger className="w-[120px] border border-primary md:w-28">
                                     <span className='text-[#172554]'>Show</span>
-                                    <SelectValue placeholder="All" /> {/* Default placeholder to "All" */}
+                                    <SelectValue placeholder="All" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All</SelectItem>
@@ -324,139 +331,158 @@ const DeveloperContainer: React.FC = () => {
                                     <SelectItem value="40">40</SelectItem>
                                     <SelectItem value="50">50</SelectItem>
                                 </SelectContent>
-                                </Select>
-                                <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                            </div>
+                            </Select>
+                            <Input type='text' placeholder='Search' className='w-52 md:w-full' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                         </div>
-                        {/* Responsive Table: horizontal scroll only on small screens */}
-                        <div className="w-full overflow-x-auto md:overflow-x-visible">
-                            <Table>
-                                <TableHeader className="sticky top-0 bg-primary">
-                                    <TableRow>
-                                        <TableHead>#</TableHead>
-                                        <TableHead>Photo</TableHead>
-                                        <TableHead>Developer name</TableHead>
-                                        <TableHead>Email address</TableHead>
-                                        <TableHead>Location</TableHead>
-                                        <TableHead>Phone number</TableHead>
-                                        <TableHead className="text-right">Action</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {
-                                        getAllDeveloper.length === 0 && (
-                                            <TableRow>
-                                                <TableCell colSpan={7} className="text-center">No developers found.</TableCell>
-                                            </TableRow>
-                                        )
-                                    }
-                                    {getAllDeveloper
-                                        .filter(developer => 
-                                            developer.dev_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                            developer.dev_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                            developer.dev_location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                            developer.dev_phone.toLowerCase().includes(searchQuery.toLowerCase())
-                                        )
-                                        .slice(0, entriesToShow)
-                                        .map((developer, index) => (
-                                            <TableRow key={developer.id}>
-                                                <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
-                                                <TableCell className="font-medium border border-[#bfdbfe] uppercase">
-                                                    {developer.dev_name ? (
+                    </div>
+                    {/* Responsive Table: horizontal scroll only on small screens */}
+                    <div className="w-full overflow-x-auto md:overflow-x-visible">
+                        <Table>
+                            <TableHeader className="sticky top-0 bg-primary">
+                                <TableRow>
+                                    <TableHead>#</TableHead>
+                                    <TableHead>Photo</TableHead>
+                                    <TableHead>Developer name</TableHead>
+                                    <TableHead>Email address</TableHead>
+                                    <TableHead>Location</TableHead>
+                                    <TableHead>Phone number</TableHead>
+                                    <TableHead className="text-right">Action</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {
+                                    getAllDeveloper.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={7} className="text-center">No developers found.</TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                                {getAllDeveloper
+                                    .filter(developer => 
+                                        developer.dev_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        developer.dev_phone.toLowerCase().includes(searchQuery.toLowerCase())
+                                    )
+                                    .slice(0, entriesToShow)
+                                    .map((developer, index) => (
+                                        <TableRow key={developer.id}>
+                                            <TableCell className="font-medium border border-[#bfdbfe]">{index + 1}</TableCell>
+                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">
+                                                {developer.dev_name ? (
                                                     <img
                                                         src={`${import.meta.env.VITE_URL}/${developer.image}`}
                                                         alt={developer.dev_name}
                                                         className="rounded-full h-10 w-10"
                                                     />
-                                                    ) : (
+                                                ) : (
                                                     <Avatar>
                                                         <AvatarImage src="https://github.com/shadcn.png" />
                                                         <AvatarFallback>CN</AvatarFallback>
                                                     </Avatar>
-                                                    )}
-                                                </TableCell>
-                                                <TableCell className="font-medium border border-[#bfdbfe] uppercase">{developer.dev_name}</TableCell>
-                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
-                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_location}</TableCell>
-                                                <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
-                                                <TableCell className="text-right border border-[#bfdbfe]">
-                                                    <div className='flex flex-row gap-1 justify-end'>
-                                                        <AddProject
-                                                            developer={developer}
-                                                            projects={projects[developer.id] || []}
-                                                            dialogOpenState={dialogOpenStates[developer.id] || false}
-                                                            toggleDialogOpen={toggleDialogOpen}
-                                                            handleProjectChange={handleProjectChange}
-                                                            addProject={addProject}
-                                                            removeProject={removeProject}
-                                                            handleSubmitProjects={handleSubmitProjects}
-                                                            loading={loading}
-                                                            setLoading={setLoading}
-                                                        />
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="font-medium border border-[#bfdbfe] uppercase">{developer.dev_name}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_email}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_location}</TableCell>
+                                            <TableCell className='border border-[#bfdbfe]'>{developer.dev_phone}</TableCell>
+                                            <TableCell className="text-right border border-[#bfdbfe]">
+                                                <div className='flex flex-row gap-1 justify-end'>
+                                                    <AddProject
+                                                        developer={developer}
+                                                        projects={projects[developer.id] || []}
+                                                        dialogOpenState={dialogOpenStates[developer.id] || false}
+                                                        toggleDialogOpen={toggleDialogOpen}
+                                                        handleProjectChange={handleProjectChange}
+                                                        addProject={addProject}
+                                                        removeProject={removeProject}
+                                                        handleSubmitProjects={handleSubmitProjects}
+                                                        loading={loading}
+                                                        setLoading={setLoading}
+                                                    />
 
-                                                        <Dialog>
+                                                    {/* Project Card Dialog */}
+                                                    <Dialog>
                                                         <DialogTrigger>
                                                             <Button className='w-8 h-8 rounded-md' onClick={() => fetchDevelopers()}>
                                                                 <FontAwesomeIcon icon={faEye} className='text-[#eff6ff]' />
                                                             </Button>
                                                         </DialogTrigger>
-                                                            <DialogContent className='w-full max-w-6xl md:w-[90%]'>
-                                                                <DialogHeader>
-                                                                    <DialogTitle className='text-start mb-10'><span className='uppercase'>{developer.dev_name}</span> Projects</DialogTitle>
-                                                                    <DialogDescription>
-                                                                        
-                                                                            <Table>
-                                                                                <TableHeader>
-                                                                                    <TableRow>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">#</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Project name</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Location</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Category</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Total Units</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Total Available</TableHead>
-                                                                                        <TableHead className="text-accent font-bold bg-primary text-center">Status</TableHead>
-                                                                                    </TableRow>
-                                                                                </TableHeader>
-                                                                                <TableBody>
-                                                                                    {developer.projects && developer.projects.length > 0 ? (
-                                                                                    developer.projects.map((project:any, index:any) => (
-                                                                                        <TableRow key={project.id}>
-                                                                                            <TableCell className='border border-[#bfdbfe]'>{index + 1}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_name}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_location}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.project_category}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe] text-green-500'>{project.total_units}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe] text-red-500'>{project.available_units}</TableCell>
-                                                                                            <TableCell className='border border-[#bfdbfe]'>{project.status}</TableCell>
-                                                                                        </TableRow>
-                                                                                    ))
-                                                                                    ) : (
-                                                                                        <TableRow>
-                                                                                            <TableCell colSpan={7} className="text-center">No projects available.</TableCell>
-                                                                                        </TableRow>
-                                                                                    )}
-                                                                                </TableBody>
-                                                                            </Table>
-                                                                    </DialogDescription>
-                                                                </DialogHeader>
-                                                            </DialogContent>
-                                                        </Dialog>
+                                                        <DialogContent className='w-full max-w-3xl md:w-[90%]'>
+                                                            <DialogHeader>
+                                                                <DialogTitle className='text-start mb-8'>
+                                                                    <span className='uppercase'>{developer.dev_name}</span> Projects
+                                                                </DialogTitle>
+                                                                <DialogDescription>
+                                                                    {developer.projects && developer.projects.length > 0 ? (
+                                                                        <div className="grid grid-cols-3 md:grid-cols-1 gap-4">
+                                                                            {developer.projects.map((project: any, index: number) => (
+                                                                                <div
+                                                                                    key={project.id}
+                                                                                    className="bg-white rounded-lg shadow border border-blue-200 p-4 flex flex-col gap-2 hover:shadow-lg transition"
+                                                                                >
+                                                                                    <div className="flex items-center justify-between mb-1">
+                                                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">
+                                                                                            #{index + 1}
+                                                                                        </span>
+                                                                                        <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                                                                                            project.status === 'Active'
+                                                                                                ? 'bg-green-100 text-green-700'
+                                                                                                : project.status === 'Inactive'
+                                                                                                    ? 'bg-red-100 text-red-700'
+                                                                                                    : 'bg-gray-100 text-gray-700'
+                                                                                        }`}>
+                                                                                            {project.status}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className="font-bold text-base text-blue-900 truncate">
+                                                                                        {project.project_name}
+                                                                                    </div>
+                                                                                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                                                                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" />
+                                                                                        <span>{project.project_location}</span>
+                                                                                    </div>
+                                                                                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                                                                                        <FontAwesomeIcon icon={faTag} className="text-blue-400" />
+                                                                                        <span>{project.project_category}</span>
+                                                                                    </div>
+                                                                                    <div className="flex flex-row justify-between mt-1">
+                                                                                        <div className="flex flex-col items-center">
+                                                                                            <span className="text-[10px] text-gray-500">Total Units</span>
+                                                                                            <span className="font-bold text-green-600 text-sm">{project.total_units}</span>
+                                                                                        </div>
+                                                                                        <div className="flex flex-col items-center">
+                                                                                            <span className="text-[10px] text-gray-500">Available</span>
+                                                                                            <span className="font-bold text-red-500 text-sm">{project.available_units}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="text-center text-gray-500 py-8">No projects available.</div>
+                                                                    )}
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                        </DialogContent>
+                                                    </Dialog>
 
-                                                        <EditDeveloper developer={developer} fetchDevelopers={fetchDevelopers} />
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                </TableBody>
-                            </Table>
-                            <div className='flex flex-row justify-end mt-3'>
-                                <div>
-                                    <p className='text-[#172554] text-sm w-full'>Showing 1 to {Math.min(entriesToShow, getAllDeveloper.length)} of {getAllDeveloper.length} entries</p>
-                                </div>
+                                                    <EditDeveloper developer={developer} fetchDevelopers={fetchDevelopers} />
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                        <div className='flex flex-row justify-end mt-3'>
+                            <div>
+                                <p className='text-[#172554] text-sm w-full'>Showing 1 to {Math.min(entriesToShow, getAllDeveloper.length)} of {getAllDeveloper.length} entries</p>
                             </div>
                         </div>
-                    </CardContent>
+                    </div>
+                </CardContent>
                 </Card>
+               
             </div>
         </div>
     );

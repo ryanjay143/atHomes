@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { NumericFormat } from 'react-number-format'; // Import NumericFormat
+import { faArrowRight, faPlus, faUserTie, faFileInvoiceDollar, faMapMarkerAlt, faCalendarAlt, faFileUpload, faUser } from '@fortawesome/free-solid-svg-icons';
+import { NumericFormat } from 'react-number-format';
 
-function AddSales({ fetchAgent }:any) {
+function AddSales({ fetchAgent }: any) {
   const [formData, setFormData] = useState<{
     agent_id: string;
     category: string;
@@ -18,7 +32,7 @@ function AddSales({ fetchAgent }:any) {
     amount: string;
     location: string;
     remarks: string;
-    image: File | null; // Allow both File and null
+    image: File | null;
     client_name: string;
   }>({
     agent_id: '',
@@ -27,7 +41,7 @@ function AddSales({ fetchAgent }:any) {
     amount: '',
     location: '',
     remarks: '',
-    image: null, // Initialize as null
+    image: null,
     client_name: '',
   });
 
@@ -39,7 +53,7 @@ function AddSales({ fetchAgent }:any) {
   const [fileError, setFileError] = useState<string | null>(null);
   const [amount, setAmount] = React.useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -57,8 +71,6 @@ function AddSales({ fetchAgent }:any) {
     fetchAgents();
   }, []);
 
-  
-
   const handleChangeAmount = (values: any) => {
     const { value } = values;
     setAmount(value);
@@ -66,7 +78,6 @@ function AddSales({ fetchAgent }:any) {
       ...formData,
       amount: value,
     });
-    // Add validation logic if needed
     if (value === '') {
       setErrors({ amount: 'Amount is required' });
     } else {
@@ -84,7 +95,6 @@ function AddSales({ fetchAgent }:any) {
     if (selectedAgent) {
       const fullName = `${selectedAgent.personal_info.first_name} ${selectedAgent.personal_info.middle_name} ${selectedAgent.personal_info.last_name} ${selectedAgent.personal_info.extension_name}`;
       setSelectedAgentName(fullName);
-      // console.log('Selected Agent:', fullName);
     }
   };
 
@@ -105,13 +115,13 @@ function AddSales({ fetchAgent }:any) {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null; // Allow null
+    const file = e.target.files?.[0] || null;
     if (file) {
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       const maxSize = 5 * 1024 * 1024; // 5MB
 
       if (!validTypes.includes(file.type)) {
-        setFileError('Invalid file type. Only JPEG, PNG, JPG, and GIF are allowed.');
+        setFileError('Invalid file type. Only JPEG, PNG, and JPG are allowed.');
         setFormData({ ...formData, image: null });
       } else if (file.size > maxSize) {
         setFileError('File size exceeds the maximum limit of 5MB.');
@@ -167,7 +177,6 @@ function AddSales({ fetchAgent }:any) {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      // console.log('Response:', response.data);
 
       fetchAgent();
 
@@ -181,10 +190,10 @@ function AddSales({ fetchAgent }:any) {
         image: null,
         client_name: '',
       });
-      setAmount('')
+      setAmount('');
       setSelectedAgentName('Choose agent or broker');
       setIsDialogOpen(false);
-      setImagePreview(null)
+      setImagePreview(null);
 
       Swal.fire({
         icon: 'success',
@@ -196,8 +205,6 @@ function AddSales({ fetchAgent }:any) {
       });
 
     } catch (error) {
-      // console.error('Error submitting form:', error);
-
       Swal.fire({
         icon: 'error',
         title: 'Failed to create sales encoding',
@@ -213,38 +220,44 @@ function AddSales({ fetchAgent }:any) {
     <div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button className='h-10'>
-            <FontAwesomeIcon icon={faPlus} />
+          <Button className='h-10 bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md hover:from-blue-600 hover:to-blue-800 transition-all duration-200 rounded-lg'>
+            <FontAwesomeIcon icon={faPlus} className="mr-2" />
             Add Sales
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:w-[90%] overflow-auto max-h-[97%]">
+        <DialogContent className="md:w-[90%] max-w-xl h-full md:h-[85%] overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
           <DialogHeader>
-            <DialogTitle className='text-start'>ADD SALES ENCODING</DialogTitle>
+            <DialogTitle className='text-start text-2xl font-bold text-blue-900 flex items-center gap-2'>
+              <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-500" />
+              Add Sales Encoding
+            </DialogTitle>
             <DialogDescription>
               <form onSubmit={addSalesSubmit}>
-                <div className='text-start flex flex-col gap-4'>
-                  <div className="grid mt-5 w-full items-start gap-1.5">
-                    <Label>Agent/Broker</Label>
+                <div className='text-start flex flex-col gap-6 mt-4'>
+                  <div className="grid w-full items-start gap-2">
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faUserTie} className="text-blue-400" />
+                      Agent/Broker
+                    </Label>
                     <Select onValueChange={(value) => handleSelectChange('agent_id', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                         <SelectValue placeholder="Choose agent or broker">{selectedAgentName}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {getAgentBroker.map((agent) => (
                           <SelectItem key={agent.id} value={agent.id}>
-                            {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name} 
+                            {agent.personal_info.first_name} {agent.personal_info.middle_name} {agent.personal_info.last_name}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.agent_id && <p className="text-red-500 text-sm">{errors.agent_id}</p>}
+                    {errors.agent_id && <p className="text-red-500 text-xs">{errors.agent_id}</p>}
                   </div>
 
-                  <div className="grid w-full items-start gap-1.5">
-                    <Label>Category</Label>
+                  <div className="grid w-full items-start gap-2">
+                    <Label className="font-semibold text-blue-900">Category</Label>
                     <Select onValueChange={(value) => handleSelectChange('category', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -257,23 +270,42 @@ function AddSales({ fetchAgent }:any) {
                         <SelectItem value="Block and lot">Block and lot</SelectItem>
                       </SelectContent>
                     </Select>
-                    {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+                    {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
-                    <Label>Client Name</Label>
-                    <Input type="text" name="client_name" placeholder='Enter client name' value={formData.client_name} onChange={handleChange} />
-                    {errors.client_name && <p className="text-red-500 text-sm">{errors.client_name}</p>}
+                  <div className="grid w-full items-center gap-2">
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faUser} className="text-blue-400" />
+                      Client Name
+                    </Label>
+                    <Input
+                      type="text"
+                      name="client_name"
+                      placeholder='Enter client name'
+                      value={formData.client_name}
+                      onChange={handleChange}
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                    {errors.client_name && <p className="text-red-500 text-xs">{errors.client_name}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
-                    <Label>Reservation Date</Label>
-                    <Input type="date" name="date_on_sale" value={formData.date_on_sale} onChange={handleDateChange} />
-                    {errors.date_on_sale && <p className="text-red-500 text-sm">{errors.date_on_sale}</p>}
+                  <div className="grid w-full items-center gap-2">
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400" />
+                      Reservation Date
+                    </Label>
+                    <Input
+                      type="date"
+                      name="date_on_sale"
+                      value={formData.date_on_sale}
+                      onChange={handleDateChange}
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                    {errors.date_on_sale && <p className="text-red-500 text-xs">{errors.date_on_sale}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
-                    <Label>Amount of Sale</Label>
+                  <div className="grid w-full items-center gap-2">
+                    <Label className="font-semibold text-blue-900">Amount of Sale</Label>
                     <NumericFormat
                       value={amount}
                       thousandSeparator={true}
@@ -282,52 +314,79 @@ function AddSales({ fetchAgent }:any) {
                       allowNegative={false}
                       placeholder="0.00"
                       onValueChange={handleChangeAmount}
-                      className="flex h-9 w-full rounded-md border border-primary bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" // Add your input class here
+                      className="flex h-9 w-full rounded-lg border border-blue-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                     />
-                    {errors.amount && <p className="text-red-500 text-sm">{errors.amount}</p>}
+                    {errors.amount && <p className="text-red-500 text-xs">{errors.amount}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
-                    <Label>Location of Property</Label>
-                    <Input type="text" name="location" placeholder='Enter location of property' onChange={handleChange} />
-                    {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
+                  <div className="grid w-full items-center gap-2">
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" />
+                      Location of Property
+                    </Label>
+                    <Input
+                      type="text"
+                      name="location"
+                      placeholder='Enter location of property'
+                      onChange={handleChange}
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                    {errors.location && <p className="text-red-500 text-xs">{errors.location}</p>}
                   </div>
 
-                  <div className="grid w-full items-center gap-1.5">
-                    <Label>Remarks:</Label>
+                  <div className="grid w-full items-center gap-2">
+                    <Label className="font-semibold text-blue-900">Remarks</Label>
                     <Select onValueChange={(value) => handleSelectChange('remarks', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                         <SelectValue placeholder="Select remarks" />
                       </SelectTrigger>
                       <SelectContent>
-                          <SelectItem value="Sold">Sold</SelectItem>
-                          <SelectItem value="Not Sold">Not Sold</SelectItem>
-                          <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
-                          <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
+                        <SelectItem value="Sold">Sold</SelectItem>
+                        <SelectItem value="Not Sold">Not Sold</SelectItem>
+                        <SelectItem value="Pre-Selling">Pre-Selling</SelectItem>
+                        <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                       </SelectContent>
                     </Select>
-                    {errors.remarks && <p className="text-red-500 text-sm">{errors.remarks}</p>}
+                    {errors.remarks && <p className="text-red-500 text-xs">{errors.remarks}</p>}
                   </div>
 
-                  <div className="grid w-full gap-1.5">
-                    <Label>Upload Proof of Transaction</Label>
-                    <Input type="file" name="image" onChange={handleFileChange} />
-                    {fileError && <p className="text-red-500 text-sm">{fileError}</p>}
-                    {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
-                    {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 max-w-md rounded-md" />}
+                  <div className="grid w-full gap-2">
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faFileUpload} className="text-blue-400" />
+                      Upload Proof of Transaction
+                      <span className="text-xs text-red-500 ml-2">(JPEG, PNG, JPG only, max 5MB)</span>
+                    </Label>
+                    <Input
+                      type="file"
+                      name="image"
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      onChange={handleFileChange}
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    />
+                    {fileError && <p className="text-red-500 text-xs">{fileError}</p>}
+                    {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}
+                    {imagePreview && (
+                      <div className="mt-2 flex justify-center">
+                        <img src={imagePreview} alt="Preview" className="max-w-xs rounded-lg border border-blue-200 shadow" />
+                      </div>
+                    )}
                   </div>
 
-                  <DialogFooter>
-                    <Button type="submit" disabled={loading}>
+                  <DialogFooter className="mt-4">
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg shadow hover:from-blue-700 hover:to-blue-900 flex items-center justify-center gap-2"
+                    >
                       {loading ? (
                         <>
-                          <span>Submitting....</span>
+                          <span>Submitting...</span>
                           <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
                         </>
                       ) : (
                         <>
                           <FontAwesomeIcon icon={faArrowRight} />
-                          Submit
+                          <span>Submit</span>
                         </>
                       )}
                     </Button>

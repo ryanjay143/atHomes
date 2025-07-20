@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import NavigationBrokerage from "./navigation/NavigationBrokerage";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import axios from "../../../plugin/axios";
 import AddProperty from './dialog/AddProperty';
 import ViewProperty from './dialog/ViewProperty';
@@ -22,9 +21,6 @@ function BrokerageProperty() {
   const [searchQuery, setSearchQuery] = useState('');
   const [entriesToShow, setEntriesToShow] = useState<number>(10);
   const [selectedProperty, setSelectedProperty] = useState<any | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
   const navigate = useNavigate();
 
   const fetchPropertiesData = async () => {
@@ -57,15 +53,12 @@ function BrokerageProperty() {
   }, []);
 
   const filteredProperties = properties.filter(property => {
-    const matchesCategory = selectedCategory === 'all' || property.category === selectedCategory;
-    const matchesDate = !selectedDate || new Date(property.date_listed).toISOString().split('T')[0] === selectedDate;
-    const matchesStatus = selectedStatus === 'all' || property.status === selectedStatus;
     const matchesSearch = property.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           property.type_of_listing.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           property.status.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesCategory && matchesDate && matchesStatus && matchesSearch;
+    return matchesSearch;
   });
 
   const propertiesToDisplay = filteredProperties.slice(0, entriesToShow);
@@ -82,48 +75,17 @@ function BrokerageProperty() {
         <NavigationBrokerage />
         <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
           <CardHeader>
-             <div className='flex flex-row md:flex-col gap-4 justify-between'>
-              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>
-                <div className="grid w-full gap-1.5">
-                  <Label>Category</Label>
-                  <Select onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="md:w-full ">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Lot only">Lot only</SelectItem>
-                      <SelectItem value="House and lot">House and lot</SelectItem>
-                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      <SelectItem value="Block and lot">Block and lot</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Date Listed</Label>
-                  <Input type="date" className="md:w-full" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Filter Status</Label>
-                  <Select onValueChange={setSelectedStatus}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All</SelectItem>
-                        <SelectItem value="Sold">Sold</SelectItem>
-                        <SelectItem value="Not Sold">Not Sold</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex flex-wrap items-center gap-4 justify-between">
+              {/* Statistic Card (Left) */}
+              <div className="flex flex-col items-start bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 rounded-lg shadow-sm">
+                <span className="text-xs text-blue-700 font-semibold">Total Properties</span>
+                <span className="text-2xl font-bold text-blue-900">{properties.length}</span>
               </div>
-              <div className='md:flex md:justify-end md:items-center md:w-full'>
-                <AddProperty 
+              {/* Add Property Button (Right) */}
+              <div className="flex items-center">
+                <AddProperty
                   isOpen={isDialogOpen}
-                  fetchPropertiesData={fetchPropertiesData} 
+                  fetchPropertiesData={fetchPropertiesData}
                   onClose={() => setIsDialogOpen(false)}
                 />
               </div>
@@ -220,6 +182,51 @@ function BrokerageProperty() {
                               />
                             )}
                           </Dialog>
+                         <Button
+                            className='h-8 w-8 rounded-md font-medium bg-red-500 hover:bg-red-400 text-sm flex items-center justify-center'
+                            onClick={async () => {
+                              const result = await Swal.fire({
+                                icon: 'warning',
+                                title: 'Are you sure?',
+                                text: 'This action will permanently delete the property. Continue?',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'Cancel',
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                              });
+
+                              if (result.isConfirmed) {
+                                try {
+                                  const response = await axios.delete(`property-listings/${property.id}`, {
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                                    },
+                                  });
+                                  Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: response.data.message,
+                                    timerProgressBar: true,
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                  });
+                                  fetchPropertiesData();
+                                } catch (error) {
+                                  console.error('Error deleting property:', error);
+                                  Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to delete property. Please try again.',
+                                    confirmButtonText: 'OK',
+                                  });
+                                }
+                              }
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

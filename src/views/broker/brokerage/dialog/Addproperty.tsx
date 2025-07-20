@@ -1,11 +1,27 @@
 import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus, faTimes, faTag, faCalendarAlt, faMapMarkerAlt, faList, faBuilding, faDollarSign, faImages, faUpload
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../../../plugin/axios";
 import Swal from "sweetalert2";
@@ -16,7 +32,6 @@ interface AddPropertyProps {
   fetchPropertiesData: () => void;
 }
 
-// Utility function to format number with commas
 function formatNumberWithCommas(value: string) {
   const numericValue = value.replace(/\D/g, '');
   return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -43,45 +58,71 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   const [rentalRate, setRentalRate] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const [imageTypeError, setImageTypeError] = useState<string | null>(null);
 
-  // Handler for Selling Price input with digit formatting
   const handleSellingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, '');
-    if (!/^\d*$/.test(rawValue)) return; // Only allow numbers
+    if (!/^\d*$/.test(rawValue)) return;
     setSellingPrice(rawValue);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setImageTypeError(null);
-  const files = e.target.files;
-  if (files) {
-    const fileArray = Array.from(files);
-    // Only allow jpg, jpeg, png
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    const invalidFile = fileArray.find(file => !allowedTypes.includes(file.type));
-    if (invalidFile) {
-      setImageTypeError('Only JPG, JPEG, and PNG files are allowed.');
-      setImages([]);
-      setImagePreviews([]);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
-    }
-    setImages(fileArray);
-    const previews: string[] = [];
-    fileArray.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.result) {
-          previews.push(reader.result as string);
-          setImagePreviews([...previews]);
+    setImageTypeError(null);
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const maxSize = 5 * 1024 * 1024;
+
+      const invalidFile = fileArray.find(
+        (file) =>
+          !allowedTypes.includes(file.type) ||
+          file.size > maxSize
+      );
+      if (invalidFile) {
+        if (!allowedTypes.includes(invalidFile.type)) {
+          setImageTypeError('Only JPG, JPEG, and PNG files are allowed.');
+        } else if (invalidFile.size > maxSize) {
+          setImageTypeError('Each image must be 5MB or less.');
         }
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-};
+        setImages([]);
+        setImagePreviews([]);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      const filteredFiles = fileArray.filter(
+        (newFile) =>
+          !images.some(
+            (existingFile) =>
+              existingFile.name === newFile.name &&
+              existingFile.size === newFile.size
+          )
+      );
+
+      const newImages = [...images, ...filteredFiles];
+      setImages(newImages);
+
+      if (filteredFiles.length === 0) return;
+
+      const newPreviews: string[] = [];
+      let loadedCount = 0;
+
+      filteredFiles.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (reader.result) {
+            newPreviews[idx] = reader.result as string;
+            loadedCount++;
+            if (loadedCount === filteredFiles.length) {
+              setImagePreviews(prev => [...prev, ...newPreviews]);
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
 
   const handleRemoveImage = (index: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -195,21 +236,27 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger>
-        <Button className="">
-          <FontAwesomeIcon icon={faPlus} />
+        <Button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md hover:from-blue-600 hover:to-blue-800 transition-all duration-200 rounded-lg">
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Add Brokerage
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:w-[90%] overflow-auto max-h-[95%]">
+      <DialogContent className="md:w-[90%] max-w-lg overflow-auto h-full bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader className="text-start">
-          <DialogTitle>Add New Property Listing</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2">
+            <FontAwesomeIcon icon={faBuilding} className="text-blue-500" />
+            Add New Property Listing
+          </DialogTitle>
           <DialogDescription>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
                 <div>
-                  <Label>Category</Label>
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faTag} className="text-blue-400" />
+                    Category
+                  </Label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -222,64 +269,113 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                       <SelectItem value="Block and lot">Block and lot</SelectItem>
                     </SelectContent>
                   </Select>
-                  {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+                  {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
                 </div>
                 {category === 'Rental Properties' && (
                   <div>
-                    <Label>Rental Rate</Label>
-                    <Input type="number" value={rentalRate} onChange={e => setRentalRate(e.target.value)} placeholder='0.00'/>
-                    {errors.rentalRate && <p className="text-red-500 text-sm">{errors.rentalRate}</p>}
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faDollarSign} className="text-green-500" />
+                      Rental Rate
+                    </Label>
+                    <Input
+                      type="number"
+                      value={rentalRate}
+                      onChange={e => setRentalRate(e.target.value)}
+                      placeholder='0.00'
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                    />
+                    {errors.rentalRate && <p className="text-red-500 text-xs mt-1">{errors.rentalRate}</p>}
                   </div>
                 )}
                 {category === 'Commercial Properties' && (
                   <div>
-                    <Label>Selling Price</Label>
+                    <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                      <FontAwesomeIcon icon={faDollarSign} className="text-green-500" />
+                      Selling Price
+                    </Label>
                     <Input
                       type="text"
                       value={formatNumberWithCommas(sellingPrice)}
                       onChange={handleSellingPriceChange}
                       placeholder='0.00'
+                      className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
                     />
-                    {errors.sellingPrice && <p className="text-red-500 text-sm">{errors.sellingPrice}</p>}
+                    {errors.sellingPrice && <p className="text-red-500 text-xs mt-1">{errors.sellingPrice}</p>}
                   </div>
                 )}
                 <div>
-                  <Label>Date Listed</Label>
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400" />
+                    Date Listed
+                  </Label>
                   <Input
                     type="date"
                     value={dateListed}
                     onChange={e => setDateListed(e.target.value)}
+                    className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
                   />
-                  {errors.dateListed && <p className="text-red-500 text-sm">{errors.dateListed}</p>}
+                  {errors.dateListed && <p className="text-red-500 text-xs mt-1">{errors.dateListed}</p>}
                 </div>
                 <div>
-                  <Label>Lot Area (sqm)</Label>
-                  <Input type="number" value={lotArea} onChange={e => setLotArea(e.target.value)} />
-                  {errors.lotArea && <p className="text-red-500 text-sm">{errors.lotArea}</p>}
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faDollarSign} className="text-green-500" />
+                    Lot Area (sqm)
+                  </Label>
+                  <Input
+                    type="number"
+                    min='0'
+                    value={lotArea}
+                    onChange={e => setLotArea(e.target.value)}
+                    className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                  />
+                  {errors.lotArea && <p className="text-red-500 text-xs mt-1">{errors.lotArea}</p>}
                 </div>
                 <div>
-                  <Label>Floor Area (sqm)</Label>
-                  <Input type="number" value={floorArea} onChange={e => setFloorArea(e.target.value)} />
-                  {errors.floorArea && <p className="text-red-500 text-sm">{errors.floorArea}</p>}
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faDollarSign} className="text-green-500" />
+                    Floor Area (sqm)
+                  </Label>
+                  <Input
+                    type="number"
+                    min='0'
+                    value={floorArea}
+                    onChange={e => setFloorArea(e.target.value)}
+                    className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                  />
+                  {errors.floorArea && <p className="text-red-500 text-xs mt-1">{errors.floorArea}</p>}
                 </div>
                 <div>
-                  <Label>Other Details</Label>
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faList} className="text-blue-400" />
+                    Other Details
+                  </Label>
                   <Textarea
                     value={otherDetails}
                     onChange={e => setOtherDetails(e.target.value)}
-                    className="w-full border rounded-md p-2"
+                    className="w-full border rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1 p-2"
                     rows={3}
                   />
-                  {errors.otherDetails && <p className="text-red-500 text-sm">{errors.otherDetails}</p>}
+                  {errors.otherDetails && <p className="text-red-500 text-xs mt-1">{errors.otherDetails}</p>}
                 </div>
                 <div>
-                  <Label>Location</Label>
-                  <Input type="text" value={location} onChange={e => setLocation(e.target.value)} />
-                  {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" />
+                    Location
+                  </Label>
+                  <Input
+                    type="text"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                  />
+                  {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
                 </div>
                 <div>
-                  <Label>Type of Listing</Label>
-                  <div className="flex space-x-4">
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faList} className="text-blue-400" />
+                    Type of Listing
+                  </Label>
+                  <div className="flex space-x-4 mt-2">
                     <Label className="flex items-center space-x-2">
                       <input
                         type="radio"
@@ -287,26 +383,31 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                         value="Exclusive"
                         checked={type === 'Exclusive'}
                         onChange={e => setType(e.target.value)}
+                        className="accent-blue-500"
                       />
                       <span>Exclusive</span>
                     </Label>
-                    <label className="flex items-center space-x-2">
+                    <Label className="flex items-center space-x-2">
                       <input
                         type="radio"
                         name="type"
                         value="Non-Exclusive"
                         checked={type === 'Non-Exclusive'}
                         onChange={e => setType(e.target.value)}
+                        className="accent-blue-500"
                       />
                       <span>Non-Exclusive</span>
-                    </label>
+                    </Label>
                   </div>
-                  {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+                  {errors.type && <p className="text-red-500 text-xs mt-1">{errors.type}</p>}
                 </div>
                 <div>
-                  <Label>Status of Property</Label>
+                  <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faBuilding} className="text-blue-400" />
+                    Status of Property
+                  </Label>
                   <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -316,64 +417,91 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                       <SelectItem value="RFO">Ready for Occupancy - (RFO)</SelectItem>
                     </SelectContent>
                   </Select>
-                  {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
+                  {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status}</p>}
                 </div>
                 <div>
-                <Label className="font-semibold flex items-center gap-1">
-                  Upload Property Images <span className="text-red-600">*</span>
-                  <span className="text-xs font-normal text-red-600 ml-2">(JPG, JPEG, PNG only)</span>
-                </Label>
-                <Input
-                  type="file"
-                  multiple
-                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-                  onChange={handleImageChange}
-                  ref={fileInputRef}
-                  className={imageTypeError || errors.images ? "border-red-500" : ""}
-                  required
-                />
-                {(imageTypeError || errors.images) && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {imageTypeError || errors.images}
-                  </p>
-                )}
-                <div className="flex space-x-2 mt-2">
-                  {imagePreviews.map((preview, index) => (
-                    <div
-                      key={index}
-                      className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer"
+                  <Label className="font-semibold flex items-center gap-1">
+                    <FontAwesomeIcon icon={faImages} className="text-indigo-400" />
+                    Upload Property Images <span className="text-red-600">*</span>
+                    <span className="text-xs font-normal text-red-600 ml-2">
+                      (JPG, JPEG, PNG only, max 5MB each)
+                    </span>
+                  </Label>
+                  <label
+                    htmlFor="property-image-upload"
+                    className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-lg p-4 bg-white hover:bg-blue-50 cursor-pointer transition-all duration-200 mt-2"
+                  >
+                    <FontAwesomeIcon icon={faUpload} className="text-blue-400 text-3xl mb-2" />
+                    <span className="text-blue-700 font-medium">Click to upload or drag images here</span>
+                    <Input
+                      id="property-image-upload"
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                      onChange={handleImageChange}
+                      ref={fileInputRef}
+                      className="hidden"
+                    />
+                  </label>
+                  <div className="relative mt-2">
+                    <span
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-600 pointer-events-none bg-white px-2 rounded"
+                      style={{
+                        zIndex: 2,
+                        background: "white",
+                        opacity: 0.85,
+                        fontWeight: 500,
+                      }}
                     >
-                      <img
-                        src={preview}
-                        alt={`Preview ${index + 1}`}
-                        className="object-cover w-full h-full transform transition-transform duration-300 hover:scale-110"
+                      {images.length === 0
+                        ? "No image"
+                        : `${images.length} image${images.length > 1 ? "s" : ""}`}
+                    </span>
+                  </div>
+                  {(imageTypeError || errors.images) && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {imageTypeError || errors.images}
+                    </p>
+                  )}
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div
+                        key={index}
+                        className="relative w-20 h-20 bg-gray-200 flex items-center justify-center rounded-md shadow-md overflow-hidden cursor-pointer group"
+                        title="Click to preview"
                         onClick={() => setSelectedImage(preview)}
-                      />
-                      <button
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                        onClick={(e) => handleRemoveImage(index, e)}
                       >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </button>
-                    </div>
-                  ))}
+                        <img
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          className="object-cover w-full h-full transform transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <button
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-red-400 transition"
+                          onClick={(e) => handleRemoveImage(index, e)}
+                          type="button"
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  {selectedImage && (
+                    <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+                      <DialogContent className="max-w-[425px] p-4 bg-white rounded-lg shadow-lg">
+                        <DialogHeader className='text-start'>
+                          <DialogTitle className="text-xl font-bold mb-4">Image Preview</DialogTitle>
+                          <DialogDescription>
+                            <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md" />
+                          </DialogDescription>
+                        </DialogHeader>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
-                {selectedImage && (
-                  <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-                    <DialogContent className="max-w-[425px] p-4 bg-white rounded-lg shadow-lg">
-                      <DialogHeader className='text-start'>
-                        <DialogTitle className="text-xl font-bold mb-4">Image Preview</DialogTitle>
-                        <DialogDescription>
-                          <img src={selectedImage} alt="Selected Property" className="w-full h-auto rounded-md" />
-                        </DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
-                )}
               </div>
-              </div>
-              <DialogFooter className="flex justify-end space-x-2">
-                <Button type="submit" disabled={loading}>
+              <DialogFooter className="space-x-2">
+                <Button type="submit" disabled={loading} className="bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white rounded-lg shadow flex items-center gap-2 px-6 py-2">
                   {loading ? (
                     <>
                       <span>Submitting...</span>

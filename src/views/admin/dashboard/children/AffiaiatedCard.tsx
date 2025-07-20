@@ -75,7 +75,7 @@ function AffiaiatedCard() {
     {
       to: "/admin/affialiated/licensed",
       count: agentLicensed,
-      title: "Total Licensed Affialiated",
+      title: "Total Licensed Affiliated",
       icon: faIdBadge,
       iconColor: "text-green-400",
       cardGradient: "from-green-100 via-green-50 to-white",
@@ -86,7 +86,7 @@ function AffiaiatedCard() {
     {
       to: "/admin/affialiated/unlicensed",
       count: agentUnLicensed,
-      title: "Total Unlicensed Affialiated",
+      title: "Total Unlicensed Affiliated",
       icon: faFileCircleXmark,
       iconColor: "text-red-400",
       cardGradient: "from-red-100 via-red-50 to-white",

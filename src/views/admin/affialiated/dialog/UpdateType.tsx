@@ -1,12 +1,24 @@
-
 import { useState } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { faArrowRight, faPen } from '@fortawesome/free-solid-svg-icons';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { faArrowRight, faPen, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
 
@@ -17,96 +29,115 @@ function UpdateType({ agent, agentList }: any) {
     role: agent.user?.role?.toString() || '1',
   });
 
- const handleUpdateRole = async () => {
-  if (loading) return;
-  setLoading(true);
+  const handleUpdateRole = async () => {
+    if (loading) return;
+    setLoading(true);
 
-  try {
-    const response = await axios.put(`editType/${agent.user.id}`, {
-      role: formData.role,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      },
-    });
+    try {
+      const response = await axios.put(
+        `editType/${agent.user.id}`,
+        { role: formData.role },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
 
-    agentList();
-    setIsDialogOpen(false);
+      agentList();
+      setIsDialogOpen(false);
 
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    } catch (error) {
+      console.error('Error updating role:', error);
 
-    // Show success message
-    Swal.fire({
-      icon: "success",
-      title: "Success",
-      text: response.data.message,
-      showConfirmButton: false,
-      timer: 2000,
-      timerProgressBar: true,
-    });
-  } catch (error) {
-    console.error('Error updating role:', error);
-
-    // Show error message
-    Swal.fire({
-      icon: "error",
-      title: "Oops",
-      text: 'Failed to update role. Please try again.',
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: 'Failed to update role. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-     {agent?.prc_liscence_number !== "" && (
+      {agent?.prc_liscence_number !== "" && (
         <DialogTrigger>
-          <Button 
+          <Button
             className={`w-8 h-8 rounded-md ${
-              agent?.prc_liscence_number === "" 
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                : "bg-green-500 hover:bg-green-400"
+              agent?.prc_liscence_number === ""
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-green-400 to-green-600 shadow hover:from-green-500 hover:to-green-700 transition-all duration-200"
             }`}
             disabled={agent?.prc_liscence_number === ""}
+            title="Edit Type"
           >
-            <FontAwesomeIcon icon={faPen} className="text-[#eff6ff]" />
+            <FontAwesomeIcon icon={faPen} className="text-white" />
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="md:max-w-[425px]">
+      <DialogContent className="md:max-w-[430px] rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader>
-          <DialogTitle className='text-start'>Edit Type</DialogTitle>
+          <DialogTitle className="text-start text-2xl font-bold text-blue-900 flex items-center gap-2">
+            <FontAwesomeIcon icon={faUserTag} className="text-blue-500" />
+            Edit Type
+          </DialogTitle>
           <DialogDescription>
-            <div className='text-start flex flex-col gap-4 mt-5'>
+            <div className="flex flex-col gap-5 mt-6 text-start">
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="accnt">Account number</Label>
-                <Input type="text" value={agent.user.acct_number} readOnly className='cursor-not-allowed' />
+                <Label htmlFor="accnt" className="font-semibold text-blue-900">Account Number</Label>
+                <Input
+                  type="text"
+                  value={agent.user.acct_number}
+                  readOnly
+                  className="cursor-not-allowed rounded-lg border-blue-200 bg-gray-100"
+                />
               </div>
-
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="name">Fullname</Label>
-                <Input type="text" value={`${agent.personal_info.first_name} ${agent.personal_info.middle_name} ${agent.personal_info.last_name} ${agent.personal_info.extension_name}`} readOnly className='cursor-not-allowed' />
+                <Label htmlFor="name" className="font-semibold text-blue-900">Full Name</Label>
+                <Input
+                  type="text"
+                  value={`${agent.personal_info.first_name} ${agent.personal_info.middle_name} ${agent.personal_info.last_name} ${agent.personal_info.extension_name}`}
+                  readOnly
+                  className="cursor-not-allowed rounded-lg border-blue-200 bg-gray-100"
+                />
               </div>
-
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="email">Email address</Label>
-                <Input type="email" value={agent.user.email} readOnly className='cursor-not-allowed' />
+                <Label htmlFor="email" className="font-semibold text-blue-900">Email Address</Label>
+                <Input
+                  type="email"
+                  value={agent.user.email}
+                  readOnly
+                  className="cursor-not-allowed rounded-lg border-blue-200 bg-gray-100"
+                />
               </div>
-
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="phone">Contact number</Label>
-                <Input type="text" value={agent?.personal_info.phone} readOnly className='cursor-not-allowed' />
+                <Label htmlFor="phone" className="font-semibold text-blue-900">Contact Number</Label>
+                <Input
+                  type="text"
+                  value={agent?.personal_info.phone}
+                  readOnly
+                  className="cursor-not-allowed rounded-lg border-blue-200 bg-gray-100"
+                />
               </div>
-
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="type">Type</Label>
+                <Label htmlFor="type" className="font-semibold text-blue-900">Type</Label>
                 <Select
                   name="role"
                   defaultValue={formData.role}
                   onValueChange={(value) => setFormData({ ...formData, role: value })}
                 >
-                  <SelectTrigger className="h-9 bg-white">
+                  <SelectTrigger className="h-9 bg-white rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
                     <SelectValue placeholder="Select Agent or Broker" />
                   </SelectTrigger>
                   <SelectContent>
@@ -115,20 +146,23 @@ function UpdateType({ agent, agentList }: any) {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className='flex justify-end w-full gap-2'>
-                <Button className='w-full bg-green-500 hover:bg-green-400' onClick={handleUpdateRole} disabled={loading}>
+              <div className="flex justify-end w-full gap-2 mt-2">
+                <Button
+                  className="w-full bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg shadow hover:from-green-600 hover:to-green-800 flex items-center justify-center gap-2"
+                  onClick={handleUpdateRole}
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
-                        <span>Updating...</span>
-                        <span className="animate-spin border-2 cursor-not-allowed border-white border-t-transparent rounded-full w-4 h-4" />
+                      <span>Updating...</span>
+                      <span className="animate-spin border-2 cursor-not-allowed border-white border-t-transparent rounded-full w-4 h-4" />
                     </>
-                    ) : (
+                  ) : (
                     <>
-                        <FontAwesomeIcon icon={faArrowRight} />
-                        <span className='text-[#eff6ff]'>Update</span>
+                      <FontAwesomeIcon icon={faArrowRight} />
+                      <span>Update</span>
                     </>
-                    )}
+                  )}
                 </Button>
               </div>
             </div>

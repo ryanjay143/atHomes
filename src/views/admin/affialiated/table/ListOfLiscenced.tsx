@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faIdBadge, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -54,6 +54,16 @@ function ListOfLiscenced() {
   });
 
   const displayedAgents = entriesToShow === 'all' ? filteredAgents : filteredAgents.slice(0, entriesToShow);
+
+  // Status badge color
+  const statusBadge = (status: number) => {
+    if (status === 0)
+      return <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Approved</span>;
+    if (status === 1)
+      return <span className="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">Pending</span>;
+    return <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">Declined</span>;
+  };
+
 
   return (
     <div className='p-2'>
@@ -114,43 +124,81 @@ function ListOfLiscenced() {
                   <TableCell className="text-right border border-[#bfdbfe]">
                     <div className="flex flex-row gap-1 justify-end">
                       <Dialog>
-                        <DialogTrigger>
-                          <Button className="w-8 h-8 rounded-md border border-primary">
-                            <FontAwesomeIcon icon={faEye} className="text-[#eff6ff]" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="md:max-w-[400px]">
-                          <DialogHeader>
-                            <DialogTitle className="text-start">Agent and Broker Details</DialogTitle>
-                            <DialogDescription>
-                              <div className="flex flex-col gap-4 mt-5 mb-5">
-                                <div className="border-b pb-2 mb-4 text-start">
-                                  <h2 className="text-lg font-bold">Personal Details</h2>
-                                  <p>Name: {licensed?.personal_info?.first_name} {licensed?.personal_info?.middle_name} {licensed?.personal_info?.last_name}</p>
-                                  <p>Email: {licensed?.user?.email}</p>
-                                  <p>Username: {licensed?.user?.username}</p>
-                                  <p>Phone: {licensed?.personal_info?.phone}</p>
-                                  <p>Gender: {licensed.personal_info.gender.charAt(0).toUpperCase() + licensed.personal_info.gender.slice(1)}</p>
-                                  <p>Complete Address: {licensed.personal_info.complete_address}</p>
-                                  <p>Status: {licensed.user.status === 0 ? "Approved" : licensed.user.status === 1 ? "Pending" : "Decline"}</p>
+                          <DialogTrigger>
+                            <Button className="w-8 h-8 rounded-md border border-primary bg-gradient-to-br from-blue-500 to-blue-700 shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200">
+                              <FontAwesomeIcon icon={faEye} className="text-white" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="md:max-w-[400px] rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
+                            <DialogHeader>
+                              <DialogTitle className="text-start text-2xl font-bold text-blue-900 flex items-center gap-2">
+                                <FontAwesomeIcon icon={faIdBadge} className="text-blue-500" />
+                                Agent & Broker Details
+                              </DialogTitle>
+                              <DialogDescription>
+                                <div className="flex flex-col gap-6 mt-6 mb-4">
+                                  {/* Personal Details */}
+                                  <div className="border-b pb-4 mb-2 text-start">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <FontAwesomeIcon icon={faUser} className="text-blue-400" />
+                                      <h2 className="text-lg font-bold text-blue-800">Personal Details</h2>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-1 text-sm text-gray-700">
+                                      <div>
+                                        <span className="font-semibold">Name:</span> {licensed?.personal_info?.first_name} {licensed?.personal_info?.middle_name} {licensed?.personal_info?.last_name}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Email:</span> {licensed?.user?.email}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Username:</span> {licensed?.user?.username}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Phone:</span> {licensed?.personal_info?.phone}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Gender:</span> {licensed.personal_info.gender.charAt(0).toUpperCase() + licensed.personal_info.gender.slice(1)}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Complete Address:</span> {licensed.personal_info.complete_address}
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-semibold">Status:</span>
+                                        {statusBadge(licensed.user.status)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {/* Identity Information */}
+                                  <div className="text-start">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <FontAwesomeIcon icon={faIdBadge} className="text-blue-400" />
+                                      <h2 className="text-lg font-bold text-blue-800">Identity Information</h2>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-1 text-sm text-gray-700">
+                                      <div>
+                                        <span className="font-semibold">PRC License Number:</span> {licensed?.prc_liscence_number || "N/A"}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">DHSUD Reg. #:</span> {licensed?.dhsud_registration_number || "N/A"}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Type:</span> {licensed?.user.role === 1 ? "Agent" : licensed?.user.role === 2 ? "Broker" : "N/A"}
+                                      </div>
+                                      <div>
+                                        <span className="font-semibold">Validity Date:</span> {formatDateToMMDDYYYY(licensed?.validation_date || "N/A")}
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="text-start">
-                                  <h2 className="text-lg font-bold ">Identity Information</h2>
-                                  <p>PRC License Number: {licensed?.prc_liscence_number || "N/A"}</p>
-                                  <p>DHSUD Registration Number: {licensed?.dhsud_registration_number || "N/A"}</p>
-                                  <p>Type: {licensed?.user.role === 1 ? "Agent" : licensed?.user.role === 2 ? "Broker" : "N/A"}</p>
-                                  <p>Validity Date: {formatDateToMMDDYYYY(licensed?.validation_date || "N/A")}</p>
-                                </div>
-                              </div>
-                            </DialogDescription>
-                            <DialogClose asChild>
-                              <Button className='bg-red-500 hover:bg-red-400'>
-                                Close
-                              </Button>
-                            </DialogClose>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
+                              </DialogDescription>
+                              <DialogClose asChild>
+                                <Button className='bg-red-500 hover:bg-red-400 rounded-lg shadow'>
+                                  Close
+                                </Button>
+                              </DialogClose>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
                     </div>
                   </TableCell>
                 </TableRow>

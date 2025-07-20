@@ -11,187 +11,117 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFileInvoiceDollar, faUser, faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faFileImage, faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
   const receiptRef = useRef<HTMLDivElement>(null);
-  // const [imgLoaded, setImgLoaded] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-
-  // const handlePrint = () => {
-  //   if (!receiptRef.current) return;
-  //   const printContents = receiptRef.current.innerHTML;
-
-  //   const printStyles = `
-  //     <style>
-  //       body {
-  //         font-size: 20px !important;
-  //         font-family: Arial, sans-serif;
-  //       }
-  //       label, span, div {
-  //         font-size: 40px !important;
-  //       }
-  //       img {
-  //         max-width: 800px !important;
-  //         max-height: 800px !important;
-  //         display: block;
-  //         margin: 16px auto;
-  //         margin-top: 150px;
-  //       }
-  //     </style>
-  //   `;
-
-  //   const width = 800;
-  //   const height = 600;
-  //   const left = window.screenX + (window.outerWidth - width) / 2;
-  //   const top = window.screenY + (window.outerHeight - height) / 2;
-  //   const printWindow = window.open(
-  //     '',
-  //     '',
-  //     `width=${width},height=${height},left=${left},top=${top}`
-  //   );
-
-  //   if (printWindow) {
-  //     printWindow.document.write('<html><head><title>Print Receipt</title>');
-  //     printWindow.document.write(printStyles);
-  //     printWindow.document.write('</head><body >');
-  //     printWindow.document.write(printContents);
-  //     printWindow.document.write('</body></html>');
-  //     printWindow.document.close();
-  //     printWindow.focus();
-  //     setTimeout(() => {
-  //       printWindow.print();
-  //       printWindow.close();
-  //     }, 500);
-  //   }
-  // };
 
   return (
     <div>
       <Dialog>
         <DialogTrigger>
-          <Button className="h-8 w-8 font-medium text-sm rounded-md border border-primary">
+          <Button className="h-8 w-8 font-medium text-sm rounded-md border border-primary bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow hover:from-blue-600 hover:to-blue-800 transition-all duration-200">
             <FontAwesomeIcon icon={faEye} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="md:w-[90%] h-full max-h-[650px] overflow-auto">
+        <DialogContent className="md:w-[95%] max-w-2xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
           <DialogHeader>
-            <DialogTitle className="text-start">View Receipt</DialogTitle>
+            <DialogTitle className="text-start text-2xl font-bold text-blue-900 flex items-center gap-2">
+              <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-500" />
+              View Receipt
+            </DialogTitle>
             <DialogDescription>
               <div
                 ref={receiptRef}
-                className="grid gap-4 py-6 text-start bg-white"
+                className="grid gap-6 py-6 text-start bg-white rounded-xl shadow-inner px-6"
               >
-                <div className="grid grid-cols-4 md:grid-cols- items-center gap-4">
-                  <Label
-                    htmlFor="category"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Broker/Agent:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Broker/Agent */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faUser} className="text-blue-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Broker/Agent:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {sales.agent.personal_info.first_name}{' '}
                     {sales.agent.personal_info.middle_name}{' '}
                     {sales.agent.personal_info.last_name}{' '}
                     {sales.agent.personal_info?.extension_name}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols- items-center gap-4">
-                  <Label
-                    htmlFor="category"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Client name:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Client Name */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faUser} className="text-blue-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Client Name:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {sales.client_name}
                   </span>
                 </div>
-
-                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
-                  <Label
-                    htmlFor="category"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Category:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Category */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Category:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {sales.category}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
-                  <Label
-                    htmlFor="date"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Date of Sale:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Date of Sale */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Date of Sale:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {dateFormatter.format(new Date(sales.date_on_sale))}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
-                  <Label
-                    htmlFor="amount"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Amount:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Amount */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faMoneyBillWave} className="text-green-500 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Amount:</Label>
+                  <span className="ml-2 text-base text-green-700 font-bold">
                     {currencyFormatter.format(sales.amount)}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
-                  <Label
-                    htmlFor="location"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Location:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Location */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-red-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Location:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {sales.location}
                   </span>
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-2 items-center gap-4">
-                  <Label
-                    htmlFor="remarks"
-                    className="text-gray-600 font-semibold"
-                  >
-                    Remarks:
-                  </Label>
-                  <span className="col-span-3 text-center text-gray-800">
+                {/* Remarks */}
+                <div className="flex items-center gap-3 border-b pb-3">
+                  <FontAwesomeIcon icon={faCommentDots} className="text-indigo-400 text-lg" />
+                  <Label className="text-gray-600 font-semibold">Remarks:</Label>
+                  <span className="ml-2 text-base text-gray-800 font-medium">
                     {sales.remarks}
                   </span>
                 </div>
-
-                <Label
-                  htmlFor="remarks"
-                  className="text-gray-600 text-start font-semibold"
-                >
-                  Proof of Transaction:
-                </Label>
-                <div className="mt-3">
-                  {/* Image with hover and click-to-preview */}
-                  <img
-                    src={`${import.meta.env.VITE_URL}/${sales.image}`}
-                    alt={sales.image}
-                    className="h-full object-cover md:rounded-sm md:w-24 md:h-24  rounded-sm cursor-pointer transition-transform duration-200 hover:scale-105 hover:ring-2 hover:ring-primary"
-                    // onLoad={() => setImgLoaded(true)}
-                    onClick={() => setPreviewOpen(true)}
-                    title="Click to preview"
-                  />
+                {/* Proof of Transaction */}
+                <div className="flex flex-col gap-2 mt-2">
+                  <Label className="text-gray-600 font-semibold flex items-center gap-2">
+                    <FontAwesomeIcon icon={faFileImage} className="text-pink-400 text-lg" />
+                    Proof of Transaction:
+                  </Label>
+                  <div className="flex justify-center">
+                    <img
+                      src={`${import.meta.env.VITE_URL}/${sales.image}`}
+                      alt={sales.image}
+                      className="object-cover rounded-lg border-2 border-blue-200 shadow-md max-w-xs max-h-60 cursor-pointer transition-transform duration-200 hover:scale-105 hover:ring-2 hover:ring-primary"
+                      onClick={() => setPreviewOpen(true)}
+                      title="Click to preview"
+                    />
+                  </div>
                   {/* Preview Dialog */}
                   <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-                    <DialogContent className="md:w-[90%] flex flex-col items-center">
+                    <DialogContent className="md:max-w-[80vw] flex flex-col items-center bg-white rounded-xl shadow-2xl">
                       <img
                         src={`${import.meta.env.VITE_URL}/${sales.image}`}
                         alt={sales.image}
-                        className="md:max-w-[80vw] md:max-h-[80vh] md:rounded shadow-lg "
+                        className="max-w-[80vw] max-h-[80vh] rounded shadow-lg"
                       />
                       <DialogFooter>
                         <Button
-                          className="mt-4"
+                          className="mt-4 bg-red-500 hover:bg-red-400 text-white"
                           onClick={() => setPreviewOpen(false)}
                         >
                           Close
@@ -206,18 +136,10 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
           <DialogFooter>
             <div className="flex flex-row justify-end gap-2">
               <DialogClose asChild>
-                <Button className="bg-red-500 hover:bg-red-400 h-8">
+                <Button className="bg-red-500 hover:bg-red-400 h-8 rounded shadow">
                   Close
                 </Button>
               </DialogClose>
-              {/* <Button
-                className="h-8"
-                onClick={handlePrint}
-                disabled={!imgLoaded}
-              >
-                <FontAwesomeIcon icon={faPrint} />
-                <span>Print</span>
-              </Button> */}
             </div>
           </DialogFooter>
         </DialogContent>

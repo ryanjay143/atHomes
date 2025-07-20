@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { faPen, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTimes, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 
@@ -41,11 +41,19 @@ function EditDeveloper({ developer, fetchDevelopers }: any) {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+      const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const maxSize = 5 * 1024 * 1024; // 5MB
       if (!validImageTypes.includes(file.type)) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          image: "Invalid image type. Only jpeg, png, jpg, gif are allowed.",
+          image: "Invalid image type. Only JPEG, PNG, JPG are allowed.",
+        }));
+        return;
+      }
+      if (file.size > maxSize) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          image: "Image size must not exceed 5MB.",
         }));
         return;
       }
@@ -113,8 +121,6 @@ function EditDeveloper({ developer, fetchDevelopers }: any) {
         }
       );
 
-      // console.log("Developer updated successfully:", response.data);
-
       fetchDevelopers();
       setIsImageChanged(false);
       setIsDialogOpen(false);
@@ -137,82 +143,96 @@ function EditDeveloper({ developer, fetchDevelopers }: any) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger>
-        <Button className="w-8 h-8 rounded-md bg-green-500 hover:bg-green-400">
-          <FontAwesomeIcon icon={faPen} className="text-[#eff6ff]" />
+        <Button className="w-8 h-8 rounded-md bg-gradient-to-r from-green-400 to-green-600 shadow hover:from-green-500 hover:to-green-700 transition-all duration-200">
+          <FontAwesomeIcon icon={faPen} className="text-white" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:max-w-[425px]">
+      <DialogContent className='md:pt-10 h-full md:w-[90%] md:max-w-xl overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200'>
         <DialogHeader>
-          <DialogTitle className="text-start">Edit Developer</DialogTitle>
+          <DialogTitle className="text-start text-2xl font-bold text-blue-900">Edit Developer</DialogTitle>
           <DialogDescription>
-            <form onSubmit={handleSubmit} className="mt-5 text-start space-y-4">
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="developer">Developer name</Label>
+            <form onSubmit={handleSubmit} className="mt-5 text-start space-y-5">
+              <div className="grid w-full items-center gap-2">
+                <Label htmlFor="developer" className="font-semibold text-blue-900">Developer Name</Label>
                 <Input
                   type="text"
-                  className="uppercase"
+                  className="uppercase rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   name="dev_name"
                   value={formData.dev_name}
                   onChange={handleInputChange}
+                  autoFocus
                 />
-                {errors.dev_name && <span className="text-red-500 text-sm">{errors.dev_name}</span>}
+                {errors.dev_name && <span className="text-red-500 text-xs">{errors.dev_name}</span>}
               </div>
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="email">Email address</Label>
+              <div className="grid w-full items-center gap-2">
+                <Label htmlFor="email" className="font-semibold text-blue-900">Email Address</Label>
                 <Input
                   type="email"
                   name="dev_email"
+                  className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   value={formData.dev_email}
                   onChange={handleInputChange}
                 />
-                {errors.dev_email && <span className="text-red-500 text-sm">{errors.dev_email}</span>}
+                {errors.dev_email && <span className="text-red-500 text-xs">{errors.dev_email}</span>}
               </div>
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="location">Location</Label>
+              <div className="grid w-full items-center gap-2">
+                <Label htmlFor="location" className="font-semibold text-blue-900">Location</Label>
                 <Input
                   type="text"
                   name="dev_location"
+                  className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   value={formData.dev_location}
                   onChange={handleInputChange}
                 />
-                {errors.dev_location && <span className="text-red-500 text-sm">{errors.dev_location}</span>}
+                {errors.dev_location && <span className="text-red-500 text-xs">{errors.dev_location}</span>}
               </div>
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="phone">Phone number</Label>
+              <div className="grid w-full items-center gap-2">
+                <Label htmlFor="phone" className="font-semibold text-blue-900">Phone Number</Label>
                 <Input
                   type="text"
                   name="dev_phone"
+                  className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   value={formData.dev_phone}
                   onChange={handleInputChange}
                 />
-                {errors.dev_phone && <span className="text-red-500 text-sm">{errors.dev_phone}</span>}
+                {errors.dev_phone && <span className="text-red-500 text-xs">{errors.dev_phone}</span>}
               </div>
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="image">Developer image</Label>
-                <Input
-                  type="file"
-                  className="uppercase"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  ref={fileInputRef}
-                />
-                {errors.image && <span className="text-red-500 text-sm">{errors.image}</span>}
+              <div className="grid w-full items-center gap-2">
+                <Label htmlFor="image" className="font-semibold text-blue-900">Developer Image</Label>
+                <label
+                  htmlFor="dev-image-upload"
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-blue-300 rounded-lg p-4 bg-white hover:bg-blue-50 cursor-pointer transition-all duration-200"
+                >
+                  <FontAwesomeIcon icon={faUpload} className="text-blue-400 text-3xl mb-2" />
+                  <span className="text-blue-700 font-medium">Click to upload image here</span>
+                  <span className="text-xs text-gray-500 mt-1">(JPEG, PNG, JPG only, max 5MB)</span>
+                  <Input
+                    id="dev-image-upload"
+                    type='file'
+                    accept="image/jpeg, image/png, image/jpg"
+                    onChange={handleImageChange}
+                    ref={fileInputRef}
+                    className="hidden"
+                  />
+                </label>
+                {errors.image && <span className="text-red-500 text-xs">{errors.image}</span>}
               </div>
 
               {/* Image Preview */}
-              <div className="relative">
+              <div className="relative flex justify-center">
                 <img
                   src={imagePreview}
                   alt={developer.dev_name}
-                  className="object-cover w-full h-32 rounded-md"
+                  className="object-cover w-36 h-36 rounded-lg border-2 border-blue-200 shadow-md"
                 />
                 {isImageChanged && (
                   <Button
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-400 text-white rounded-full h-8 w-8"
+                    type="button"
+                    className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white rounded-full h-8 w-8 flex items-center justify-center shadow"
                     onClick={handleCancelImageChange}
                   >
                     <FontAwesomeIcon icon={faTimes} />
@@ -223,13 +243,13 @@ function EditDeveloper({ developer, fetchDevelopers }: any) {
               <div>
                 <Button
                   type="submit"
-                  className="w-full bg-green-500 hover:bg-green-400"
+                  className="w-full bg-gradient-to-r from-green-500 to-green-700 text-white rounded-lg shadow hover:from-green-600 hover:to-green-800 flex items-center justify-center gap-2"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
                       <span>Saving...</span>
-                      <span className="animate-spin cursor-not-allowed border-2 border-white border-t-transparent rounded-full w-4 h-4" />
+                      <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4" />
                     </>
                   ) : (
                     <>
