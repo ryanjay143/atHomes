@@ -64,6 +64,16 @@ function ViewReceipt({ sales, dateFormatter, currencyFormatter }: any) {
                     {sales.category}
                   </span>
                 </div>
+                {/* Block & Lot (only if category is Block and lot) */}
+                {sales.category === 'Block and lot' && (
+                  <div className="flex items-center gap-3 border-b pb-3">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400 text-lg" />
+                    <Label className="text-gray-600 font-semibold">Block &amp; Lot:</Label>
+                    <span className="ml-2 text-base text-gray-800 font-medium">
+                      {sales.block_and_lot || <span className="italic text-gray-400">N/A</span>}
+                    </span>
+                  </div>
+                )}
                 {/* Date of Sale */}
                 <div className="flex items-center gap-3 border-b pb-3">
                   <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400 text-lg" />

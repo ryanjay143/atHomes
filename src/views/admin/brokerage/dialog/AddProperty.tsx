@@ -250,7 +250,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
           Add Brokerage
         </Button>
       </DialogTrigger>
-      <DialogContent className="md:w-[90%] max-w-2xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
+      <DialogContent className="md:w-[90%] max-w-xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader className="text-start">
           <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2">
             <FontAwesomeIcon icon={faHome} className="text-blue-500" />
@@ -275,7 +275,8 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                       <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                       <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                       <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      <SelectItem value="Block and lot">Block and lot</SelectItem>
+                      <SelectItem value="For Assumption">For Assumption</SelectItem>
+                      {/* <SelectItem value="Block and lot">Block and lot</SelectItem> */}
                     </SelectContent>
                   </Select>
                   {errors.category && <p className="text-red-500 text-xs">{errors.category}</p>}
@@ -299,6 +300,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     Location
                   </Label>
                   <Input type="text" value={location} onChange={e => setLocation(e.target.value)}
+                  placeholder='e.g. Cagayan de Oro City, Misamis Oriental'
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-2"
                   />
                   {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
@@ -358,6 +360,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     Lot Area (sqm)
                   </Label>
                   <Input type="number" min='0' value={lotArea} onChange={e => setLotArea(e.target.value)}
+                    placeholder="e.g. 100"
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-2"
                   />
                   {errors.lotArea && <p className="text-red-500 text-xs">{errors.lotArea}</p>}
@@ -368,6 +371,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     Floor Area (sqm)
                   </Label>
                   <Input type="number" min='0' value={floorArea} onChange={e => setFloorArea(e.target.value)}
+                  placeholder="e.g. 100"
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-2"
                   />
                   {errors.floorArea && <p className="text-red-500 text-xs mt-1">{errors.floorArea}</p>}

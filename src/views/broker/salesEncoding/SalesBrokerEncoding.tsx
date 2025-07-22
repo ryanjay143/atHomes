@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
 import AgentSalesNavigation from '../../broker/salesEncoding/navigation/NavigationSalesEncoding'
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,9 +34,8 @@ function SalesBrokerEncoding() {
   const [personalInfo, setPersonalInfo] = useState<any>({});
   const [identityDetails, setIdentityDetails] = useState<any>({});
   const [editDialogOpenId, setEditDialogOpenId] = useState<number | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateFilter, setDateFilter] = useState<string>('');
   const [entriesToShow, setEntriesToShow] = useState<number>(10);
 
   const fetchAgent = async () => {
@@ -91,10 +89,9 @@ function SalesBrokerEncoding() {
       sales.remarks.toLowerCase().includes(searchQuery.toLowerCase()) ||
      sales.client_name.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = categoryFilter && categoryFilter !== "all" ? sales.category === categoryFilter : true;
-    const matchesDate = dateFilter ? sales.date_on_sale.split('T')[0] === dateFilter : true;
+    
 
-    return matchesSearch && matchesCategory && matchesDate;
+    return matchesSearch;
   });
 
   const salesEncodingData = filteredSalesEncodings.slice(0, entriesToShow);
@@ -104,35 +101,17 @@ function SalesBrokerEncoding() {
       <div className="ml-72 md:ml-0  gap-2 items-start justify-center mr-5 md:px-2 ">
         <AgentSalesNavigation />
         <Card className="bg-[#eef2ff] border-b-4 border-primary min-w-[100px] fade-in-left md:w-[380px]">
-          <CardHeader>
-            <div className='flex flex-row md:flex-col gap-4 justify-between'>
-              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>
-                <div className="grid w-full gap-1.5">
-                  <Label>Category</Label>
-                  <Select onValueChange={setCategoryFilter} value={categoryFilter}>
-                    <SelectTrigger className="md:w-full ">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Lot only">Lot only</SelectItem>
-                      <SelectItem value="House and lot">House and lot</SelectItem>
-                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      <SelectItem value="Block and lot">Block and lot</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Reservation date</Label>
-                   <Input type="date" className="md:w-full]" onChange={e => setDateFilter(e.target.value)} />
-                </div>
+           <CardHeader>
+            <div className="flex flex-wrap items-center gap-4 justify-between">
+              {/* Left: Statistic Card */}
+              <div className="flex flex-col items-start bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 rounded-lg shadow-sm">
+                <span className="text-xs text-blue-700 font-semibold">Total Sales Encodings</span>
+                <span className="text-2xl font-bold text-blue-900">{filteredSalesEncodings.length}</span>
               </div>
-               <div className='md:flex md:justify-end md:items-center md:w-full'>
+              {/* Right: Add Sales Button */}
+              <div className="flex items-center">
                <AddSales fetchAgent={fetchAgent} personalInfo={personalInfo} identityDetails={identityDetails}/>
-              </div>
+             </div>
             </div>
           </CardHeader>
           <CardContent>

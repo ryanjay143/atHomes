@@ -36,6 +36,7 @@ interface SalesEncoding {
   remarks: string;
   image: string;
   client_name: string;
+  block_and_lot?: string; // <-- Add this field
 }
 
 interface EditSalesDialogProps {
@@ -58,6 +59,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const [preview, setPreview] = useState<string>(defaultImageUrl);
   const [remarks, setRemarks] = useState(sales.remarks || '');
   const [clientName, setClientName] = useState(sales.client_name || '');
+  const [blockAndLot, setBlockAndLot] = useState(sales.block_and_lot || ''); // <-- Add state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -111,6 +113,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       setLocation(sales.location || '');
       setRemarks(sales.remarks || '');
       setClientName(sales.client_name || '');
+      setBlockAndLot(sales.block_and_lot || ''); // <-- Reset on open
       setPreview(defaultImageUrl);
       setError(null);
       setImageFile(null);
@@ -119,11 +122,26 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
     // eslint-disable-next-line
   }, [open, sales]);
 
+  // When category changes, clear blockAndLot if not Block and lot
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    if (value !== 'Block and lot') {
+      setBlockAndLot('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     setError(null);
+
+    // Validation for block_and_lot
+    if (category === 'Block and lot' && !blockAndLot) {
+      setError('Block & Lot is required.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -134,6 +152,11 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       formData.append('location', location);
       formData.append('remarks', remarks);
       formData.append('client_name', clientName);
+
+      // Only append block_and_lot if category is "Block and lot"
+      if (category === 'Block and lot') {
+        formData.append('block_and_lot', blockAndLot);
+      }
 
       if (imageFile) {
         formData.append('image', imageFile);
@@ -199,7 +222,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-400" />
                 Category
               </Label>
-              <Select value={category} onValueChange={setCategory}>
+              <Select value={category} onValueChange={handleCategoryChange}>
                 <SelectTrigger className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -214,6 +237,24 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 </SelectContent>
               </Select>
             </div>
+            {/* Block & Lot input, only show if category is Block and lot */}
+            {category === 'Block and lot' && (
+              <div>
+                <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" />
+                  Block &amp; Lot <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type="text"
+                  value={blockAndLot}
+                  onChange={e => setBlockAndLot(e.target.value)}
+                  placeholder="e.g. Block 01, Lot 10"
+                  className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                  required={category === 'Block and lot'}
+                  autoFocus
+                />
+              </div>
+            )}
             <div>
               <Label className="font-semibold text-blue-900 flex items-center gap-2">
                 <FontAwesomeIcon icon={faUser} className="text-blue-400" />

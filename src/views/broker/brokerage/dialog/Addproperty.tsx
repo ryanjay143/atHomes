@@ -266,7 +266,8 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                       <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                       <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                       <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      <SelectItem value="Block and lot">Block and lot</SelectItem>
+                      <SelectItem value="For Assumption">For Assumption</SelectItem>
+                      {/* <SelectItem value="Block and lot">Block and lot</SelectItem> */}
                     </SelectContent>
                   </Select>
                   {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
@@ -325,6 +326,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                     type="number"
                     min='0'
                     value={lotArea}
+                    placeholder='e.g. 100'
                     onChange={e => setLotArea(e.target.value)}
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
                   />
@@ -338,6 +340,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                   <Input
                     type="number"
                     min='0'
+                    placeholder='e.g. 100'
                     value={floorArea}
                     onChange={e => setFloorArea(e.target.value)}
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
@@ -365,6 +368,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                   <Input
                     type="text"
                     value={location}
+                    placeholder='e.g. Cagayan de Oro City, Misamis Oriental'
                     onChange={e => setLocation(e.target.value)}
                     className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
                   />
@@ -463,7 +467,7 @@ function AddProperty({ onClose, fetchPropertiesData }: AddPropertyProps) {
                       {imageTypeError || errors.images}
                     </p>
                   )}
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-4">
+                  <div className="grid grid-cols-5 md:grid-cols-4 gap-2 mt-4">
                     {imagePreviews.map((preview, index) => (
                       <div
                         key={index}

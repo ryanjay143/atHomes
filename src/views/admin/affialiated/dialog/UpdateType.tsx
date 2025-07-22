@@ -26,8 +26,8 @@ function UpdateType({ agent, agentList }: any) {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
-    role: agent.user?.role?.toString() || '1',
-  });
+  role: agent.user?.role?.toString() ?? '1', // Use ?? instead of ||
+});
 
   const handleUpdateRole = async () => {
     if (loading) return;
@@ -71,21 +71,14 @@ function UpdateType({ agent, agentList }: any) {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      {agent?.prc_liscence_number !== "" && (
-        <DialogTrigger>
-          <Button
-            className={`w-8 h-8 rounded-md ${
-              agent?.prc_liscence_number === ""
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-green-400 to-green-600 shadow hover:from-green-500 hover:to-green-700 transition-all duration-200"
-            }`}
-            disabled={agent?.prc_liscence_number === ""}
-            title="Edit Type"
-          >
-            <FontAwesomeIcon icon={faPen} className="text-white" />
-          </Button>
-        </DialogTrigger>
-      )}
+      <DialogTrigger>
+        <Button
+          className='w-8 h-8 rounded-md bg-gradient-to-r from-green-400 to-green-600 shadow hover:from-green-500 hover:to-green-700 transition-all duration-200'
+          title="Edit Type">
+          <FontAwesomeIcon icon={faPen} className="text-white" />
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="md:max-w-[430px] rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader>
           <DialogTitle className="text-start text-2xl font-bold text-blue-900 flex items-center gap-2">
@@ -131,20 +124,21 @@ function UpdateType({ agent, agentList }: any) {
                 />
               </div>
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="type" className="font-semibold text-blue-900">Type</Label>
+                <Label htmlFor="type" className="font-semibold text-blue-900">User Role:</Label>
                 <Select
-                  name="role"
-                  defaultValue={formData.role}
-                  onValueChange={(value) => setFormData({ ...formData, role: value })}
-                >
-                  <SelectTrigger className="h-9 bg-white rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
-                    <SelectValue placeholder="Select Agent or Broker" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">Agent</SelectItem>
-                    <SelectItem value="2">Broker</SelectItem>
-                  </SelectContent>
-                </Select>
+  name="role"
+  value={formData.role}
+  onValueChange={(value) => setFormData({ ...formData, role: value })}
+>
+  <SelectTrigger className="h-9 bg-white rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+    <SelectValue placeholder="Select Agent or Broker" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="1">Agent</SelectItem>
+    <SelectItem value="2">Broker</SelectItem>
+    <SelectItem value="0">Admin</SelectItem>
+  </SelectContent>
+</Select>
               </div>
               <div className="flex justify-end w-full gap-2 mt-2">
                 <Button

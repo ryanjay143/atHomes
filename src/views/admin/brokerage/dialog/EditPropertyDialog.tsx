@@ -243,7 +243,7 @@ function EditPropertyDialog({ property, onClose, fetchPropertiesData }: any) {
                 <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
                 <SelectItem value="Rental Properties">Rental Properties</SelectItem>
                 <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                <SelectItem value="Block and lot">Block and lot</SelectItem>
+                <SelectItem value="For Assumption">For Assumption</SelectItem>
               </SelectContent>
             </Select>
           </div>

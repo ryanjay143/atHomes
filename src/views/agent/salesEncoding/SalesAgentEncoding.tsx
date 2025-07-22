@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
 import AgentSalesNavigation from '../../agent/salesEncoding/navigation/AgentSalesNavigation'
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,10 +31,8 @@ function SalesAgentEncoding() {
   const [personalInfo, setPersonalInfo] = useState<any>({});
   const [identityDetails, setIdentityDetails] = useState<any>({});
   const [editDialogOpenId, setEditDialogOpenId] = useState<number | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateFilter, setDateFilter] = useState<string>('');
-  const [entriesToShow, setEntriesToShow] = useState<number>(10);
+  const [entriesToShow, setEntriesToShow] = useState<string>('all');
 
   const fetchAgent = async () => {
     try {
@@ -88,13 +85,13 @@ function SalesAgentEncoding() {
       sales.remarks.toLowerCase().includes(searchQuery.toLowerCase()) ||
      sales.client_name.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = categoryFilter && categoryFilter !== "all" ? sales.category === categoryFilter : true;
-    const matchesDate = dateFilter ? sales.date_on_sale.split('T')[0] === dateFilter : true;
-
-    return matchesSearch && matchesCategory && matchesDate;
+    return matchesSearch;
   });
 
-  const salesEncodingData = filteredSalesEncodings.slice(0, entriesToShow);
+  const salesEncodingData =
+  entriesToShow === 'all'
+    ? filteredSalesEncodings
+    : filteredSalesEncodings.slice(0, parseInt(entriesToShow, 10));
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -102,53 +99,38 @@ function SalesAgentEncoding() {
         <AgentSalesNavigation />
         <Card className="bg-[#eef2ff] border-b-4 border-primary fade-in-left md:w-[380px]">
           <CardHeader>
-            <div className='flex flex-row md:flex-col gap-4 justify-between'>
-              <div className='grid grid-cols-4 md:grid-cols-1 gap-4 md:mt-0'>
-                <div className="grid w-full gap-1.5">
-                  <Label>Category</Label>
-                  <Select onValueChange={setCategoryFilter} value={categoryFilter}>
-                    <SelectTrigger className="md:w-full ">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Lot only">Lot only</SelectItem>
-                      <SelectItem value="House and lot">House and lot</SelectItem>
-                      <SelectItem value="Condominium/Apartment">Condominium/Apartment</SelectItem>
-                      <SelectItem value="Commercial Properties">Commercial Properties</SelectItem>
-                      <SelectItem value="Rental Properties">Rental Properties</SelectItem>
-                      <SelectItem value="Farm Lot">Farm Lot</SelectItem>
-                      <SelectItem value="Block and lot">Block and lot</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid w-full items-center gap-1.5">
-                  <Label>Reservation date</Label>
-                   <Input type="date" className="md:w-full]" onChange={e => setDateFilter(e.target.value)} />
-                </div>
+            <div className="flex flex-wrap items-center gap-4 justify-between">
+              {/* Left: Statistic Card */}
+              <div className="flex flex-col items-start bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-2 rounded-lg shadow-sm">
+                <span className="text-xs text-blue-700 font-semibold">Total Sales Encodings</span>
+                <span className="text-2xl font-bold text-blue-900">{filteredSalesEncodings.length}</span>
               </div>
-               <div className='md:flex md:justify-end md:items-center md:w-full'>
+              {/* Right: Add Sales Button */}
+              <div className="flex items-center">
                <AddSales fetchAgent={fetchAgent} personalInfo={personalInfo} identityDetails={identityDetails}/>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className='py-2 flex flex-row justify-between gap-4'>
-              <Select onValueChange={value => setEntriesToShow(value === 'all' ? filteredSalesEncodings.length : parseInt(value, 10))}>
-                <SelectTrigger className="w-[120px]  border border-primary">
-                  <span className='text-[#172554]'>Show</span>
-                  <SelectValue placeholder="All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="30">30</SelectItem>
-                  <SelectItem value="40">40</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select
+                  value={entriesToShow}
+                  onValueChange={value => setEntriesToShow(value)}
+                >
+                  <SelectTrigger className="w-[120px] border border-primary">
+                    <span className='text-[#172554]'>Show</span>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="40">40</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
                <Input
                 type='text'
                 placeholder='Search'
@@ -217,8 +199,8 @@ function SalesAgentEncoding() {
             <div className='flex flex-row justify-end mt-3'>
               <div>
                 <p className='text-[#172554] text-sm w-full'>
-                  Showing 1 to {Math.min(entriesToShow, filteredSalesEncodings.length)} of {filteredSalesEncodings.length} entries
-                </p>
+  Showing 1 to {entriesToShow === 'all' ? filteredSalesEncodings.length : Math.min(parseInt(entriesToShow, 10), filteredSalesEncodings.length)} of {filteredSalesEncodings.length} entries
+</p>
               </div>
             </div>
           </CardContent>

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { formatDateToMMDDYYYY, formatDateToMMDDYYYYDateApproved } from "@/helper/dateUtils";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import UpdateType from '../dialog/UpdateType';
+// import UpdateType from '../dialog/UpdateType';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
@@ -248,7 +248,7 @@ function ListOfBrokerAgent() {
 
                       
 
-                      <UpdateType agent={agent} agentList={agentList} />
+                      {/* <UpdateType agent={agent} agentList={agentList} /> */}
 
                     </div>
                   </TableCell>

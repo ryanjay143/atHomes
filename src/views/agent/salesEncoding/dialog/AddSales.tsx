@@ -34,6 +34,7 @@ function AddSales({ fetchAgent, identityDetails }: any) {
     remarks: '',
     image: null,
     client_name: '',
+    block_and_lot: '', // <-- Add block_and_lot to state
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -60,6 +61,10 @@ function AddSales({ fetchAgent, identityDetails }: any) {
     if (!formData.remarks) newErrors.remarks = 'Remarks are required.';
     if (!formData.image) newErrors.image = 'Proof of Transaction is required.';
     if (!formData.client_name) newErrors.client_name = 'Client name is required.';
+    // Only require block_and_lot if category is "Block and lot"
+    if (formData.category === "Block and lot" && !formData.block_and_lot) {
+      newErrors.block_and_lot = 'Block & Lot is required.';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -72,8 +77,15 @@ function AddSales({ fetchAgent, identityDetails }: any) {
 
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value as string | Blob);
-    });
+  if (key === "block_and_lot") {
+    // Always append, empty string if not Block and lot
+    formDataToSend.append(key, formData.category === "Block and lot" ? String(value || "") : "");
+  } else if (key === "image") {
+    if (value) formDataToSend.append(key, value as Blob);
+  } else {
+    formDataToSend.append(key, String(value));
+  }
+});
 
     try {
       await axios.post('user/agent-sales', formDataToSend, {
@@ -94,6 +106,7 @@ function AddSales({ fetchAgent, identityDetails }: any) {
         remarks: '',
         image: null,
         client_name: '',
+        block_and_lot: '',
       });
       setAmount('');
       setIsDialogOpen(false);
@@ -121,10 +134,19 @@ function AddSales({ fetchAgent, identityDetails }: any) {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    // If changing category, reset block_and_lot if not "Block and lot"
+    if (name === "category") {
+      setFormData({
+        ...formData,
+        category: value,
+        block_and_lot: value === "Block and lot" ? formData.block_and_lot : '', // clear if not block and lot
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,6 +245,27 @@ function AddSales({ fetchAgent, identityDetails }: any) {
                     </Select>
                     {errors.category && <p className="text-red-500 text-xs mt-1">{errors.category}</p>}
                   </div>
+
+                  {/* Block & Lot input, only show if category is Block and lot */}
+                  {formData.category === "Block and lot" && (
+                    <div>
+                      <Label className="font-semibold text-blue-900 flex items-center gap-2">
+                        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-400" />
+                        Block &amp; Lot <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        type="text"
+                        name="block_and_lot"
+                        placeholder='e.g. Block 01, Lot 10'
+                        value={formData.block_and_lot}
+                        onChange={handleChange}
+                        className="rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 mt-1"
+                        required={formData.category === "Block and lot"}
+                        autoFocus
+                      />
+                      {errors.block_and_lot && <p className="text-red-500 text-xs mt-1">{errors.block_and_lot}</p>}
+                    </div>
+                  )}
 
                   <div>
                     <Label className="font-semibold text-blue-900 flex items-center gap-2">

@@ -5,7 +5,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faTimes, faUserTie, faFileInvoiceDollar, faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faFileImage, faCommentDots, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faTimes, faUserTie, faFileInvoiceDollar, faMapMarkerAlt, faCalendarAlt, faMoneyBillWave, faFileImage, faCommentDots, faUser, faLocation } from '@fortawesome/free-solid-svg-icons';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -34,6 +34,7 @@ interface SalesEncoding {
   remarks: string;
   image: string;
   client_name: string;
+  block_and_lot?: string; // Add this field
 }
 
 interface EditSalesDialogProps {
@@ -56,6 +57,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
   const [preview, setPreview] = useState<string>(defaultImageUrl);
   const [remarks, setRemarks] = useState(sales.remarks || '');
   const [clientName, setClientName] = useState(sales.client_name || '');
+  const [blockAndLot, setBlockAndLot] = useState(sales.block_and_lot || ''); // New state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -109,6 +111,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       setLocation(sales.location || '');
       setRemarks(sales.remarks || '');
       setClientName(sales.client_name || '');
+      setBlockAndLot(sales.block_and_lot || ''); // Reset block_and_lot on open
       setPreview(defaultImageUrl);
       setError(null);
       setImageFile(null);
@@ -131,6 +134,11 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
       formData.append('location', location);
       formData.append('remarks', remarks);
       formData.append('client_name', clientName);
+
+      // Only append block_and_lot if category is "Block and lot" and value is not empty
+      if (category === "Block and lot" && blockAndLot) {
+        formData.append('block_and_lot', blockAndLot);
+      }
 
       if (imageFile) {
         formData.append('image', imageFile);
@@ -179,7 +187,7 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:w-[95%] max-w-xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
+      <DialogContent className="md:w-[90%] max-w-xl h-full overflow-auto bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl border border-blue-200">
         <DialogHeader className='text-start'>
           <DialogTitle className="text-2xl font-bold text-blue-900 flex items-center gap-2">
             <FontAwesomeIcon icon={faFileInvoiceDollar} className="text-blue-500" />
@@ -242,6 +250,22 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
                 className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               />
             </div>
+            {/* Conditionally render Block & Lot input */}
+            {category === 'Block and lot' && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="block_and_lot" className="text-blue-900 font-semibold flex items-center gap-2">
+                  <FontAwesomeIcon icon={faLocation} className="text-blue-400" />
+                  Block & Lot
+                </Label>
+                <Input
+                  value={blockAndLot}
+                  onChange={e => setBlockAndLot(e.target.value)}
+                  placeholder="e.g. Block 01, Lot 10"
+                  className="col-span-3 rounded-lg border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                required={category === 'Block and lot'}
+                />
+              </div>
+            )}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="date_on_sale" className="text-blue-900 font-semibold flex items-center gap-2">
                 <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-400" />
@@ -302,7 +326,6 @@ const EditSalesDialog: React.FC<EditSalesDialogProps> = ({
               <Label htmlFor="Image" className="text-blue-900 font-semibold flex items-center gap-2">
                 <FontAwesomeIcon icon={faFileImage} className="text-pink-400" />
                 Proof of Transaction
-               
               </Label>
               <div className="col-span-3">
                 <span className="text-xs text-red-500 ml-2">(JPEG, PNG, JPG only, max 5MB)</span>

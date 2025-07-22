@@ -1,3 +1,5 @@
+/* Responsive, circular, spinning loader-card */
+
 .loader-card {
   position: relative;
   width: 48px;
@@ -5,15 +7,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%; /* Ensure circle */
 }
 
 .loader-card-image {
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 50%; /* Make image circular */
   z-index: 2;
   box-shadow: 0 0 8px 0 rgba(59, 130, 246, 0.15);
   animation: loader-card-bounce 1.2s infinite alternate;
+  object-fit: cover;
 }
 
 .loader-card::before {
@@ -24,7 +28,7 @@
   border: 4px solid #dbeafe;
   border-top: 4px solid #3b82f6;
   border-bottom: 4px solid #60a5fa;
-  animation: loader-card-spin 1s linear infinite;
+  animation: loader-card-spin 0.7s linear infinite;
   z-index: 1;
   box-shadow: 0 0 12px 2px #3b82f6, 0 0 24px 4px #60a5fa33;
 }
@@ -38,6 +42,19 @@
   animation: loader-card-glow-pulse 1.5s infinite alternate;
 }
 
+/* Responsive for md screens and up */
+@media (min-width: 768px) {
+  .loader-card {
+    width: 64px;
+    height: 64px;
+  }
+  .loader-card-image {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Animations */
 @keyframes loader-card-spin {
   to {
     transform: rotate(1turn);

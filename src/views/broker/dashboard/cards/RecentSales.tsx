@@ -51,7 +51,7 @@ function RecentSales({ sales, formatDateToMMDDYYYYDateApproved, currencyFormatte
                 className="bg-white border border-[#bfdbfe] rounded-xl shadow hover:shadow-lg transition flex flex-col"
               >
                 <CardContent className="flex flex-col gap-2 p-4">
-                  <span className="inline-block bg-yellow-100 text-yellow-800 text-[11px] font-semibold px-3 py-1 rounded-full mb-1">
+                  <span className="inline-block bg-yellow-100 text-yellow-800 text-[10px] font-bold px-3 py-1 rounded-full mb-1">
                     Reservation Date: {formatDateToMMDDYYYYDateApproved(sale.date_on_sale)}
                   </span>
                   <div className="font-semibold text-lg text-[#172554] truncate">

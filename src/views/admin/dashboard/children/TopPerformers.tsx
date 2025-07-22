@@ -64,7 +64,7 @@ function TopPerformers() {
           <Input
             type="text"
             placeholder="Search"
-            className="w-full"
+            className="w-52"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />

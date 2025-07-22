@@ -52,22 +52,27 @@ function BrokerageProperty() {
     fetchPropertiesData();
   }, []);
 
-  const filteredProperties = properties.filter(property => {
-    const matchesSearch = property.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          property.type_of_listing.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          property.status.toLowerCase().includes(searchQuery.toLowerCase());
+  // 1. Define dateFormatter first
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: '2-digit',
+});
 
-    return matchesSearch;
-  });
+// 2. Then use it in your filter
+const filteredProperties = properties.filter(property => {
+  const matchesSearch =
+    property.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property.type_of_listing.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    property.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dateFormatter.format(new Date(property.date_listed)).toLowerCase().includes(searchQuery.toLowerCase());
+
+  return matchesSearch;
+});
 
   const propertiesToDisplay = filteredProperties.slice(0, entriesToShow);
 
-  const dateFormatter = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: '2-digit',
-  });
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
