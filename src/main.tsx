@@ -100,8 +100,19 @@ const routes = [
     path: "/admin",
     element: <ProtectedRoute element={<Admin />} allowedRoles={['0']} />,
     children: [
-      { path: "", element: <Navigate to="/admin/user-dashboard" /> },
-      { path: "user-dashboard", element: <Suspense fallback={<Loader />}><DashboardContainer /></Suspense> },
+      { 
+        path: "", 
+        element: <Navigate to="/admin/user-dashboard" /> 
+      },
+      { 
+        path: "user-dashboard", 
+        element: 
+          <Suspense fallback={<Loader />}>
+            <DashboardContainer />
+          </Suspense> 
+      },
+
+      
       { path: "admin-profile", element: <Suspense fallback={<Loader />}><AdminProfile /></Suspense> },
       { path: "developer", element: <Suspense fallback={<Loader />}><DeveloperContainer /></Suspense> },
       {

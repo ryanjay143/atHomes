@@ -62,10 +62,10 @@ function Header() {
           <img
             src={`${import.meta.env.VITE_URL}/${personalinfo.profile_pic}`}
             alt="Profile"
-            className="w-14 h-14 rounded-full border-4 border-white shadow-md object-cover hover:scale-105 transition"
+            className="w-14 h-14 rounded-full  shadow-md object-cover hover:scale-105 transition"
           />
         ) : (
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-700 via-blue-400 to-blue-200 flex items-center justify-center text-white text-2xl font-bold border-4 border-white shadow-md">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-700 via-blue-400 to-blue-200 flex items-center justify-center text-white text-2xl font-bold shadow-md">
             {getInitials()}
           </div>
         )}
